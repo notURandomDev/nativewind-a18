@@ -22,7 +22,6 @@ const CustomVideoView = ({ videoSource }) => {
   const videoHeight = screenWidth * (9 / 16);
 
   const [videoControlsVisible, setVideoControlsVisible] = useState(false);
-  const hideTimeoutRef = useRef(null);
   const opacity = useSharedValue(0);
 
   const player = useVideoPlayer(videoSource, (player) => {
@@ -33,23 +32,11 @@ const CustomVideoView = ({ videoSource }) => {
   const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
 
   const showControls = () => {
-    if (hideTimeoutRef.current) {
-      clearTimeout(hideTimeoutRef.current); // Clear any existing timeout
-    }
-
     setVideoControlsVisible(true);
     opacity.value = withTiming(1, { duration: 300 });
-
-    // 5 秒后自动隐藏
-    hideTimeoutRef.current = setTimeout(() => runOnJS(hideControls)(), 5000);
   };
 
   const hideControls = () => {
-    if (hideTimeoutRef.current) {
-      clearTimeout(hideTimeoutRef.current); // Clear the timeout manually
-      hideTimeoutRef.current = null;
-    }
-
     opacity.value = withTiming(0, { duration: 300 }, () => {
       runOnJS(setVideoControlsVisible)(false);
     });
