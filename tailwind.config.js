@@ -9,6 +9,7 @@ module.exports = {
         primary: '#f2f2f2',
         secondary: '#111111',
         red: '#ff3f3f',
+        blue: '#00BBFF',
       },
       fontFamily: {
         pf: ['PingFang', 'sans-serif'],
