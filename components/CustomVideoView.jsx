@@ -6,10 +6,10 @@ import {
   TouchableWithoutFeedback,
   Dimensions,
 } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useVideoPlayer, VideoView } from 'expo-video';
-import { useEvent } from 'expo';
+import { useEvent, useEventListener } from 'expo';
 import Animated, {
   runOnJS,
   useAnimatedStyle,
@@ -18,28 +18,42 @@ import Animated, {
 } from 'react-native-reanimated';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import TouchableIcon from './TouchableIcon';
-import Slider from '@react-native-community/slider';
+import { Slider } from '@miblanchard/react-native-slider';
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 const defaultVideoSource =
   'https://prod-streaming-video-msn-com.akamaized.net/a8c412fa-f696-4ff2-9c76-e8ed9cdffe0f/604a87fc-e7bc-463e-8d56-cde7e661d690.mp4';
 
-const CustomVideoView = ({
-  videoSource = defaultVideoSource,
-  views = 1950,
-  videoDuration = 8121,
-}) => {
+const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => {
   const { width: screenWidth } = Dimensions.get('window');
-  const videoHeight = screenWidth * (9 / 16);
+  const videoHeight = screenWidth * (3 / 5);
 
-  const [videoControlsVisible, setVideoControlsVisible] = useState(false);
+  const [videoControlsVisible, setVideoControlsVisible] = useState(true);
   const [seekbarPosition, setSeekbarPosition] = useState(0);
+  const [videoDuration, setVideoDuration] = useState(0);
+
+  const videoViewRef = useRef(null);
+
   const opacity = useSharedValue(0);
 
   const player = useVideoPlayer(videoSource, (player) => {
     player.loop = true;
+    player.timeUpdateEventInterval = 1;
   });
 
   const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
+  const { status } = useEvent(player, 'statusChange', { status: player.status });
+
+  useEventListener(player, 'timeUpdate', ({ currentTime }) => {
+    setSeekbarPosition(currentTime);
+  });
+
+  useEffect(() => {
+    if (status === 'readyToPlay') {
+      setVideoDuration(player.duration);
+      player.play();
+    }
+  }, [status]);
 
   const showControls = () => {
     setVideoControlsVisible(true);
@@ -62,11 +76,18 @@ const CustomVideoView = ({
       .padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Handle seeking with the slider
   const handleSeek = (value) => {
-    const newPosition = value; // Value is in seconds
-    // player.seekTo(newPosition * 1000); // Convert to ms for player
-    setSeekbarPosition(newPosition); // Update UI immediately
+    const seekPosition = Math.round(value);
+    setSeekbarPosition(seekPosition);
+  };
+
+  const handleSeekComplete = (value) => {
+    const seekCompletePosition = Math.round(value);
+    player.currentTime = seekCompletePosition;
+  };
+
+  const handleEnterFullscreen = async () => {
+    // videoViewRef.current.enterFullscreen();
   };
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -88,7 +109,7 @@ const CustomVideoView = ({
           allowsFullscreen
           allowsPictureInPicture
           nativeControls={false}
-          contentFit="contain"
+          contentFit="cover"
         />
         {videoControlsVisible && (
           <Animated.View
@@ -100,7 +121,9 @@ const CustomVideoView = ({
               end={{ x: 0.5, y: 1 }}
               locations={[0.1317, 0.5086]}
               style={{ height: videoHeight / 2 }}>
-              <View accessibilityLabel="top-controls" className="flex-row justify-between p-5">
+              <View
+                accessibilityLabel="top-controls"
+                className="mt-12 flex-row justify-between p-5">
                 <View
                   accessibilityLabel="top-left-controls"
                   className="flex-row items-center gap-4">
@@ -148,14 +171,18 @@ const CustomVideoView = ({
                 </TouchableIcon>
                 <View className="flex-1 ">
                   <Slider
+                    value={seekbarPosition}
+                    onSlidingComplete={handleSeekComplete}
+                    onValueChange={handleSeek}
+                    minimumValue={0}
+                    maximumValue={videoDuration || 1}
                     minimumTrackTintColor="#00BBFF"
                     maximumTrackTintColor="#ffffff75"
                     thumbTintColor="#ffffff65"
-                    minimumValue={0}
-                    maximumValue={videoDuration || 1}
-                    value={seekbarPosition}
-                    onValueChange={handleSeek}
-                    thumbImage={require('../assets/imgs/seekbar_thumb_image.png')}
+                    renderTrackMarkComponent={() => {
+                      <Text>asdf</Text>;
+                    }}
+                    ref={videoViewRef}
                   />
                 </View>
                 <View className="w-28 flex-row items-center">
@@ -165,7 +192,7 @@ const CustomVideoView = ({
                   <Text className="text-sm text-white">/</Text>
                   <Text className="w-14  text-sm text-white">{formatTime(videoDuration)}</Text>
                 </View>
-                <TouchableIcon>
+                <TouchableIcon onPress={handleEnterFullscreen}>
                   <Ionicons name="scan-outline" size={24} color="#ffffff" />
                 </TouchableIcon>
               </View>

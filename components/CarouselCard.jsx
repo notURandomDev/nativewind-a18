@@ -19,18 +19,18 @@ const CarouselCard = ({ title, time, venue, poster, views }) => {
         }}>
         <View className="flex-1 flex-col justify-between p-1">
           <View className="flex-row justify-between">
-            <View className=" flex-row items-center justify-center gap-1 rounded-3xl bg-white px-2 py-1">
+            <View className="flex-row items-center justify-center gap-1 rounded-3xl bg-white px-2 py-1">
               <Ionicons name="ellipse" size={10} color={'#ff3f3f'} />
-              <Text className="text-secondary text-base">Live</Text>
+              <Text className="text-base text-secondary">Live</Text>
             </View>
             <View className="flex-row items-center justify-center gap-1.5">
-              <Text className="text-primary text-2xl">{views}</Text>
+              <Text className="text-2xl text-primary">{views}</Text>
               <Ionicons name="eye-outline" size={20} color={'#f2f2f2'} />
             </View>
           </View>
           <View className="gap-2">
             <Text
-              className="text-primary text-3xl font-semibold"
+              className="text-3xl font-semibold text-primary"
               numberOfLines={1}
               ellipsizeMode="tail">
               {title}
@@ -38,11 +38,11 @@ const CarouselCard = ({ title, time, venue, poster, views }) => {
             <View className="flex-row items-center gap-8">
               <View className="flex-row items-center gap-1.5">
                 <Ionicons name="time-outline" size={18} color={'#f2f2f2'} />
-                <Text className="text-primary text-xl">{time}</Text>
+                <Text className="text-xl text-primary">{time}</Text>
               </View>
               <View className="flex-row items-center gap-1.5">
                 <Ionicons name="location-outline" size={18} color={'#f2f2f2'} />
-                <Text className="text-primary text-xl">{venue}</Text>
+                <Text className="text-xl text-primary">{venue}</Text>
               </View>
             </View>
           </View>

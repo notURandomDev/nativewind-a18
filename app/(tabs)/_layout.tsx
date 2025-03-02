@@ -19,7 +19,7 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="stream"
         options={{
           title: '直播',
         }}
