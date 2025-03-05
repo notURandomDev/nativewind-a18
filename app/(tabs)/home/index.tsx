@@ -39,10 +39,10 @@ const width = Dimensions.get('screen').width;
 const defaultDataWith6Colors = ['#B0604D', '#899F9C', '#B3C680', '#5C6265', '#F5D399', '#F1F1F1'];
 
 function App() {
-  const ref = React.useRef(null);
+  const ref = React.useRef<ICarouselInstance>(null);
   const progress = useSharedValue(0);
 
-  const onPressPagination = (index) => {
+  const onPressPagination = (index: number) => {
     ref.current?.scrollTo({
       count: index - progress.value,
       animated: true,
@@ -50,7 +50,7 @@ function App() {
   };
 
   return (
-    <View className="flex-1 items-center bg-white px-3 py-3">
+    <View className="flex-1 items-center px-3 py-3">
       <View className="relative">
         <Carousel
           style={{ borderRadius: 25 }}

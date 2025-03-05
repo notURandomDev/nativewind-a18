@@ -10,7 +10,7 @@ module.exports = {
         secondary: '#111111',
         red: '#ff3f3f',
         blue: {
-          DEFAULT: '#00BBFF',
+          DEFAULT: '#1556F0',
           faint: '#F7FDFF',
         },
         gray: {
