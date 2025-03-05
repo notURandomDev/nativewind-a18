@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialTopTabs } from 'components/MaterialTopTabs';
 import { LinearGradient } from 'expo-linear-gradient';
+import MyTabBar from '../../../components/MyTabBar';
 
 const HomeLayout = () => {
   return (
@@ -22,6 +23,7 @@ const HomeLayout = () => {
         }}
       />
       <MaterialTopTabs
+        tabBar={(props) => <MyTabBar {...props} />}
         screenOptions={{
           tabBarStyle: {
             backgroundColor: 'transparent',

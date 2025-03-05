@@ -1,62 +1,69 @@
-import { useLinkBuilder, useTheme } from '@react-navigation/native';
-import { Animated, Platform, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { Text, TouchableOpacity, View } from 'react-native';
 
-export function MyTabBar({ state, descriptors, navigation, position }) {
-  const { colors } = useTheme();
-  const { buildHref } = useLinkBuilder();
-
+// Custom Tab Bar Component
+const MyTabBar = ({ state, descriptors, navigation }) => {
   return (
-    <View style={{ flexDirection: 'row' }}>
-      {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-              ? options.title
-              : route.name;
+    <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'transparent' }}>
+      {/* Left Icon */}
+      <Ionicons size={24} name="menu-outline" />
 
-        const isFocused = state.index === index;
+      {/* Tab Bar Content */}
+      <View style={{ flex: 1, flexDirection: 'row' }}>
+        {state.routes.map((route, index) => {
+          const { options } = descriptors[route.key];
+          const label = options.title || route.name;
+          const isFocused = state.index === index;
 
-        const onPress = () => {
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          });
+          const onPress = () => {
+            const event = navigation.emit({
+              type: 'tabPress',
+              target: route.key,
+              canPreventDefault: true,
+            });
 
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params);
-          }
-        };
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name);
+            }
+          };
 
-        const onLongPress = () => {
-          navigation.emit({
-            type: 'tabLongPress',
-            target: route.key,
-          });
-        };
+          return (
+            <TouchableOpacity
+              key={route.key}
+              onPress={onPress}
+              style={{ flex: 1, alignItems: 'center', paddingVertical: 10 }}>
+              <View style={{ alignItems: 'center' }}>
+                <Text
+                  style={{
+                    fontSize: 22,
+                    color: isFocused ? '#1556F0' : '#000000',
+                    textTransform: 'none',
+                  }}>
+                  {label}
+                </Text>
+                {isFocused && (
+                  <View
+                    style={{
+                      backgroundColor: '#1556F0',
+                      height: 2,
+                      width: 30,
+                      marginTop: 4,
+                      marginLeft: '50%',
+                      transform: [{ translateX: -15 }],
+                    }}
+                  />
+                )}
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
 
-        const inputRange = state.routes.map((_, i) => i);
-        const opacity = position.interpolate({
-          inputRange,
-          outputRange: inputRange.map((i) => (i === index ? 1 : 0)),
-        });
-
-        return (
-          <TouchableOpacity
-            href={buildHref(route.name, route.params)}
-            accessibilityRole={Platform.OS === 'web' ? 'link' : 'button'}
-            accessibilityState={isFocused ? { selected: true } : {}}
-            accessibilityLabel={options.tabBarAccessibilityLabel}
-            testID={options.tabBarButtonTestID}
-            onPress={onPress}
-            onLongPress={onLongPress}
-            style={{ flex: 1 }}>
-            <Animated.Text style={{ opacity, color: colors.text }}>{label}</Animated.Text>
-          </TouchableOpacity>
-        );
-      })}
+      {/* Right Icon */}
+      <Ionicons size={24} name="search-outline" />
     </View>
   );
-}
+};
+
+export default MyTabBar;
