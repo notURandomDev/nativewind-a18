@@ -1,13 +1,20 @@
 import React from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Text, TouchableOpacity, View } from 'react-native';
+import { useTabAnimation } from '@react-navigation/material-top-tabs';
+import ButtonAllinOne from './ButtonAllinOne';
 
 // Custom Tab Bar Component
 const MyTabBar = ({ state, descriptors, navigation }) => {
+  // const { position } = useTabAnimation();
+
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'transparent' }}>
+    <View className="flex-row items-center bg-transparent px-3">
       {/* Left Icon */}
-      <Ionicons size={24} name="menu-outline" />
+
+      <ButtonAllinOne variant="ghost" containerStyles="pb-3">
+        <Ionicons size={24} name="menu-outline" />
+      </ButtonAllinOne>
 
       {/* Tab Bar Content */}
       <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -43,14 +50,14 @@ const MyTabBar = ({ state, descriptors, navigation }) => {
                   {label}
                 </Text>
                 {isFocused && (
-                  <View
+                  <Animated.View
                     style={{
                       backgroundColor: '#1556F0',
-                      height: 2,
-                      width: 30,
+                      height: 3,
+                      width: 28,
                       marginTop: 4,
-                      marginLeft: '50%',
-                      transform: [{ translateX: -15 }],
+                      borderRadius: 25,
+                      // transform: [{ translateX: position }],
                     }}
                   />
                 )}
@@ -61,7 +68,10 @@ const MyTabBar = ({ state, descriptors, navigation }) => {
       </View>
 
       {/* Right Icon */}
-      <Ionicons size={24} name="search-outline" />
+
+      <ButtonAllinOne variant="ghost" containerStyles="pb-3">
+        <Ionicons size={24} name="search-outline" />
+      </ButtonAllinOne>
     </View>
   );
 };

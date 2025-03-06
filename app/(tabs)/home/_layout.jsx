@@ -31,8 +31,8 @@ const HomeLayout = () => {
           tabBarIndicatorStyle: {
             backgroundColor: '#1556F0',
             height: 2,
-            width: 30,
-            marginLeft: 23,
+            /*  width: 30,
+            marginLeft: 22, */
           },
           tabBarInactiveTintColor: '#000000',
           tabBarActiveTintColor: '#1556F0',

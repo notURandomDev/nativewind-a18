@@ -1,8 +1,17 @@
 import CarouselCard from 'components/CarouselCard';
 import * as React from 'react';
-import { Dimensions, ImageBackground, StyleSheet, Text, View } from 'react-native';
+import {
+  Dimensions,
+  ImageBackground,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
 import Carousel, { ICarouselInstance, Pagination } from 'react-native-reanimated-carousel';
+import CustomLink from 'components/CustomLink';
 
 const data = [
   {
@@ -50,41 +59,45 @@ function App() {
   };
 
   return (
-    <View className="flex-1 items-center px-3 py-3">
-      <View className="relative">
-        <Carousel
-          style={{ borderRadius: 25 }}
-          ref={ref}
-          width={360}
-          height={256}
-          data={data}
-          autoPlay={false}
-          autoPlayInterval={2000}
-          onProgressChange={progress}
-          renderItem={({ item }) => <CarouselCard {...item} />}
-        />
-        <View className="absolute bottom-2 self-center">
-          <Pagination.Basic
-            progress={progress}
+    <ScrollView className="flex-1 px-3 py-3">
+      {/* 直播推荐 */}
+      <View className="gap-4">
+        <CustomLink title="直播推荐" />
+        <View className="relative items-center px-2">
+          <Carousel
+            style={{ borderRadius: 25 }}
+            ref={ref}
+            width={360}
+            height={256}
             data={data}
-            dotStyle={{
-              width: 25,
-              height: 2,
-              backgroundColor: '#a6a6a6',
-            }}
-            activeDotStyle={{
-              overflow: 'hidden',
-              backgroundColor: '#e8e8e8',
-            }}
-            containerStyle={{
-              gap: 5,
-            }}
-            horizontal
-            onPress={onPressPagination}
+            autoPlay={false}
+            autoPlayInterval={2000}
+            onProgressChange={progress}
+            renderItem={({ item }) => <CarouselCard {...item} />}
           />
+          <View className="absolute bottom-2 self-center">
+            <Pagination.Basic
+              progress={progress}
+              data={data}
+              dotStyle={{
+                width: 25,
+                height: 2,
+                backgroundColor: '#a6a6a6',
+              }}
+              activeDotStyle={{
+                overflow: 'hidden',
+                backgroundColor: '#e8e8e8',
+              }}
+              containerStyle={{
+                gap: 5,
+              }}
+              horizontal
+              onPress={onPressPagination}
+            />
+          </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
