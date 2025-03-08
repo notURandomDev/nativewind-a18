@@ -2,7 +2,7 @@ import CarouselCard from 'components/CarouselCard';
 import * as React from 'react';
 import {
   Dimensions,
-  ImageBackground,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,6 +12,8 @@ import {
 import { useSharedValue } from 'react-native-reanimated';
 import Carousel, { ICarouselInstance, Pagination } from 'react-native-reanimated-carousel';
 import CustomLink from 'components/CustomLink';
+import VideoCard from 'components/VideoCard';
+import replayRecommendations from 'data/cards';
 
 const data = [
   {
@@ -58,14 +60,20 @@ function App() {
     });
   };
 
+  const ReplayRecommendationCombo = () => {
+    return replayRecommendations.map(({ title, time, venue }, index) => (
+      <VideoCard key={`rr-${index}`} title={title} time={time} venue={venue} />
+    ));
+  };
+
   return (
-    <ScrollView className="flex-1 px-3 py-3">
+    <ScrollView contentContainerClassName="gap-5" className="px-3 py-3">
       {/* 直播推荐 */}
       <View className="gap-4">
         <CustomLink title="直播推荐" />
-        <View className="relative items-center px-2">
+        <View className="relative px-2">
           <Carousel
-            style={{ borderRadius: 25 }}
+            style={{ borderRadius: 17 }}
             ref={ref}
             width={360}
             height={256}
@@ -75,27 +83,38 @@ function App() {
             onProgressChange={progress}
             renderItem={({ item }) => <CarouselCard {...item} />}
           />
-          <View className="absolute bottom-2 self-center">
-            <Pagination.Basic
-              progress={progress}
-              data={data}
-              dotStyle={{
-                width: 25,
-                height: 2,
-                backgroundColor: '#a6a6a6',
-              }}
-              activeDotStyle={{
-                overflow: 'hidden',
-                backgroundColor: '#e8e8e8',
-              }}
-              containerStyle={{
-                gap: 5,
-              }}
-              horizontal
-              onPress={onPressPagination}
-            />
-          </View>
+          <Pagination.Basic
+            progress={progress}
+            data={data}
+            dotStyle={{
+              width: 7,
+              height: 7,
+              borderRadius: 100,
+              backgroundColor: '#a6a6a6',
+              overflow: 'hidden',
+            }}
+            activeDotStyle={{
+              overflow: 'hidden',
+              backgroundColor: '#e8e8e8',
+              width: 7,
+              height: 7,
+              borderRadius: 100,
+            }}
+            containerStyle={{
+              gap: 6,
+              position: 'absolute',
+              bottom: 20,
+              right: 20,
+            }}
+            horizontal
+            onPress={onPressPagination}
+          />
         </View>
+      </View>
+      {/* 回放推荐 */}
+      <View className="gap-4">
+        <CustomLink title="回放推荐" />
+        <ReplayRecommendationCombo />
       </View>
     </ScrollView>
   );

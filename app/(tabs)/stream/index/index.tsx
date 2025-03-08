@@ -55,7 +55,7 @@ const DetailsView = () => {
             className="rounded-xl border border-gray"
             source={require('../../../../assets/imgs/qr-code-example.png')}
           />
-          <Text className="text-gray-solid text-sm font-light">打开APP·扫一扫快速入会</Text>
+          <Text className="text-sm font-light text-gray-solid">打开APP·扫一扫快速入会</Text>
         </View>
       </View>
       <View accessibilityLabel="2nd-layout-hosts" className="border-b border-gray py-5">

@@ -9,7 +9,7 @@ const CarouselCard = ({ title, time, venue, poster, views }) => {
       source={poster}
       resizeMode="cover"
       className="flex-1"
-      style={{ borderRadius: '34.42px' }}>
+      style={{ borderRadius: 17 }}>
       <LinearGradient
         colors={['#ffffff00', '#29292940', '#29292987']}
         locations={[0, 0.31, 1]} // Define color stop positions
@@ -18,31 +18,28 @@ const CarouselCard = ({ title, time, venue, poster, views }) => {
           padding: 16,
         }}>
         <View className="flex-1 flex-col justify-between p-1">
-          <View className="flex-row justify-between">
+          <View className="flex-row items-center justify-between">
             <View className="flex-row items-center justify-center gap-1 rounded-3xl bg-white px-2 py-1">
-              <Ionicons name="ellipse" size={10} color={'#ff3f3f'} />
-              <Text className="text-base text-secondary">Live</Text>
+              <Ionicons name="ellipse" size={8} color={'#ff3f3f'} />
+              <Text className="text-sm font-[500] text-gray-ghost">Live</Text>
             </View>
             <View className="flex-row items-center justify-center gap-1.5">
-              <Text className="text-2xl text-primary">{views}</Text>
               <Ionicons name="eye-outline" size={20} color={'#f2f2f2'} />
+              <Text className="text-primary">{views + '人次'}</Text>
             </View>
           </View>
-          <View className="gap-2">
-            <Text
-              className="text-3xl font-semibold text-primary"
-              numberOfLines={1}
-              ellipsizeMode="tail">
+          <View className="gap-3">
+            <Text className="text-2xl  text-primary" numberOfLines={1} ellipsizeMode="tail">
               {title}
             </Text>
-            <View className="flex-row items-center gap-8">
+            <View className="gap-1">
               <View className="flex-row items-center gap-1.5">
-                <Ionicons name="time-outline" size={18} color={'#f2f2f2'} />
-                <Text className="text-xl text-primary">{time}</Text>
+                <Ionicons name="time-outline" size={14} color={'#f2f2f2'} />
+                <Text className="text-primary">{time}</Text>
               </View>
               <View className="flex-row items-center gap-1.5">
-                <Ionicons name="location-outline" size={18} color={'#f2f2f2'} />
-                <Text className="text-xl text-primary">{venue}</Text>
+                <Ionicons name="location-outline" size={14} color={'#f2f2f2'} />
+                <Text className="text-primary">{venue}</Text>
               </View>
             </View>
           </View>
