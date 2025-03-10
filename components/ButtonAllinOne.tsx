@@ -17,7 +17,7 @@ const ButtonAllinOne = ({
   children,
   bgColor = 'bg-blue',
   variant = 'solid',
-  textColor = 'text-black',
+  textColor,
   rounded = 'lg',
   borderColor = 'border-blue',
   label,
@@ -26,10 +26,10 @@ const ButtonAllinOne = ({
     console.log('button pressed');
   },
 }: ButtonAllinOneProps) => {
-  const baseStyles = 'text-black py-1.5 px-2 border items-center justify-center';
+  const baseStyles = 'py-1.5 px-2 border items-center justify-center';
 
   const variantStyles = {
-    solid: `${bgColor} border-${bgColor.replace('bg-', '')} `,
+    solid: `text-white ${bgColor} border-${bgColor.replace('bg-', '')} `,
     outline: ` ${borderColor}`,
     ghost: 'border-0',
   };
@@ -39,11 +39,17 @@ const ButtonAllinOne = ({
     lg: 'rounded-lg',
   };
 
+  const textStyles = {
+    solid: 'text-white',
+    outline: 'text-blue',
+    ghost: 'text-blue', // Add a style for the ghost variant
+  };
+
   const combinedStyles = `${baseStyles} ${roundedStyles[rounded]} ${variantStyles[variant]} ${containerStyles}`;
 
   return (
     <TouchableOpacity className={combinedStyles} onPress={onPress}>
-      {label && <Text className={textColor}>{label}</Text>}
+      {label && <Text className={`${textStyles[variant]} ${textColor}`}>{label}</Text>}
       {children}
     </TouchableOpacity>
   );

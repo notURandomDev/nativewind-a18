@@ -1,25 +1,38 @@
-import { View, Text, ImageBackground } from 'react-native';
+import { View, Text, ImageBackground, ImageSourcePropType } from 'react-native';
 import React from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 
 interface PortraitCardProps {
   title?: string;
   subtitle?: string;
+  img?: ImageSourcePropType;
+  variant?: 'default' | 'square';
 }
 
-const PortraitCard = ({ title = '标题', subtitle = '副标题' }: PortraitCardProps) => {
+const PortraitCard = ({
+  title = '标题',
+  subtitle = '副标题',
+  img,
+  variant = 'default',
+}: PortraitCardProps) => {
+  const imageDimensions = {
+    default: { height: 130, width: 100 },
+    square: { height: 100, width: 100 },
+  };
+
   return (
     <ImageBackground
       imageStyle={{ borderRadius: 17 }}
-      style={{
-        height: 130,
-        width: 100,
-        justifyContent: 'flex-end',
-        paddingHorizontal: 8,
-        paddingVertical: 10,
-        position: 'relative',
-      }}
-      source={require('../assets/imgs/guest-p-1.png')}>
+      style={[
+        {
+          justifyContent: 'flex-end',
+          paddingHorizontal: 8,
+          paddingVertical: 10,
+          position: 'relative',
+        },
+        imageDimensions[variant],
+      ]}
+      source={img}>
       <LinearGradient
         colors={['#6d6d6d00', '#000000']}
         locations={[0, 1]}
