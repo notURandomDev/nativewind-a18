@@ -5,6 +5,7 @@ import {
   Image,
   ImageBackground,
   ImageSourcePropType,
+  Modal,
   ScrollView,
   StyleSheet,
   Text,
@@ -21,6 +22,7 @@ import MyCarousel from 'components/MyCarousel';
 import VideoThumbnail from 'components/VideoThumbnail';
 import { rrData } from 'data/carousels';
 import BottomIndicator from 'components/BottomIndicator';
+import { Link } from 'expo-router';
 
 const width = Dimensions.get('screen').width;
 
@@ -58,11 +60,13 @@ export const InfoSlot = ({ title, time, venue }: InfoSlotProps) => {
 };
 
 function App() {
+  const [modalVisible, setModalVisible] = React.useState(false);
+
   return (
     <ScrollView
       contentContainerClassName="gap-8"
       contentContainerStyle={{ paddingHorizontal: 16 }}
-      className="py-3">
+      className="relative py-3">
       {/* 直播推荐 */}
       <View className="gap-4">
         <CustomLink title="直播推荐" />
@@ -83,6 +87,27 @@ function App() {
           )}
         />
       </View>
+      <Link href="../../modal" asChild>
+        <TouchableOpacity
+          onPress={() => setModalVisible(true)}
+          className="absolute items-center justify-center"
+          style={{
+            backgroundColor: '#ffffff',
+            top: 360,
+            right: 5,
+            height: 65,
+            width: 65,
+            borderRadius: 13,
+            borderColor: '#1556f010',
+            borderWidth: 2,
+          }}>
+          <Image
+            style={{ height: 40, width: 40 }}
+            resizeMode="contain"
+            source={require('../../../assets/imgs/favicon-1.png')}
+          />
+        </TouchableOpacity>
+      </Link>
       <BottomIndicator />
     </ScrollView>
   );

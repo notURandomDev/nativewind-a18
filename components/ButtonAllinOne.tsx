@@ -6,7 +6,7 @@ interface ButtonAllinOneProps {
   bgColor?: string;
   textColor?: string;
   variant?: 'solid' | 'outline' | 'ghost';
-  rounded?: 'none' | 'xl';
+  rounded?: 'none' | 'xl' | 'full';
   label?: string;
   borderColor?: string;
   containerStyles?: string;
@@ -37,6 +37,7 @@ const ButtonAllinOne = ({
   const roundedStyles = {
     none: 'rounded-none',
     xl: 'rounded-xl',
+    full: 'rounded-full',
   };
 
   const textStyles = {

@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { MaterialTopTabs } from 'components/MaterialTopTabs';
 import { LinearGradient } from 'expo-linear-gradient';
 import MyTabBar from '../../../components/MyTabBar';
+import { View } from 'react-native';
 
 const HomeLayout = () => {
   return (
@@ -50,6 +51,7 @@ const HomeLayout = () => {
         <MaterialTopTabs.Screen name="news" options={{ title: '新闻' }} />
         <MaterialTopTabs.Screen name="downloads" options={{ title: '下载' }} />
       </MaterialTopTabs>
+
       <StatusBar style="dark" backgroundColor="transparent" />
     </SafeAreaView>
   );

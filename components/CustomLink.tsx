@@ -16,7 +16,7 @@ const CustomLink = ({ title = 'Default Heading', subtitle, link = '/' }: CustomL
       <TouchableOpacity className="flex-row items-center justify-between">
         <View className="flex-row items-baseline">
           <View className="relative">
-            <View className="bg- bg-yellow absolute bottom-0 left-0 right-0 h-2 rounded-sm"></View>
+            <View className="bg- absolute bottom-0 left-0 right-0 h-2 rounded-sm bg-yellow"></View>
             <Text className="text-3xl font-normal">{title}</Text>
           </View>
           {subtitle && <Text className="text-lg font-light">/{subtitle}</Text>}
