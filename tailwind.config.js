@@ -17,8 +17,9 @@ module.exports = {
           DEFAULT: '#E8E8E8',
           solid: '#8B8B8B',
           tertiary: '#D9D9D9',
-          ghost: '#11111170',
+          ghost: '#11111190',
         },
+        yellow: '#ffca5f',
       },
       fontFamily: {
         pf: ['PingFang', 'sans-serif'],

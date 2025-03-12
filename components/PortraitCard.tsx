@@ -1,33 +1,45 @@
 import { View, Text, ImageBackground, ImageSourcePropType } from 'react-native';
 import React from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 interface PortraitCardProps {
   title?: string;
   subtitle?: string;
+  label?: string;
   img?: ImageSourcePropType;
   variant?: 'default' | 'square';
+  alignMode?: 'left' | 'center';
+  size?: number;
 }
 
 const PortraitCard = ({
-  title = '标题',
-  subtitle = '副标题',
+  title,
+  subtitle,
+  label,
   img,
   variant = 'default',
+  alignMode = 'left',
+  size,
 }: PortraitCardProps) => {
   const imageDimensions = {
-    default: { height: 130, width: 100 },
-    square: { height: 100, width: 100 },
+    default: { height: 180, width: 130 },
+    square: size ? { height: size, width: size } : { height: 90, width: 90 },
+  };
+
+  const alignStyles = {
+    left: 'items-start',
+    center: 'items-center',
   };
 
   return (
     <ImageBackground
+      className={`justify-end ${alignStyles[alignMode]}`}
       imageStyle={{ borderRadius: 17 }}
       style={[
         {
-          justifyContent: 'flex-end',
-          paddingHorizontal: 8,
-          paddingVertical: 10,
+          paddingHorizontal: 10,
+          paddingVertical: 8,
           position: 'relative',
         },
         imageDimensions[variant],
@@ -48,10 +60,13 @@ const PortraitCard = ({
         }}
       />
       <View>
-        <Text className="text-lg text-white">{title}</Text>
-        <Text style={{ fontSize: 10 }} className="text-white">
-          {subtitle}
-        </Text>
+        {title && <Text className="text-lg text-white">{title}</Text>}
+        {subtitle && (
+          <Text style={{ fontSize: 10 }} className="text-white" numberOfLines={1}>
+            {subtitle}
+          </Text>
+        )}
+        {label && <Text className="text-sm text-white">{label}</Text>}
       </View>
     </ImageBackground>
   );

@@ -44,6 +44,8 @@ const MyTabBar = ({ state, descriptors, navigation }) => {
                 <Text
                   style={{
                     fontSize: 22,
+                    fontWeight: '500',
+
                     color: isFocused ? '#1556F0' : '#000000',
                     textTransform: 'none',
                   }}>

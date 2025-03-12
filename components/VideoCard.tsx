@@ -8,7 +8,7 @@ interface VideoCardProps {
 
 const VideoCard = ({ leftSlot, rightSlot }: VideoCardProps) => {
   return (
-    <View className="flex-row gap-4">
+    <View className="flex-row items-center gap-4">
       {leftSlot}
       {rightSlot}
     </View>

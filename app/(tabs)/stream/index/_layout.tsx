@@ -6,6 +6,7 @@ import DownloadView from './download';
 import MindmapView from './mindmap';
 import DetailsView from '.';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import BottomIndicator from 'components/BottomIndicator';
 
 const viewWithinTab = [<DetailsView />, <AgendaView />, <MindmapView />, <DownloadView />];
 const buttonConfig = [
@@ -27,7 +28,7 @@ const DetailsTabLayout = () => {
         backgroundColor: '#ffffff',
         paddingHorizontal: 28,
         paddingVertical: 16,
-        paddingBottom: 250,
+        paddingBottom: 225,
       }}>
       <View accessibilityLabel="block-buttons" className="flex-row gap-3 rounded-none">
         {buttonConfig.map(({ label }, index) => {
@@ -45,9 +46,7 @@ const DetailsTabLayout = () => {
         })}
       </View>
       <View>{viewWithinTab[activeViewIndex]}</View>
-      <View className="items-center justify-center">
-        <Text className="text-gray-tertiary text-sm font-light">—— 已到底部 ——</Text>
-      </View>
+      <BottomIndicator />
     </ScrollView>
   );
 };
