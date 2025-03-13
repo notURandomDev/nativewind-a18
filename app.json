@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "nativewind-a18",
+    "scheme": "nativewind-a18",
     "slug": "nativewind-a18",
     "version": "1.0.0",
     "web": {

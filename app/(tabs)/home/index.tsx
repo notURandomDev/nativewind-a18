@@ -87,7 +87,7 @@ function App() {
           )}
         />
       </View>
-      <Link href="../../modal" asChild>
+      <Link href="../../chat" asChild>
         <TouchableOpacity
           onPress={() => setModalVisible(true)}
           className="absolute items-center justify-center"

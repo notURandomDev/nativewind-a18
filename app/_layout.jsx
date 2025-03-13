@@ -35,17 +35,7 @@ export default function RootLayout() {
     <GestureHandlerRootView>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="modal"
-          options={{
-            presentation: 'modal',
-            headerShadowVisible: false,
-            headerBackVisible: true,
-            headerTitle: () => <CustomHeaderTitle name="edit-3" size={24} color="black" />,
-            headerLeft: () => <Ionicons name="chevron-back-outline" size={24} />,
-            headerRight: () => <Octicons name="history" size={24} />,
-          }}
-        />
+        <Stack.Screen name="chat" options={{ presentation: 'modal', headerShown: false }} />
       </Stack>
     </GestureHandlerRootView>
   );
