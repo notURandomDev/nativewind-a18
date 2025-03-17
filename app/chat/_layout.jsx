@@ -38,7 +38,7 @@ const CustomChatHistoryHeader = () => (
 
 export default function ModalLayout() {
   return (
-    <Stack>
+    <Stack screenOptions={{ gestureEnabled: false }}>
       <Stack.Screen
         name="index"
         options={{
@@ -46,6 +46,7 @@ export default function ModalLayout() {
           presentation: 'modal',
           headerShadowVisible: false,
           headerBackVisible: true,
+          gestureEnabled: false,
           header: () => <CustomChatHeader />,
         }}
       />

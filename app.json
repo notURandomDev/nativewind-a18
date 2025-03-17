@@ -34,7 +34,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.nativewinda18"
+      "bundleIdentifier": "com.anonymous.nativewinda18",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -42,6 +45,14 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.anonymous.nativewinda18"
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "6df773d4-9438-4575-88a1-d9f6a655eac2"
+      }
     }
   }
 }

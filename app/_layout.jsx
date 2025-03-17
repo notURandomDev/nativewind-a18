@@ -35,7 +35,10 @@ export default function RootLayout() {
     <GestureHandlerRootView>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="chat" options={{ presentation: 'modal', headerShown: false }} />
+        <Stack.Screen
+          name="chat"
+          options={{ presentation: 'modal', headerShown: false, gestureEnabled: false }}
+        />
       </Stack>
     </GestureHandlerRootView>
   );

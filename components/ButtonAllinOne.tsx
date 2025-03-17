@@ -11,6 +11,7 @@ interface ButtonAllinOneProps {
   borderColor?: string;
   containerStyles?: string;
   onPress?: () => void;
+  disabled?: boolean;
 }
 
 const ButtonAllinOne = ({
@@ -22,6 +23,7 @@ const ButtonAllinOne = ({
   borderColor = 'border-blue',
   label,
   containerStyles,
+  disabled = false,
   onPress = () => {
     console.log('button pressed');
   },
@@ -49,7 +51,7 @@ const ButtonAllinOne = ({
   const combinedStyles = `${baseStyles} ${roundedStyles[rounded]} ${variantStyles[variant]} ${containerStyles}`;
 
   return (
-    <TouchableOpacity className={combinedStyles} onPress={onPress}>
+    <TouchableOpacity className={combinedStyles} onPress={disabled ? () => {} : onPress}>
       {label && <Text className={`${textStyles[variant]} ${textColor}`}>{label}</Text>}
       {children}
     </TouchableOpacity>
