@@ -5,16 +5,20 @@ import { useTabAnimation } from '@react-navigation/material-top-tabs';
 import ButtonAllinOne from './ButtonAllinOne';
 
 // Custom Tab Bar Component
-const MyTabBar = ({ state, descriptors, navigation }) => {
+const MyTabBar = ({ state, descriptors, navigation, variant = 'default' }) => {
   // const { position } = useTabAnimation();
+
+  const isDefault = variant !== 'mini';
 
   return (
     <View className="flex-row items-center bg-transparent px-3">
       {/* Left Icon */}
 
-      <ButtonAllinOne variant="ghost" containerStyles="pb-3">
-        <Ionicons size={24} name="menu-outline" />
-      </ButtonAllinOne>
+      {isDefault && (
+        <ButtonAllinOne variant="ghost" containerStyles="pb-3">
+          <Ionicons size={24} name="menu-outline" />
+        </ButtonAllinOne>
+      )}
 
       {/* Tab Bar Content */}
       <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -71,9 +75,11 @@ const MyTabBar = ({ state, descriptors, navigation }) => {
 
       {/* Right Icon */}
 
-      <ButtonAllinOne variant="ghost" containerStyles="pb-3">
-        <Ionicons size={24} name="search-outline" />
-      </ButtonAllinOne>
+      {isDefault && (
+        <ButtonAllinOne variant="ghost" containerStyles="pb-3">
+          <Ionicons size={24} name="search-outline" />
+        </ButtonAllinOne>
+      )}
     </View>
   );
 };

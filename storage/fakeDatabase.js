@@ -7,7 +7,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
  * @param messages 以数组的形式传入，存储时会转成字符串
  */
 const saveChat = async (chatId, messages) => {
-  console.log('received messages:', messages);
   try {
     await AsyncStorage.setItem(`chat_${chatId}`, JSON.stringify(messages));
     console.log(`[${Date.now().toString()}] Messages Saved!`);

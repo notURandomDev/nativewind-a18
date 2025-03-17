@@ -39,6 +39,7 @@ export default function RootLayout() {
           name="chat"
           options={{ presentation: 'modal', headerShown: false, gestureEnabled: false }}
         />
+        <Stack.Screen name="videos_id/[vid]" options={{ headerShown: false }} />
       </Stack>
     </GestureHandlerRootView>
   );

@@ -11,6 +11,7 @@ import {
 } from '@react-navigation/material-top-tabs';
 import { withLayoutContext } from 'expo-router';
 import { ParamListBase, TabNavigationState } from '@react-navigation/native';
+import MyTabBar from 'components/MyTabBar';
 
 // Create the Material Top Tab Navigator
 const Tab = createMaterialTopTabNavigator();
@@ -43,10 +44,11 @@ const Explore = () => {
             </View>
           </View>
           <MaterialTopTabs
+            tabBar={(props) => <MyTabBar {...props} variant="mini" />}
             initialRouteName="index"
             screenOptions={{
               tabBarIndicatorStyle: {
-                backgroundColor: '#000000',
+                backgroundColor: '#1556F0',
                 height: 3,
               },
               tabBarLabelStyle: {
@@ -54,11 +56,11 @@ const Explore = () => {
                 fontWeight: '500',
               },
             }}>
-            <MaterialTopTabs.Screen name="chat" options={{ title: '聊天' }} />
             <MaterialTopTabs.Screen name="index" options={{ title: '详情' }} />
-            <MaterialTopTabs.Screen name="transcribe" options={{ title: '转录' }} />
+            <MaterialTopTabs.Screen name="transcribe" options={{ title: '摘要' }} />
             <MaterialTopTabs.Screen name="notes" options={{ title: '笔记' }} />
             <MaterialTopTabs.Screen name="recommend" options={{ title: '推荐' }} />
+            <MaterialTopTabs.Screen name="chat" options={{ title: '聊天' }} />
           </MaterialTopTabs>
         </View>
         <StatusBar style="light" />

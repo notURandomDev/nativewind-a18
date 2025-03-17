@@ -26,9 +26,9 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="stream"
+        name="videos"
         options={{
-          title: '直播',
+          title: '大会视频',
           tabBarIcon: ({ color }) => <Ionicons size={20} name="videocam-outline" color={color} />,
         }}
       />
