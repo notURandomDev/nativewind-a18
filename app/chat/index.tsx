@@ -14,9 +14,12 @@ import {
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 import Animated, { useAnimatedKeyboard, useAnimatedStyle } from 'react-native-reanimated';
+import { Server, WebSocket } from 'mock-socket';
+import { loadChat, saveChat } from 'storage/fakeDatabase';
+var debounce = require('lodash.debounce');
 
 interface messageProps {
   text: string;
@@ -43,20 +46,55 @@ const MessageBubble = ({ text, sender }: messageProps) => (
   </View>
 );
 
+const MemorizedFlatList = React.memo(({ flatListRef, messages }: any) => {
+  console.log('MemorizedFlatList re-rendered');
+  return (
+    <FlatList
+      ref={flatListRef}
+      contentContainerStyle={{ paddingBottom: 20 }}
+      contentContainerClassName="gap-3"
+      data={messages}
+      renderItem={({ item: { text, sender } }) => <MessageBubble text={text} sender={sender} />}
+      keyExtractor={(item) => item.id}
+    />
+  );
+});
+
 const Modal = () => {
-  const textInputRef = useRef<TextInput>(null);
   const flatListRef = useRef<FlatList>(null);
+  const textInputRef = useRef<TextInput>(null);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [messages, setMessages] = useState<Array<any>>([]);
+  const [replyMessage, setReplyMessage] = useState('');
   const [textInputValue, setTextInputValue] = useState('');
-  const [messages, setMessages] = useState([
-    { id: '1', text: '你好啊！', sender: USER },
-    { id: '2', text: '你好！有什么我可以帮到你的吗？', sender: AI },
-  ]);
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
+  console.log('modal re-render triggered');
+
+  const initChat = async () => {
+    const chatData = await loadChat(1);
+    setMessages([...chatData]);
+  };
+
+  const initKbdCfg = () => {
+    setTimeout(() => {
+      if (textInputRef?.current) textInputRef.current.focus();
+    }, 100);
+  };
+
   useEffect(() => {
+    console.log('---modal mounted---');
+    initChat();
+    initKbdCfg();
+
+    return () => {
+      console.log('unmounted');
+    };
+  }, []);
+
+  /* useEffect(() => {
     const keyboardDidShow = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardVisible(true);
     });
@@ -68,36 +106,41 @@ const Modal = () => {
       keyboardDidShow.remove();
       keyboardDidHide.remove();
     };
-  }, []);
+  }, []); */
 
   const handleSubmit = async () => {
     const newMessage = {
       id: Date.now().toString(),
-      text: textInputValue,
+      // text: textInputValue,
       sender: USER,
     };
     setMessages((prevMessages) => [...prevMessages, newMessage]);
-    setTextInputValue('');
-    setIsLoading(true);
+    // setTextInputValue('');
+    // setIsLoading(true);
+    mockSSE();
     Keyboard.dismiss();
-    await mockReply();
     flatListRef.current?.scrollToEnd();
   };
 
-  const mockReply = async () => {
-    const message = '这是一条mock数据';
-    const messageStack = message.split('');
-    // const [replyMessage, setReplyMessage] = useState('');
+  const mockSSE = () => {
+    const reply = 'this is JS-mocked sse response'.split('');
 
-    setTimeout(() => {
-      const mockReplyMessage = {
-        id: Date.now().toString(),
-        text: message,
-        sender: AI,
-      };
-      setMessages((prevMessages) => [...prevMessages, mockReplyMessage]);
-      setIsLoading(false);
-    }, 1000);
+    let accumulatedMessage = '';
+
+    const interval = setInterval(() => {
+      if (reply.length) {
+        const ch = reply.shift();
+        accumulatedMessage += ch;
+        setReplyMessage(accumulatedMessage);
+      } else {
+        clearInterval(interval);
+        setMessages((prevMsgs) => [
+          ...prevMsgs,
+          { id: Date.now().toString(), text: accumulatedMessage, sender: AI },
+        ]);
+        setReplyMessage('');
+      }
+    }, 100);
   };
 
   return (
@@ -108,26 +151,17 @@ const Modal = () => {
       keyboardVerticalOffset={0}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <Animated.View style={{ marginBottom: 0 }} className="flex-1 p-4">
-          <FlatList
-            ref={flatListRef}
-            contentContainerStyle={{ paddingBottom: 20 }}
-            contentContainerClassName="gap-3"
-            data={messages}
-            renderItem={({ item: { text, sender } }) => (
-              <MessageBubble text={text} sender={sender} />
-            )}
-            keyExtractor={(item) => item.id}
-          />
-
+        <View className="flex-1 p-4 ">
+          <MemorizedFlatList flatListRef={flatListRef} messages={messages} />
           <View className="gap-3" style={{ paddingBottom: 55 }}>
             <View
               style={{ borderRadius: 20, borderWidth: 2, height: 50 }}
               className="justify-center border border-blue p-4">
               <TextInput
+                ref={textInputRef}
                 style={{ fontSize: 18 }}
                 className=""
-                onChangeText={(text) => setTextInputValue(text)}
+                onChangeText={setTextInputValue}
                 value={textInputValue}
                 placeholder="有问题尽管问安小恒！"
               />
@@ -155,7 +189,7 @@ const Modal = () => {
               <View></View>
             )}
           </View>
-        </Animated.View>
+        </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
