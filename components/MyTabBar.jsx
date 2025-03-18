@@ -43,11 +43,11 @@ const MyTabBar = ({ state, descriptors, navigation, variant = 'default' }) => {
             <TouchableOpacity
               key={route.key}
               onPress={onPress}
-              style={{ flex: 1, alignItems: 'center', paddingVertical: 10 }}>
+              style={{ flex: 1, alignItems: 'center', paddingVertical: 14 }}>
               <View style={{ alignItems: 'center' }}>
                 <Text
                   style={{
-                    fontSize: 22,
+                    fontSize: isDefault ? 22 : 18,
                     fontWeight: '500',
 
                     color: isFocused ? '#1556F0' : '#000000',
@@ -59,7 +59,7 @@ const MyTabBar = ({ state, descriptors, navigation, variant = 'default' }) => {
                   <Animated.View
                     style={{
                       backgroundColor: '#1556F0',
-                      height: 3,
+                      height: isDefault ? 3 : 2,
                       width: 28,
                       marginTop: 4,
                       borderRadius: 25,

@@ -19,6 +19,7 @@ import ButtonAllinOne from 'components/ButtonAllinOne';
 import Animated, { useAnimatedKeyboard, useAnimatedStyle } from 'react-native-reanimated';
 import { Server, WebSocket } from 'mock-socket';
 import { clearChat, loadChat, saveChat } from 'storage/fakeDatabase';
+import MyTextInput from 'components/MyTextInput';
 var debounce = require('lodash.debounce');
 
 interface messageProps {
@@ -185,17 +186,12 @@ const Modal = () => {
 
       {/* Bottom Toolbar */}
       <View className="gap-3 p-4" style={{ paddingBottom: 50 }}>
-        <View
-          style={{ borderRadius: 20, borderWidth: 2, height: 50 }}
-          className="justify-center border border-blue p-4">
-          <TextInput
-            ref={textInputRef}
-            style={{ fontSize: 20 }}
-            onChangeText={setTextInputValue}
-            value={textInputValue}
-            placeholder="有问题尽管问安小恒！"
-          />
-        </View>
+        <MyTextInput
+          ref={textInputRef}
+          onChangeText={setTextInputValue}
+          value={textInputValue}
+          placeholder="有问题尽管问安小恒！"
+        />
         <View className="flex-row items-center justify-between">
           <View className="flex-row gap-5">
             <Feather name="edit-3" size={24} color="#1556F0" />

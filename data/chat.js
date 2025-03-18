@@ -9,4 +9,25 @@ const chatHistoryData3 = [
   { subject: '如何一键导出智能笔记', date: '2025-3-10' },
 ];
 
-export { chatHistoryData1, chatHistoryData2, chatHistoryData3 };
+const livechatMockData = [
+  { id: 1, username: '老板', msg: '你们在吗' },
+  { id: 2, username: '小弟', msg: '在的老板' },
+  { id: 3, username: '大哥', msg: '在的在的' },
+  { id: 4, username: '老板', msg: '你们在吗' },
+  { id: 5, username: '小弟', msg: '在的老板' },
+  { id: 6, username: '大哥', msg: '在的在的' },
+  { id: 7, username: '老板', msg: '你们在吗' },
+  { id: 8, username: '小弟', msg: '在的老板' },
+  { id: 9, username: '大哥', msg: '在的在的' },
+  { id: 10, username: '老板', msg: '你们在吗' },
+  { id: 11, username: '小弟', msg: '在的老板' },
+  { id: 12, username: '大哥', msg: '在的在的' },
+  { id: 13, username: '老板', msg: '你们在吗' },
+  { id: 14, username: '小弟', msg: '在的老板' },
+  { id: 15, username: '大哥', msg: '在的在的' },
+  { id: 16, username: '老板', msg: '你们在吗' },
+  { id: 17, username: '小弟', msg: '在的老板' },
+  { id: 18, username: '大哥', msg: '在的在的' },
+];
+
+export { chatHistoryData1, chatHistoryData2, chatHistoryData3, livechatMockData };
