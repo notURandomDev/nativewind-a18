@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native';
 import React from 'react';
 
-const TranscribeTab = () => {
+const TextBlock = () => {
   return (
     <View>
-      <Text>transcribe</Text>
+      <Text>TextBlock</Text>
     </View>
   );
 };
 
-export default TranscribeTab;
+export default TextBlock;

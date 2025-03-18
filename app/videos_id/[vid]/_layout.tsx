@@ -57,7 +57,7 @@ const Explore = () => {
               },
             }}>
             <MaterialTopTabs.Screen name="index" options={{ title: '详情' }} />
-            <MaterialTopTabs.Screen name="transcribe" options={{ title: '摘要' }} />
+            <MaterialTopTabs.Screen name="digest" options={{ title: '摘要' }} />
             <MaterialTopTabs.Screen name="notes" options={{ title: '笔记' }} />
             <MaterialTopTabs.Screen name="recommend" options={{ title: '推荐' }} />
             <MaterialTopTabs.Screen name="chat" options={{ title: '聊天' }} />
