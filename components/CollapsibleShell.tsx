@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity, ViewStyle } from 'react-native';
 import React, { ReactNode, useState } from 'react';
+import * as Haptics from 'expo-haptics';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { twMerge } from 'tailwind-merge';
@@ -31,15 +32,19 @@ const CollapsibleShell = ({
     <View
       className={`bg-blue-faint ${toggle === 'bottom' && 'gap-4'}`}
       style={{ flexGrow: 1, borderRadius: 17, paddingHorizontal: 16, paddingVertical: 20 }}>
-      <View className="flex-row items-center justify-between">
+      <TouchableOpacity
+        activeOpacity={1}
+        className="flex-row items-center justify-between"
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+          setIsCollapsed(!isCollapsed);
+        }}>
         <View className="flex-row items-center gap-2">
           <Ionicons name="ellipse" size={14} color={dotColor} />
           <Text className={twMerge('text-xl font-medium text-blue', labelClassName)}>{label}</Text>
         </View>
         {toggle === 'top' && (
-          <TouchableOpacity
-            className="flex-row items-center gap-1"
-            onPress={() => setIsCollapsed(!isCollapsed)}>
+          <View className="flex-row items-center gap-1">
             <Text className="" style={{ color: '#c7c7c7' }}>
               {isCollapsed ? '展开' : '收起'}
             </Text>
@@ -48,9 +53,9 @@ const CollapsibleShell = ({
             ) : (
               <Ionicons size={16} name="chevron-up" color="#c7c7c7" />
             )}
-          </TouchableOpacity>
+          </View>
         )}
-      </View>
+      </TouchableOpacity>
 
       <Collapsible
         collapsedHeight={toggle === 'bottom' ? 125 : 0}
