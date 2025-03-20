@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import TintedBackground from 'components/TintedBackground';
 import Collapsible from 'react-native-collapsible';
 import Avatar from 'components/Avatar';
+import CollapsibleShell from 'components/CollapsibleShell';
 
 const essentials_review = [
   {
@@ -42,124 +43,85 @@ const speeches_review = [
 ];
 
 const EssentialsReview = () => {
-  const [isRealtimeTranscriptionCollapsed, setIsRealtimeTranscriptionCollapsed] = useState(true);
-  const [isQaReviewCollapsed, setIsQaReviewCollapsed] = useState(true);
-  const [isSpeechReviewCollapsed, setisSpeechReviewCollapsed] = useState(true);
   return (
     <View className="gap-4">
-      <TintedBackground label="实时转写">
-        <Collapsible
-          style={{ flexGrow: 1, gap: 10 }}
-          collapsedHeight={125}
-          collapsed={isRealtimeTranscriptionCollapsed}>
-          <FlatList
-            style={{ borderRadius: 10 }}
-            contentContainerClassName="gap-4"
-            scrollEnabled={false}
-            data={essentials_review}
-            renderItem={({ item: { title, content } }) => (
-              <View
-                className="flex-1 gap-3 bg-white px-4"
-                style={{ paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10 }}>
-                <Text className="text-lg font-medium">{title}</Text>
-                <Text style={{ lineHeight: 26 }} className="font-light text-gray-text">
-                  {content}
-                </Text>
-              </View>
-            )}
-          />
-        </Collapsible>
-        <TouchableOpacity
-          className="items-center"
-          onPress={() => setIsRealtimeTranscriptionCollapsed(!isRealtimeTranscriptionCollapsed)}>
-          <Text className="" style={{ color: '#c7c7c7' }}>
-            {isRealtimeTranscriptionCollapsed ? '—— 查看全部 ——' : '—— 收起 ——'}
-          </Text>
-        </TouchableOpacity>
-      </TintedBackground>
-      <TintedBackground label="问答总结">
-        <Collapsible
-          style={{ flexGrow: 1, gap: 10 }}
-          collapsedHeight={125}
-          collapsed={isQaReviewCollapsed}>
-          <FlatList
-            style={{ borderRadius: 10 }}
-            contentContainerClassName="gap-4"
-            scrollEnabled={false}
-            data={essentials_review}
-            renderItem={({ item: { title, content } }) => (
-              <View
-                className="flex-1 gap-3 bg-white px-4"
-                style={{ paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10 }}>
-                <View className="flex-row items-center gap-2" style={{ paddingEnd: 24 }}>
-                  <View className="bg-blue" style={{ borderRadius: 6, padding: 5 }}>
-                    <Text className=" text-white" style={{ fontSize: 14 }}>
-                      问
-                    </Text>
-                  </View>
-                  <View className="flex-1 flex-row gap-2">
-                    <Avatar />
-                    <Text numberOfLines={1} className="text-lg font-medium">
-                      {title}
-                    </Text>
-                  </View>
+      <CollapsibleShell withPadding={false} label="实时转写">
+        <FlatList
+          style={{ borderRadius: 10 }}
+          contentContainerClassName="gap-4"
+          scrollEnabled={false}
+          data={essentials_review}
+          renderItem={({ item: { title, content } }) => (
+            <View
+              className="flex-1 gap-3 bg-white px-4"
+              style={{ paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10 }}>
+              <Text className="text-lg font-medium">{title}</Text>
+              <Text style={{ lineHeight: 26 }} className="font-light text-gray-text">
+                {content}
+              </Text>
+            </View>
+          )}
+        />
+      </CollapsibleShell>
+      <CollapsibleShell withPadding={false} label="问答总结">
+        <FlatList
+          style={{ borderRadius: 10 }}
+          contentContainerClassName="gap-4"
+          scrollEnabled={false}
+          data={essentials_review}
+          renderItem={({ item: { title, content } }) => (
+            <View
+              className="flex-1 gap-3 bg-white px-4"
+              style={{ paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10 }}>
+              <View className="flex-row items-center gap-2" style={{ paddingEnd: 24 }}>
+                <View className="bg-blue" style={{ borderRadius: 6, padding: 5 }}>
+                  <Text className=" text-white" style={{ fontSize: 14 }}>
+                    问
+                  </Text>
                 </View>
-                <View className="flex-row items-start gap-2" style={{ paddingEnd: 24 }}>
-                  <View className="bg-blue" style={{ borderRadius: 6, padding: 5 }}>
-                    <Text className=" text-white" style={{ fontSize: 14 }}>
-                      答
-                    </Text>
-                  </View>
-                  <View className="flex-1 flex-row gap-2">
-                    <Avatar />
-                    <Text className="text-lg font-light text-gray-text">{content}</Text>
-                  </View>
-                </View>
-              </View>
-            )}
-          />
-        </Collapsible>
-        <TouchableOpacity
-          className="items-center"
-          onPress={() => setIsQaReviewCollapsed(!isQaReviewCollapsed)}>
-          <Text className="" style={{ color: '#c7c7c7' }}>
-            {isQaReviewCollapsed ? '—— 查看全部 ——' : '—— 收起 ——'}
-          </Text>
-        </TouchableOpacity>
-      </TintedBackground>
-      <TintedBackground label="发言总结">
-        <Collapsible
-          style={{ flexGrow: 1, gap: 10 }}
-          collapsedHeight={125}
-          collapsed={isSpeechReviewCollapsed}>
-          <FlatList
-            style={{ borderRadius: 10 }}
-            contentContainerClassName="gap-4"
-            scrollEnabled={false}
-            data={speeches_review}
-            renderItem={({ item: { title, content } }) => (
-              <View
-                className="flex-1 gap-3 bg-white px-4"
-                style={{ paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10 }}>
-                <View className="flex-row gap-2">
+                <View className="flex-1 flex-row gap-2">
                   <Avatar />
-                  <Text className="text-lg font-medium">{title}</Text>
+                  <Text numberOfLines={1} className="text-lg font-medium">
+                    {title}
+                  </Text>
                 </View>
-                <Text style={{ lineHeight: 26 }} className="font-light text-gray-text">
-                  {content}
-                </Text>
               </View>
-            )}
-          />
-        </Collapsible>
-        <TouchableOpacity
-          className="items-center"
-          onPress={() => setisSpeechReviewCollapsed(!isSpeechReviewCollapsed)}>
-          <Text className="" style={{ color: '#c7c7c7' }}>
-            {isSpeechReviewCollapsed ? '—— 查看全部 ——' : '—— 收起 ——'}
-          </Text>
-        </TouchableOpacity>
-      </TintedBackground>
+              <View className="flex-row items-start gap-2" style={{ paddingEnd: 24 }}>
+                <View className="bg-blue" style={{ borderRadius: 6, padding: 5 }}>
+                  <Text className=" text-white" style={{ fontSize: 14 }}>
+                    答
+                  </Text>
+                </View>
+                <View className="flex-1 flex-row gap-2">
+                  <Avatar />
+                  <Text className="text-lg font-light text-gray-text">{content}</Text>
+                </View>
+              </View>
+            </View>
+          )}
+        />
+      </CollapsibleShell>
+      <CollapsibleShell withPadding={false} label="发言总结">
+        <FlatList
+          style={{ borderRadius: 10 }}
+          contentContainerClassName="gap-4"
+          scrollEnabled={false}
+          data={speeches_review}
+          renderItem={({ item: { title, content } }) => (
+            <View
+              className="flex-1 gap-3 bg-white px-4"
+              style={{ paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10 }}>
+              <View className="flex-row gap-2">
+                <Avatar />
+                <Text className="text-lg font-medium">{title}</Text>
+              </View>
+              <Text style={{ lineHeight: 26 }} className="font-light text-gray-text">
+                {content}
+              </Text>
+            </View>
+          )}
+        />
+      </CollapsibleShell>
     </View>
   );
 };
