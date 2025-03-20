@@ -28,7 +28,7 @@ const ButtonAllinOne = ({
     console.log('button pressed');
   },
 }: ButtonAllinOneProps) => {
-  const baseStyles = 'py-1.5 px-2 border items-center justify-center';
+  const baseStyles = 'py-2 px-2 border items-center justify-center';
 
   const variantStyles = {
     solid: `text-white ${bgColor} border-${bgColor.replace('bg-', '')} `,

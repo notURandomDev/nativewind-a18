@@ -7,6 +7,7 @@ import ChaptersSnapshot from './chapters';
 import EssentialsReview from './review';
 import RealtimeTranscribe from './transcribe';
 import VideoDigest from '.';
+import { TabPageLayout } from '../_layout';
 
 const viewWithinTab = [
   <VideoDigest />,
@@ -25,16 +26,7 @@ const DigestTabLayout = () => {
   const [activeViewIndex, setActiveViewIndex] = useState(0);
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        display: 'flex',
-        flexGrow: 1,
-        gap: 12,
-        backgroundColor: '#ffffff',
-        paddingHorizontal: 28,
-        paddingVertical: 16,
-        paddingBottom: 225,
-      }}>
+    <TabPageLayout>
       <View accessibilityLabel="block-buttons" className="flex-row gap-3 rounded-none">
         {buttonConfig.map(({ label }, index) => {
           return (
@@ -51,8 +43,7 @@ const DigestTabLayout = () => {
         })}
       </View>
       <View>{viewWithinTab[activeViewIndex]}</View>
-      <BottomIndicator />
-    </ScrollView>
+    </TabPageLayout>
   );
 };
 

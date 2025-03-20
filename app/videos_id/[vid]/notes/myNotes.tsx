@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native';
 import React from 'react';
 
-const NotesTab = () => {
+const MyNotesView = () => {
   return (
     <View>
-      <Text>notes</Text>
+      <Text>MyNotesView</Text>
     </View>
   );
 };
 
-export default NotesTab;
+export default MyNotesView;

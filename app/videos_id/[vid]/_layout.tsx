@@ -1,5 +1,5 @@
-import { View, Dimensions, Text, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import { View, Dimensions, Text, TouchableOpacity, ScrollView } from 'react-native';
+import React, { ReactNode, useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import CustomVideoView from 'components/CustomVideoView';
@@ -12,6 +12,7 @@ import {
 import { withLayoutContext } from 'expo-router';
 import { ParamListBase, TabNavigationState } from '@react-navigation/native';
 import MyTabBar from 'components/MyTabBar';
+import BottomIndicator from 'components/BottomIndicator';
 
 // Create the Material Top Tab Navigator
 const Tab = createMaterialTopTabNavigator();
@@ -47,6 +48,7 @@ const Explore = () => {
             tabBar={(props) => <MyTabBar {...props} variant="mini" />}
             initialRouteName="index"
             screenOptions={{
+              sceneStyle: { backgroundColor: '#ffffff' },
               tabBarIndicatorStyle: {
                 backgroundColor: '#1556F0',
                 height: 3,
@@ -68,5 +70,20 @@ const Explore = () => {
     </SafeAreaProvider>
   );
 };
+
+export const TabPageLayout = ({ children }: { children: ReactNode }) => (
+  <ScrollView
+    contentContainerStyle={{
+      display: 'flex',
+      flexGrow: 1,
+      gap: 12,
+      backgroundColor: '#ffffff',
+      paddingHorizontal: 28,
+      paddingBottom: 225,
+    }}>
+    {children}
+    <BottomIndicator />
+  </ScrollView>
+);
 
 export default Explore;

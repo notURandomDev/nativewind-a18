@@ -1,23 +1,17 @@
 import { View, Text, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import ButtonAllinOne from 'components/ButtonAllinOne';
-import AgendaView from './agenda';
-import DownloadView from './download';
-import MindmapView from './mindmap';
-import DetailsView from '.';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BottomIndicator from 'components/BottomIndicator';
+import VideoDigest from '.';
+import CategorizedView from '.';
+import MyNotesView from './myNotes';
 import { TabPageLayout } from '../_layout';
 
-const viewWithinTab = [<DetailsView />, <AgendaView />, <MindmapView />, <DownloadView />];
-const buttonConfig = [
-  { label: '会议详情' },
-  { label: '会议议程' },
-  { label: '会议脑图' },
-  { label: '资料下载' },
-];
+const viewWithinTab = [<CategorizedView />, <MyNotesView />];
+const buttonConfig = [{ label: '标签分类' }, { label: '我的笔记' }];
 
-const DetailsTabLayout = () => {
+const DigestTabLayout = () => {
   const [activeViewIndex, setActiveViewIndex] = useState(0);
 
   return (
@@ -42,4 +36,4 @@ const DetailsTabLayout = () => {
   );
 };
 
-export default DetailsTabLayout;
+export default DigestTabLayout;
