@@ -1,10 +1,8 @@
-import { View, Text, TouchableOpacity, ImageSourcePropType, ColorValue } from 'react-native';
+import { View, Text, TouchableOpacity, ColorValue } from 'react-native';
 import React, { useState } from 'react';
 import MyTextInput from 'components/MyTextInput';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
-import TintedBackground from 'components/TintedBackground';
-import Collapsible from 'react-native-collapsible';
 import CollapsibleShell from 'components/CollapsibleShell';
 import Avatar from 'components/Avatar';
 

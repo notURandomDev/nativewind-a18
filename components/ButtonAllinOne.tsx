@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import React, { ReactNode } from 'react';
+import * as Haptics from 'expo-haptics';
 
 interface ButtonAllinOneProps {
   children?: ReactNode;
@@ -50,8 +51,13 @@ const ButtonAllinOne = ({
 
   const combinedStyles = `${baseStyles} ${roundedStyles[rounded]} ${variantStyles[variant]} ${containerStyles}`;
 
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onPress();
+  };
+
   return (
-    <TouchableOpacity className={combinedStyles} onPress={disabled ? () => {} : onPress}>
+    <TouchableOpacity className={combinedStyles} onPress={disabled ? () => {} : handlePress}>
       {label && <Text className={`${textStyles[variant]} ${textColor}`}>{label}</Text>}
       {children}
     </TouchableOpacity>

@@ -14,8 +14,8 @@ const MyTextInput = forwardRef<TextInput, MyTextInputProps>(
   ({ onChangeText, value, placeholder, icon }, ref) => {
     return (
       <View
-        style={{ borderRadius: 30, borderWidth: 2, height: 50 }}
-        className="flex-row items-center gap-1 border border-blue p-4">
+        style={{ borderRadius: 30, borderWidth: 2, height: 45 }}
+        className="flex-row items-center gap-2 border border-blue px-4 py-1">
         {icon}
         <TextInput
           ref={ref}
