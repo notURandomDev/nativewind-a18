@@ -26,8 +26,8 @@ const DigestTabLayout = () => {
   const [activeViewIndex, setActiveViewIndex] = useState(0);
 
   return (
-    <TabPageLayout>
-      <View accessibilityLabel="block-buttons" className="flex-row gap-3 rounded-none">
+    <View className="gap-4">
+      <View accessibilityLabel="block-buttons" className="flex-row gap-3 rounded-none px-8">
         {buttonConfig.map(({ label }, index) => {
           return (
             <ButtonAllinOne
@@ -42,8 +42,10 @@ const DigestTabLayout = () => {
           );
         })}
       </View>
-      <View>{viewWithinTab[activeViewIndex]}</View>
-    </TabPageLayout>
+      <TabPageLayout>
+        <View>{viewWithinTab[activeViewIndex]}</View>
+      </TabPageLayout>
+    </View>
   );
 };
 
