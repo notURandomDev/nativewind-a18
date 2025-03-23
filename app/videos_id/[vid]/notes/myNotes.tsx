@@ -9,7 +9,16 @@ import ButtonAllinOne from 'components/ButtonAllinOne';
 import * as Haptics from 'expo-haptics';
 import { TabPageLayout } from '../_layout';
 
-function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
+interface RightActionProps {
+  progress: SharedValue<number>;
+  dragX: SharedValue<number>;
+}
+
+const RightAction: React.FC<{
+  prog: SharedValue<number>;
+  drag: SharedValue<number>;
+  openModal: () => void;
+}> = ({ prog, drag, openModal }) => {
   const styleAnimation = useAnimatedStyle(() => {
     return {
       transform: [{ translateX: drag.value + 228 }],
@@ -23,7 +32,11 @@ function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
       <ButtonAllinOne rounded="full" containerStyles="bg-blue-faint" variant="ghost">
         <Ionicons color="#1556F0" size={26} name="chevron-up" />
       </ButtonAllinOne>
-      <ButtonAllinOne rounded="full" containerStyles="bg-blue-faint" variant="ghost">
+      <ButtonAllinOne
+        onPress={openModal}
+        rounded="full"
+        containerStyles="bg-blue-faint"
+        variant="ghost">
         <Ionicons color="#1556F0" size={26} name="grid-outline" />
       </ButtonAllinOne>
       <ButtonAllinOne rounded="full" containerStyles="bg-blue-faint" variant="ghost">
@@ -34,20 +47,17 @@ function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
       </ButtonAllinOne>
     </Reanimated.View>
   );
-}
+};
 
-const NoteItem = () => {
-  const handleSwipeOpen = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
-  };
-
+const NoteItem = ({ cb }: { cb: () => void }) => {
   return (
     <ReanimatedSwipeable
-      onSwipeableOpen={handleSwipeOpen}
       overshootRight={false}
       childrenContainerStyle={{ flex: 1 }}
       friction={1}
-      renderRightActions={RightAction}>
+      renderRightActions={(progress, dragX) => (
+        <RightAction prog={progress} drag={dragX} openModal={cb} />
+      )}>
       <View style={{ position: 'relative', borderRadius: 17 }} className="gap-0.5 p-4">
         <LinearGradient
           colors={['#E9E8FF', '#F5F8FF']}
@@ -76,9 +86,26 @@ const NoteItem = () => {
   );
 };
 
+const NOTE_ITEMS = [
+  {
+    id: 1,
+    title: '云计算与AI融合：共创数字智能新时代',
+    date: '2025年5月18日',
+    subtitle: '随着大语言模型与云的结合，技...',
+    category: 'PRIVATE',
+  },
+  {
+    id: 1,
+    title: '云计算与AI融合：共创数字智能新时代',
+    date: '2025年5月18日',
+    subtitle: '随着大语言模型与云的结合，技...',
+    category: 'PRIVATE',
+  },
+];
+
 const MyNotesView = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [categoryIndex, setCategoryIndex] = useState(0);
+  const [categoryIndex, setCategoryIndex] = useState(3);
 
   const handleNoteCreation = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -93,14 +120,24 @@ const MyNotesView = () => {
             icon={<Ionicons size={18} name="search-outline" color="#8b8b8b" />}
             placeholder="搜索笔记"
           />
-          <NoteItem />
+          {NOTE_ITEMS.map(() => (
+            <NoteItem cb={() => setIsModalVisible(true)} />
+          ))}
         </View>
       </TabPageLayout>
       <TouchableOpacity
         activeOpacity={1}
         onPress={handleNoteCreation}
-        style={{ paddingVertical: 16, borderColor: '#1556F010', borderTopWidth: 1 }}
-        className="absolute bottom-0 left-0 right-0 flex-row items-center justify-center gap-1">
+        style={{
+          paddingVertical: 16,
+          borderColor: '#1556F010',
+          borderTopWidth: 1,
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+        }}
+        className=" flex-row items-center justify-center gap-1">
         <Ionicons name="add" size={24} />
         <Text className="text-2xl font-medium">新建笔记</Text>
       </TouchableOpacity>
@@ -113,10 +150,10 @@ const MyNotesView = () => {
         visible={isModalVisible}>
         <View className="flex-1 justify-end">
           <View
-            className="gap-4 bg-white"
+            className=" bg-white"
             style={{
               borderRadius: 17,
-              paddingBottom: 16,
+              paddingBottom: 28,
               paddingHorizontal: 28,
               shadowRadius: 40,
               shadowColor: '#00026C65',
@@ -128,16 +165,16 @@ const MyNotesView = () => {
                 <Ionicons size={28} name="chevron-down" />
               </ButtonAllinOne>
             </View>
-            <View className="">
-              <Text style={{ fontSize: 28 }}>请选择分类</Text>
+            <View>
+              <Text style={{ fontSize: 28, paddingBottom: 20 }}>请选择分类</Text>
             </View>
-            <View className="" style={{ paddingTop: 20, gap: 26 }}>
-              {CATEGORIES.map(({ label, color }, idx) => (
+            <View className="" style={{ gap: 26, paddingBottom: 20 }}>
+              {CATEGORIES.map(({ label, category }, idx) => (
                 <Category
                   key={`cat-${idx}`}
                   isActive={categoryIndex === idx}
                   label={label}
-                  color={color}
+                  category={category}
                   pressCb={() => setCategoryIndex(idx)}
                 />
               ))}
@@ -145,9 +182,9 @@ const MyNotesView = () => {
             <TouchableOpacity
               onPress={() => setIsModalVisible(false)}
               activeOpacity={1}
-              className="items-center"
-              style={{ paddingVertical: 24 }}>
-              <Text className="text-2xl font-medium text-gray-solid">取消</Text>
+              className="items-center bg-blue-faint"
+              style={{ paddingVertical: 16, borderRadius: 17 }}>
+              <Text className="text-2xl font-medium text-blue">确认</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -156,22 +193,30 @@ const MyNotesView = () => {
   );
 };
 
+const COLORS = new Map([
+  ['PRIVATE', '#00BBFF25'],
+  ['WORK', '#FF4E7425'],
+  ['MEETING', '#FFBB0025'],
+  ['UNCATEGORIZED', '#8b8b8b'],
+  ['NEW', '#c7c7c7'],
+]);
+
 const CATEGORIES = [
-  { label: '个人', color: '#00BBFF25' },
-  { label: '工作', color: '#FF4E7425' },
-  { label: '圆桌会议', color: '#FFBB0025' },
-  { label: '未分类', color: '#8b8b8b' },
-  { label: '新建', color: '#c7c7c7' },
+  { label: '个人', category: 'PRIVATE' },
+  { label: '工作', category: 'WORK' },
+  { label: '圆桌会议', category: 'MEETING' },
+  { label: '未分类', category: 'UNCATEGORIZED' },
+  { label: '新建', category: 'NEW' },
 ];
 
 interface CategoryProps {
   label?: string;
-  color?: ColorValue;
   isActive?: boolean;
+  category: string | 'UNCATEGORIZED';
   pressCb?: () => void;
 }
 
-const Category = ({ label, color, isActive = false, pressCb = () => {} }: CategoryProps) => {
+const Category = ({ label, category, isActive = false, pressCb = () => {} }: CategoryProps) => {
   const ActiveCircle = () => (
     <View className="rounded-full bg-blue">
       <Ionicons size={30} name="ellipse" color="#ffffff" />
@@ -193,7 +238,9 @@ const Category = ({ label, color, isActive = false, pressCb = () => {} }: Catego
       activeOpacity={1}
       className="flex-row items-center justify-between">
       <View className="flex-row items-center gap-4">
-        <View className="bg-blue p-4" style={{ borderRadius: 7.5, backgroundColor: color }}></View>
+        <View
+          className="bg-blue p-4"
+          style={{ borderRadius: 7.5, backgroundColor: COLORS.get(category) }}></View>
         <Text style={{ fontSize: 20 }} className="">
           {label}
         </Text>
