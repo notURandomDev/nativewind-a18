@@ -42,9 +42,8 @@ const DigestTabLayout = () => {
           );
         })}
       </View>
-      <TabPageLayout>
-        <View>{viewWithinTab[activeViewIndex]}</View>
-      </TabPageLayout>
+
+      <View>{viewWithinTab[activeViewIndex]}</View>
     </View>
   );
 };

@@ -31,6 +31,7 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
   const [videoControlsVisible, setVideoControlsVisible] = useState(true);
   const [seekbarPosition, setSeekbarPosition] = useState(0);
   const [videoDuration, setVideoDuration] = useState(0);
+  const [cc, setCc] = useState('实时字幕条');
 
   const videoViewRef = useRef(null);
 
@@ -176,9 +177,13 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
                     onValueChange={handleSeek}
                     minimumValue={0}
                     maximumValue={videoDuration || 1}
-                    minimumTrackTintColor="#00BBFF"
+                    minimumTrackTintColor="#1556F0"
                     maximumTrackTintColor="#ffffff75"
                     thumbTintColor="#ffffff65"
+                    thumbStyle={{
+                      width: 18,
+                      height: 18,
+                    }}
                     renderTrackMarkComponent={() => {
                       <Text>asdf</Text>;
                     }}
@@ -190,7 +195,7 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
                     {formatTime(seekbarPosition)}
                   </Text>
                   <Text className="text-sm text-white">/</Text>
-                  <Text className="w-14  text-sm text-white">{formatTime(videoDuration)}</Text>
+                  <Text className="w-14 text-sm text-white">{formatTime(videoDuration)}</Text>
                 </View>
                 <TouchableIcon onPress={handleEnterFullscreen}>
                   <Ionicons name="scan-outline" size={24} color="#ffffff" />
@@ -199,6 +204,11 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
             </LinearGradient>
           </Animated.View>
         )}
+        <View style={{ bottom: 64 }} className="absolute left-0 right-0 items-center">
+          <View style={{ backgroundColor: '#323232' }}>
+            <Text className="p-1 px-8 text-lg text-white">{cc}</Text>
+          </View>
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );

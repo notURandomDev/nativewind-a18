@@ -79,7 +79,8 @@ export const TabPageLayout = ({ children }: { children: ReactNode }) => (
       gap: 12,
       backgroundColor: '#ffffff',
       paddingHorizontal: 28,
-      paddingBottom: 245,
+      // paddingBottom: 245,
+      paddingBottom: 285,
     }}>
     {children}
     <BottomIndicator />
