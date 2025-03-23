@@ -4,23 +4,24 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   TextInput,
-  Platform,
   ScrollView,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  Button,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ButtonAllinOne from 'components/ButtonAllinOne';
-import Animated, { useAnimatedKeyboard, useAnimatedStyle } from 'react-native-reanimated';
-import { Server, WebSocket } from 'mock-socket';
+
 import { clearChat, loadChat, saveChat } from 'storage/fakeDatabase';
 import MyTextInput from 'components/MyTextInput';
-var debounce = require('lodash.debounce');
+import { getSign } from 'utils/getSign';
+import * as Progress from 'react-native-progress';
+import Markdown from 'react-native-markdown-display';
+
+const appKey = process.env.EXPO_PUBLIC_APP_KEY;
+const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
 
 interface messageProps {
   id?: string;
@@ -40,14 +41,22 @@ const MessageBubble = ({ text, sender }: messageProps) => (
         borderBottomLeftRadius: sender === USER ? 12 : 0,
         borderBottomRightRadius: sender === USER ? 0 : 12,
         paddingHorizontal: 16,
-        paddingVertical: 12,
+        paddingVertical: 0,
       }}
-      className={sender === USER ? 'bg-blue' : ''}>
-      <Text
-        style={{ fontSize: 20, lineHeight: 28 }}
-        className={`${sender === USER && 'font-light text-white'} `}>
+      className={sender === USER ? 'flex-col-reverse bg-blue' : 'bg-blue-faint'}>
+      <Markdown
+        style={{
+          body: {
+            flex: 1,
+            fontSize: 20,
+            lineHeight: 32,
+            color: sender === USER ? '#ffffff' : '#000000',
+            fontWeight: sender === USER ? 300 : 400,
+          },
+          list_item: { marginBottom: 8 },
+        }}>
         {text}
-      </Text>
+      </Markdown>
     </View>
   </View>
 );
@@ -63,10 +72,11 @@ const Modal = () => {
   const textInputRef = useRef<TextInput>(null);
   const messagesRef = useRef<Array<messageProps>>(messages);
   const scrollViewRef = useRef<ScrollView>(null);
+  const wsRef = useRef<WebSocket | null>(null);
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
-  console.log('modal re-render triggered');
+  // console.log('modal re-render triggered');
 
   const initChat = async () => {
     const chatData = await loadChat(1);
@@ -82,7 +92,7 @@ const Modal = () => {
       setKeyboardVisible(false);
       setTimeout(() => {
         scrollViewRef.current?.scrollToEnd({ animated: true });
-      }, 100);
+      }, 10);
     });
 
     setTimeout(() => {
@@ -90,18 +100,54 @@ const Modal = () => {
     }, 100);
   };
 
+  const initWs = () => {
+    const sign = getSign(appKey, appSecret);
+    const ws = new WebSocket(`https://www.das-ai.com/open/ws/chat?appKey=${appKey}&sign=${sign}`);
+    wsRef.current = ws;
+
+    ws.onopen = (e) => {
+      console.log('onopen', e);
+    };
+
+    ws.onmessage = (e) => {
+      const res = JSON.parse(e.data);
+      // console.log(res.answer);
+
+      if (res.status === 0) {
+        setMessages((prevMsgs) => {
+          const newMsg = { id: Date.now().toString(), text: res.answer, sender: AI };
+          return [...prevMsgs, newMsg];
+        });
+        setIsLoading(false);
+      }
+      // scrollViewRef.current?.scrollToEnd();
+      setReplyMessage(res.answer);
+    };
+
+    ws.onerror = (e) => {
+      console.log('onerror', e);
+    };
+
+    ws.onclose = (e) => {
+      console.log('onclose', e);
+    };
+
+    return ws;
+  };
+
   const quitChat = async () => {
     const res = await saveChat(1, messagesRef.current);
-    // clearChat(1);
   };
 
   useEffect(() => {
     console.log('---modal mounted---');
     initChat();
     initKbdCfg();
+    initWs();
 
     return () => {
       quitChat();
+      wsRef.current && wsRef.current.close();
       console.log('unmounted');
     };
   }, []);
@@ -120,6 +166,9 @@ const Modal = () => {
   }, []); */
 
   const handleSubmit = async () => {
+    setReplyMessage('');
+    setIsLoading(true);
+
     const newMessage = {
       id: Date.now().toString(),
       text: textInputValue,
@@ -128,11 +177,19 @@ const Modal = () => {
     Keyboard.dismiss();
 
     setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+    wsRef.current &&
+      wsRef.current.send(
+        JSON.stringify({
+          query: textInputValue,
+        })
+      );
+
     setTextInputValue('');
-    mockSSE();
+    // mockSSE();
   };
 
-  const mockSSE = () => {
+  /*   const mockSSE = () => {
     const reply =
       'Lorem Ipsum生成器，也称虚拟文本生成器，乱数假文生成器，支持随机生成指定数量段落的测试文章，用于测试不同字型和版型下的排版效果。\n当设计师或排版师需要填充内容时，Lorem Ipsum是一种常用的占位文本。它的目的是让人专注于布局、字体、颜色等设计元素，而不是实际的内容。Lorem Ipsum是一个拉丁文的占位文本，通常用于填充书籍、杂志、网页等排版设计中。\nLorem Ipsum生成器是一种工具，用于生成指定数量段落和指定长度的Lorem Ipsum文本。它可以节省设计师和排版师的时间，因为他们不需要手动编写和排版Lorem Ipsum文本。相反，他们可以使用Lorem Ipsum生成器来快速生成所需数量的Lorem Ipsum文本，并将其直接插入设计中，可以帮助设计师和排版师更好地进行视觉设计工作，并且可以提高工作效率。'.split(
         ''
@@ -157,7 +214,7 @@ const Modal = () => {
         setIsLoading(false);
       }
     }, 10);
-  };
+  }; */
 
   const MemorizedMessages = useMemo(() => {
     return messages.map(({ text, sender, id }: messageProps) => (
@@ -172,16 +229,28 @@ const Modal = () => {
       behavior="padding"
       style={{ backgroundColor: '#ffffff', marginBottom: 55 }}>
       <ScrollView
+        onContentSizeChange={() => {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        }}
         ref={scrollViewRef}
-        contentContainerClassName="gap-3 p-4"
+        contentContainerClassName="gap-4 p-4 justify-end"
         contentContainerStyle={{ flexGrow: 1 }}
         style={{ backgroundColor: '#ffffff' }}>
         {MemorizedMessages}
-        {isLoading && (
-          <Animated.View style={{ marginBottom: 150 }}>
+
+        {isLoading &&
+          (replyMessage === '' ? (
+            <View className="" style={{ paddingHorizontal: 18 }}>
+              <Progress.CircleSnail
+                size={36}
+                duration={1000}
+                spinDuration={1000}
+                style={{ alignSelf: 'flex-start' }}
+              />
+            </View>
+          ) : (
             <MessageBubble text={replyMessage} sender={AI} />
-          </Animated.View>
-        )}
+          ))}
       </ScrollView>
 
       {/* Bottom Toolbar */}

@@ -15,11 +15,12 @@ const MyTextInput = forwardRef<TextInput, MyTextInputProps>(
     return (
       <View
         style={{ borderRadius: 30, borderWidth: 2, height: 45 }}
-        className="flex-row items-center gap-2 border border-blue px-4 py-1">
+        className="flex-row items-center gap-2 border border-blue px-2 py-1">
         {icon}
         <TextInput
+          className="flex-1 p-2 font-light"
           ref={ref}
-          style={{ fontSize: 18 }}
+          style={{ fontSize: 20, paddingHorizontal: 8 }}
           onChangeText={onChangeText}
           value={value}
           placeholder={placeholder}
