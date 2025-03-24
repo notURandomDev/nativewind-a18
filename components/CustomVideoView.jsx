@@ -20,6 +20,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import TouchableIcon from './TouchableIcon';
 import { Slider } from '@miblanchard/react-native-slider';
 import * as ScreenOrientation from 'expo-screen-orientation';
+import ClosedCaptionData from '../test/raw_output.json';
 
 const defaultVideoSource =
   'https://prod-streaming-video-msn-com.akamaized.net/a8c412fa-f696-4ff2-9c76-e8ed9cdffe0f/604a87fc-e7bc-463e-8d56-cde7e661d690.mp4';
@@ -31,7 +32,8 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
   const [videoControlsVisible, setVideoControlsVisible] = useState(true);
   const [seekbarPosition, setSeekbarPosition] = useState(0);
   const [videoDuration, setVideoDuration] = useState(0);
-  const [cc, setCc] = useState('实时字幕条');
+  const [closedCaption, setClosedCaption] = useState({ text: '', sentenceId: -1 });
+  const [ccVisible, setccVisible] = useState(false);
 
   const videoViewRef = useRef(null);
 
@@ -45,8 +47,23 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
   const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
   const { status } = useEvent(player, 'statusChange', { status: player.status });
 
+  const setSeekbarOnTimeUpdate = (currentTime) => setSeekbarPosition(currentTime);
+  const setClosedCaptionsOnTimeUpdate = (currentTime) => {
+    const roundedTime = Math.round(currentTime * 1000);
+    const sentence = ClosedCaptionData.filter(({ startTime, endTime }) => {
+      return startTime < roundedTime && endTime > roundedTime;
+    })[0];
+
+    if (closedCaption.sentenceId !== sentence?.sentenceId)
+      setClosedCaption({ text: sentence?.text, sentenceId: sentence?.sentenceId });
+    // console.log(currentClosedCaption);
+  };
+
+  const num = 1;
+
   useEventListener(player, 'timeUpdate', ({ currentTime }) => {
-    setSeekbarPosition(currentTime);
+    setSeekbarOnTimeUpdate(currentTime);
+    setClosedCaptionsOnTimeUpdate(currentTime);
   });
 
   useEffect(() => {
@@ -139,8 +156,12 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
                 <View
                   accessibilityLabel="top-right-controls"
                   className="flex-row items-center gap-8">
-                  <TouchableIcon>
-                    <Ionicons name="resize-outline" size={22} color="#ffffff" />
+                  <TouchableIcon onPress={() => setccVisible(!ccVisible)}>
+                    <Ionicons
+                      name="logo-closed-captioning"
+                      size={22}
+                      color={ccVisible ? '#1556f0' : '#ffffff'}
+                    />
                   </TouchableIcon>
                   <TouchableIcon>
                     <Ionicons name="settings-outline" size={22} color="#ffffff" />
@@ -204,11 +225,15 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
             </LinearGradient>
           </Animated.View>
         )}
-        <View style={{ bottom: 64 }} className="absolute left-0 right-0 items-center">
-          <View style={{ backgroundColor: '#323232' }}>
-            <Text className="p-1 px-8 text-lg text-white">{cc}</Text>
+        {closedCaption.sentenceId !== -1 && ccVisible && (
+          <View style={{ bottom: 64 }} className="absolute left-0 right-0 items-center px-4">
+            <View style={{ backgroundColor: '#323232' }}>
+              <Text className="p-1 px-8 text-lg text-white" numberOfLines={1}>
+                {closedCaption.text}
+              </Text>
+            </View>
           </View>
-        </View>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );
