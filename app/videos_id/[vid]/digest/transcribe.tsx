@@ -1,5 +1,5 @@
-import { View, Text, ScrollView } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, ScrollView, Alert, StyleProp, TextStyle } from 'react-native';
+import React, { Children, ReactNode, useEffect, useRef, useState } from 'react';
 import TintedBackground from 'components/TintedBackground';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 import { getSign } from 'utils/getSign';
@@ -11,38 +11,8 @@ import BottomIndicator from 'components/BottomIndicator';
 const appKey = process.env.EXPO_PUBLIC_APP_KEY;
 const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
 
-import TC_DATA from './output.json';
-TC_DATA.sort((a, b) => a.sentenceId - b.sentenceId);
-console.log(TC_DATA);
-
-const TC_EXAMPLE = {
-  type: 'realtime',
-  data: {
-    sentence_id: 'sdf',
-    speaker_id: 2, // 发言者ID
-    seq_num: '0', // 句子顺序
-    text: '过去的十多年时间，一直带领安全团队冲在安全攻防第一线。\n最近5年转向产业研究，AI+网络安全是我们持续研究的核心课题。', // 转写文本
-    knowledge_data: {
-      terms: [
-        {
-          term: '安全攻防',
-          explanation: '网络安全领域的对抗技术体系，涵盖攻击模拟、漏洞防御、入侵检测等实战能力',
-          positions: [[76, 101]],
-        },
-        {
-          term: 'AI+网络安全',
-          explanation:
-            '将机器学习、深度学习等人工智能技术应用于威胁检测、风险预测、自动化响应等网络安全场景的技术融合方向',
-          positions: [[148, 164]],
-        },
-      ],
-    },
-    start_time: '590', // 语句开始时间
-    end_time: '11200', // 语句结束时间
-    is_final: true, // false表示临时结果，true表示最终转写
-    is_enhanced: true, // 数据是否经过增强处理
-  },
-};
+import TRANSCRIPTION_DATA from '../../../../test/enhance_output_cards.json';
+TRANSCRIPTION_DATA.sort((a, b) => a.sentenceId - b.sentenceId);
 
 interface KnowledgeDataProps {
   term: string;
@@ -50,7 +20,7 @@ interface KnowledgeDataProps {
   positions: Array<Array<number>>;
 }
 
-interface TcTextProps {
+interface TranscriptionProps {
   type: string;
   data: {
     sentence_id: number; // uuid
@@ -67,22 +37,15 @@ interface TcTextProps {
   };
 }
 
-interface PureTranscriptionProps {
-  sentenceId: number;
-  text: string;
-  startTime: number;
-  endTime: number;
-}
-
 const RealtimeTranscribe = () => {
-  const [tcText, setTcText] = useState<Array<PureTranscriptionProps>>(TC_DATA);
+  const [transcription, setTranscription] = useState<Array<SentenceProps>>(TRANSCRIPTION_DATA);
   const [loading, setLoading] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const scrollviewRef = useRef<ScrollView>(null);
 
   const startTest = () => {
     setLoading(true);
-    setTcText([]);
+    setTranscription([]);
     wsRef.current &&
       wsRef.current.send(
         JSON.stringify({
@@ -111,7 +74,7 @@ const RealtimeTranscribe = () => {
         return;
       }
 
-      // setTcText(res.answer);
+      // setTranscription(res.answer);
     };
 
     ws.onerror = (e) => {
@@ -126,6 +89,8 @@ const RealtimeTranscribe = () => {
       ws.close();
     };
   }, []);
+
+  useEffect(() => {}, []);
 
   return (
     <ScrollView
@@ -154,22 +119,113 @@ const RealtimeTranscribe = () => {
             className="flex-1 gap-3 bg-white px-4"
             style={{ paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10 }}>
             <Text className="text-lg font-medium">{'SSE测试'}</Text>
-            {tcText.map((item) => {
-              return (
-                <Text
-                  key={`sentence-${item.sentenceId}`}
-                  style={{ lineHeight: 26 }}
-                  className="font-light text-gray-text">
-                  {item.text}
-                </Text>
-              );
-            })}
+            {transcription.map((sentence) => (
+              <HighlightableParagraph
+                key={`paragraph-${sentence.sentenceId}`}
+                sentence={sentence}
+              />
+            ))}
           </View>
         </TintedBackground>
       </View>
       <BottomIndicator />
     </ScrollView>
   );
+};
+
+const HighlightableParagraph = ({ sentence }: { sentence: SentenceProps }) => {
+  const [isActive, setIsActive] = useState(false);
+
+  const segmentedSentence = segmentSentence(sentence);
+  const textDecorationStyles: TextStyle = {
+    textDecorationLine: 'underline',
+    textDecorationColor: '#FFD84E',
+  };
+  return (
+    <Text
+      onPressOut={() => setIsActive(false)}
+      style={[{ lineHeight: 26 }, isActive && textDecorationStyles]}
+      onLongPress={() => setIsActive(true)}>
+      {segmentedSentence.map((segment) => {
+        if (segment.isTerm) {
+          return (
+            <Text
+              key={segment.segmentId}
+              suppressHighlighting={true}
+              onPress={() => Alert.alert(segment.text, segment.explanation)}
+              className="text-blue">
+              {segment.text}
+            </Text>
+          );
+        } else {
+          return <Text>{segment.text}</Text>;
+        }
+      })}
+    </Text>
+  );
+};
+
+interface SentenceProps {
+  sentenceId: number;
+  text: string;
+  startTime: number;
+  endTime: number;
+  card: string;
+}
+
+interface SentenceSegmentProps {
+  segmentId: string;
+  text: string;
+  isTerm: boolean;
+  explanation?: string;
+}
+
+const segmentSentence = (sentence: SentenceProps) => {
+  const segments: Array<SentenceSegmentProps> = [];
+
+  const terms: Array<KnowledgeDataProps> = JSON.parse(sentence.card).terms;
+
+  // 如果card是一个空数组，就不用进行分割，直接返回原始句子
+  if (!terms.length) {
+    return [
+      { text: sentence.text, isTerm: false, segmentId: `sentence-${sentence.sentenceId}-no-card` },
+    ];
+  }
+
+  let plainTextStartIndex = 0;
+
+  terms.forEach((term: KnowledgeDataProps, index) => {
+    const [termTextStartIndex, termTextEndIndex] = term.positions[0];
+
+    // 如果两个term是连在一起的，就不用对plainText进行切割
+    if (plainTextStartIndex !== termTextStartIndex) {
+      const plainText = sentence.text.slice(plainTextStartIndex, termTextStartIndex);
+      segments.push({
+        text: plainText,
+        isTerm: false,
+        segmentId: `sentence-${sentence.sentenceId}-segment-${index}-plain`,
+      });
+    }
+
+    segments.push({
+      text: term.term,
+      isTerm: true,
+      explanation: term.explanation,
+      segmentId: `sentence-${sentence.sentenceId}-segment-${index}-term`,
+    });
+    plainTextStartIndex = termTextEndIndex + 1;
+  });
+
+  if (plainTextStartIndex < sentence.text.length) {
+    const remainingText = sentence.text.slice(plainTextStartIndex);
+    segments.push({
+      text: remainingText,
+      isTerm: false,
+      segmentId: `sentence-${sentence.sentenceId}-segment-last-text`,
+    });
+  }
+
+  return segments;
 };
 
 export default RealtimeTranscribe;
