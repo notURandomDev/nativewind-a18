@@ -3,6 +3,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Animated, Text, TouchableOpacity, View } from 'react-native';
 import { useTabAnimation } from '@react-navigation/material-top-tabs';
 import ButtonAllinOne from './ButtonAllinOne';
+import { router } from 'expo-router';
 
 // Custom Tab Bar Component
 const MyTabBar = ({ state, descriptors, navigation, variant = 'default' }) => {
@@ -76,7 +77,10 @@ const MyTabBar = ({ state, descriptors, navigation, variant = 'default' }) => {
       {/* Right Icon */}
 
       {isDefault && (
-        <ButtonAllinOne variant="ghost" containerStyles="pb-3">
+        <ButtonAllinOne
+          onPress={() => router.push('../../search')}
+          variant="ghost"
+          containerStyles="pb-3">
           <Ionicons size={24} name="search-outline" />
         </ButtonAllinOne>
       )}

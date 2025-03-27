@@ -40,6 +40,7 @@ export default function RootLayout() {
           options={{ presentation: 'modal', headerShown: false, gestureEnabled: false }}
         />
         <Stack.Screen name="videos_id/[vid]" options={{ headerShown: false }} />
+        <Stack.Screen name="search" options={{ headerShown: false }} />
       </Stack>
     </GestureHandlerRootView>
   );

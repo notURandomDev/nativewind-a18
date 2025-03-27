@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ViewStyle } from 'react-native';
 import React, { forwardRef, LegacyRef, ReactNode } from 'react';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -8,19 +8,40 @@ interface MyTextInputProps {
   value?: string;
   placeholder?: string;
   icon?: ReactNode;
+  size?: 'default' | 'sm';
 }
 
 const MyTextInput = forwardRef<TextInput, MyTextInputProps>(
-  ({ onChangeText, value, placeholder, icon }, ref) => {
+  ({ onChangeText, value, placeholder, icon, size = 'default' }, ref) => {
+    const containerDimension = {
+      default: {
+        height: 45,
+      },
+      sm: {
+        height: 40,
+      },
+    };
+
+    const textInputDimension = {
+      default: {
+        fontSize: 20,
+        paddingHorizontal: 8,
+      },
+      sm: {
+        fontSize: 18,
+        paddingHorizontal: 6,
+      },
+    };
+
     return (
       <View
-        style={{ borderRadius: 30, borderWidth: 2, height: 45 }}
-        className="flex-row items-center gap-2 border border-blue px-2 py-1">
+        style={[{ borderRadius: 30, borderWidth: 2.5 }, containerDimension[size]]}
+        className="flex-row items-center gap-0 border border-blue px-2 py-1">
         {icon}
         <TextInput
           className="flex-1 p-2 font-light"
           ref={ref}
-          style={{ fontSize: 20, paddingHorizontal: 8 }}
+          style={textInputDimension[size]}
           onChangeText={onChangeText}
           value={value}
           placeholder={placeholder}
