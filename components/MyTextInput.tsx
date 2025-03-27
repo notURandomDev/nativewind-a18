@@ -9,10 +9,11 @@ interface MyTextInputProps {
   placeholder?: string;
   icon?: ReactNode;
   size?: 'default' | 'sm';
+  searchInput?: boolean;
 }
 
 const MyTextInput = forwardRef<TextInput, MyTextInputProps>(
-  ({ onChangeText, value, placeholder, icon, size = 'default' }, ref) => {
+  ({ onChangeText, value, placeholder, icon, size = 'default', searchInput = true }, ref) => {
     const containerDimension = {
       default: {
         height: 45,
@@ -37,7 +38,7 @@ const MyTextInput = forwardRef<TextInput, MyTextInputProps>(
       <View
         style={[{ borderRadius: 30, borderWidth: 2.5 }, containerDimension[size]]}
         className="flex-row items-center gap-0 border border-blue px-2 py-1">
-        {icon}
+        {searchInput && <Ionicons size={20} color="#8B8B8B" name="search-outline" />}
         <TextInput
           className="flex-1 p-2 font-light"
           ref={ref}

@@ -6,7 +6,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 import * as Haptics from 'expo-haptics';
 import { ScrollView } from 'react-native-gesture-handler';
-import NoteItem from 'components/NoteItem';
+import { NoteItem } from 'components/NoteItem';
 
 const NOTE_ITEMS = [
   {

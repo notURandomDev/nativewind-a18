@@ -6,40 +6,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import CollapsibleShell from 'components/CollapsibleShell';
 import Avatar from 'components/Avatar';
 import { TabPageLayout } from '../_layout';
+import { NoteNode } from 'components/NoteItem';
 
 const PLACEHOLDER =
   '尊敬的各位来宾，女士们、先生们，大家上午好，尊敬的各位来宾，女士们、先生们，大家上午好......';
-
-interface NoteNodeProps {
-  timestamp?: string;
-  content?: string;
-  speaker?: string;
-  color?: ColorValue;
-}
-
-const NoteNode = ({
-  timestamp = '00:00:46',
-  content = PLACEHOLDER,
-  speaker = '发言人',
-  color,
-}: NoteNodeProps) => {
-  const [checked, setChecked] = useState(false);
-  return (
-    <View className="flex-1 flex-row gap-2 py-2">
-      <TouchableOpacity onPress={() => setChecked(!checked)}>
-        <Ionicons size={20} name={`checkmark-circle${checked ? '' : '-outline'}`} color={color} />
-      </TouchableOpacity>
-      <Text className="text-lg font-medium">{timestamp}</Text>
-      <View className="flex-1 gap-2">
-        <Text className="text-lg text-gray-text">{content}</Text>
-        <View className="flex-row items-center gap-2">
-          <Avatar />
-          <Text className="text-base">{speaker}</Text>
-        </View>
-      </View>
-    </View>
-  );
-};
 
 const CategorizedView = () => {
   return (

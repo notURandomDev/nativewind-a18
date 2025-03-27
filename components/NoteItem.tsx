@@ -1,5 +1,5 @@
-import { View, Text, ColorValue } from 'react-native';
-import { useRef } from 'react';
+import { View, Text, ColorValue, TouchableOpacity } from 'react-native';
+import { useRef, useState } from 'react';
 import React from 'react';
 import ReanimatedSwipeable, {
   SwipeableMethods,
@@ -8,6 +8,7 @@ import Reanimated, { SharedValue, useAnimatedStyle, useSharedValue } from 'react
 import { LinearGradient } from 'expo-linear-gradient';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import ButtonAllinOne from 'components/ButtonAllinOne';
+import Avatar from './Avatar';
 
 const COLORS = new Map([
   ['DEFAULT', '#F5F8FF'],
@@ -88,13 +89,26 @@ const RightAction: React.FC<{
   );
 };
 
+type NoteItemCategoryType = 'PRIVATE' | 'WORK' | 'MEETING' | 'NEW' | 'DEFAULT' | 'UNCATEGORIZED';
+
 interface NoteItemProps {
-  category?: 'PRIVATE' | 'WORK' | 'MEETING' | 'NEW' | 'DEFAULT' | 'UNCATEGORIZED';
+  id?: number;
+  title?: string;
+  date?: string;
+  preview?: string;
+  category?: NoteItemCategoryType;
   updateSelectedNote?: () => void;
   cb?: () => void;
 }
 
-const NoteItem = ({ updateSelectedNote, cb, category = 'UNCATEGORIZED' }: NoteItemProps) => {
+const NoteItem = ({
+  updateSelectedNote,
+  cb,
+  category = 'UNCATEGORIZED',
+  title = '云计算与AI融合：共创数字智能新时代',
+  date = '2025年5月18日',
+  preview = '随着大语言模型与云的结合，技...',
+}: NoteItemProps) => {
   const swipeableRef = useRef<SwipeableMethods>(null);
 
   const closeSwipeable = () => swipeableRef.current?.close();
@@ -141,15 +155,48 @@ const NoteItem = ({ updateSelectedNote, cb, category = 'UNCATEGORIZED' }: NoteIt
             }}
           />
         )}
-        <Text className="text-xl font-medium">云计算与AI融合：共创数字智能新时代</Text>
+        <Text className="text-xl font-medium">{title}</Text>
         <View className="flex-row">
-          <Text className="font-light text-gray-solid">2025年5月18日</Text>
+          <Text className="font-light text-gray-solid">{date}</Text>
           <Text>｜</Text>
-          <Text className="font-light text-gray-solid">随着大语言模型与云的结合，技...</Text>
+          <Text className="font-light text-gray-solid">{preview}</Text>
         </View>
       </Reanimated.View>
     </ReanimatedSwipeable>
   );
 };
 
-export default NoteItem;
+interface NoteNodeProps {
+  timestamp?: string;
+  content?: string;
+  speaker?: string;
+  color?: ColorValue;
+}
+
+const PLACEHOLDER =
+  '尊敬的各位来宾，女士们、先生们，大家上午好，尊敬的各位来宾，女士们、先生们，大家上午好......';
+const NoteNode = ({
+  timestamp = '00:00:46',
+  content = PLACEHOLDER,
+  speaker = '发言人',
+  color,
+}: NoteNodeProps) => {
+  const [checked, setChecked] = useState(false);
+  return (
+    <View className="flex-1 flex-row gap-2 py-2">
+      <TouchableOpacity onPress={() => setChecked(!checked)}>
+        <Ionicons size={20} name={`checkmark-circle${checked ? '' : '-outline'}`} color={color} />
+      </TouchableOpacity>
+      <Text className="text-lg font-medium">{timestamp}</Text>
+      <View className="flex-1 gap-2">
+        <Text className="text-lg text-gray-text">{content}</Text>
+        <View className="flex-row items-center gap-2">
+          <Avatar />
+          <Text className="text-base">{speaker}</Text>
+        </View>
+      </View>
+    </View>
+  );
+};
+
+export { NoteItem, NoteNode, NoteItemProps, NoteItemCategoryType };

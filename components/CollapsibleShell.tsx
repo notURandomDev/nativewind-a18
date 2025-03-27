@@ -6,6 +6,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { twMerge } from 'tailwind-merge';
 import Collapsible from 'react-native-collapsible';
 
+interface CustomToggleProps {
+  show: ReactNode;
+  collapse: ReactNode;
+}
+
 interface CollapsibleShellProps {
   children?: ReactNode;
   label?: string;
@@ -15,6 +20,9 @@ interface CollapsibleShellProps {
   withPadding?: boolean;
   contentContainerStyle?: ViewStyle;
   toggle?: 'bottom' | 'top';
+  transparent?: boolean;
+  customLabel?: ReactNode;
+  customToggle?: CustomToggleProps;
 }
 
 const CollapsibleShell = ({
@@ -26,11 +34,34 @@ const CollapsibleShell = ({
   withPadding = true,
   contentContainerStyle,
   toggle = 'bottom',
+  transparent = false,
+  customLabel,
+  customToggle,
 }: CollapsibleShellProps) => {
   const [isCollapsed, setIsCollapsed] = useState(collaspeEnabled);
+
+  const TopToggleIndicator = () => {
+    if (customToggle) {
+      return isCollapsed ? customToggle.show : customToggle.collapse;
+    } else {
+      return (
+        <View className="flex-row items-center gap-1">
+          <Text className="" style={{ color: '#c7c7c7' }}>
+            {isCollapsed ? '展开' : '收起'}
+          </Text>
+          {isCollapsed ? (
+            <Ionicons size={16} name="chevron-down" color="#c7c7c7" />
+          ) : (
+            <Ionicons size={16} name="chevron-up" color="#c7c7c7" />
+          )}
+        </View>
+      );
+    }
+  };
+
   return (
     <View
-      className={`bg-blue-faint ${toggle === 'bottom' && 'gap-4'}`}
+      className={`${!transparent && 'bg-blue-faint'} ${toggle === 'bottom' && 'gap-4'}`}
       style={{ flexGrow: 1, borderRadius: 17, paddingHorizontal: 16, paddingVertical: 20 }}>
       <TouchableOpacity
         activeOpacity={1}
@@ -39,22 +70,15 @@ const CollapsibleShell = ({
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
           setIsCollapsed(!isCollapsed);
         }}>
-        <View className="flex-row items-center gap-2">
-          <Ionicons name="ellipse" size={14} color={dotColor} />
-          <Text className={twMerge('text-xl font-medium text-blue', labelClassName)}>{label}</Text>
-        </View>
-        {toggle === 'top' && (
-          <View className="flex-row items-center gap-1">
-            <Text className="" style={{ color: '#c7c7c7' }}>
-              {isCollapsed ? '展开' : '收起'}
+        {customLabel ?? (
+          <View className="flex-row items-center gap-2">
+            <Ionicons name="ellipse" size={14} color={dotColor} />
+            <Text className={twMerge('text-xl font-medium text-blue', labelClassName)}>
+              {label}
             </Text>
-            {isCollapsed ? (
-              <Ionicons size={16} name="chevron-down" color="#c7c7c7" />
-            ) : (
-              <Ionicons size={16} name="chevron-up" color="#c7c7c7" />
-            )}
           </View>
         )}
+        {toggle === 'top' && <TopToggleIndicator />}
       </TouchableOpacity>
 
       <Collapsible

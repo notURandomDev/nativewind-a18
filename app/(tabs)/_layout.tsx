@@ -15,7 +15,7 @@ const TabLayout = () => {
         name="home"
         options={{
           title: '首页',
-          tabBarIcon: ({ color, focused }) =>
+          tabBarIcon: ({ focused }) =>
             focused ? (
               <Image
                 resizeMode="contain"
@@ -35,7 +35,7 @@ const TabLayout = () => {
         name="guide"
         options={{
           title: '参会指南',
-          tabBarIcon: ({ color, focused }) =>
+          tabBarIcon: ({ focused }) =>
             focused ? (
               <Image
                 resizeMode="contain"
@@ -55,7 +55,7 @@ const TabLayout = () => {
         name="videos"
         options={{
           title: '大会视频',
-          tabBarIcon: ({ color, focused }) =>
+          tabBarIcon: ({ focused }) =>
             focused ? (
               <Image
                 resizeMode="contain"
@@ -72,10 +72,10 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="subscriptions"
+        name="notes"
         options={{
           title: '智能笔记',
-          tabBarIcon: ({ color, focused }) =>
+          tabBarIcon: ({ focused }) =>
             focused ? (
               <Image
                 resizeMode="contain"
@@ -95,7 +95,7 @@ const TabLayout = () => {
         name="profile"
         options={{
           title: '我的',
-          tabBarIcon: ({ color, focused }) =>
+          tabBarIcon: ({ focused }) =>
             focused ? (
               <Image
                 resizeMode="contain"

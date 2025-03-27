@@ -6,12 +6,11 @@ import { LinearGradient4Page } from 'components/MyLinearGradients';
 import TouchableIcon from 'components/TouchableIcon';
 
 import { Ionicons } from '@expo/vector-icons';
-import MyTextInput from 'components/MyTextInput';
 import CustomLink from 'components/CustomLink';
 import { InfoSlot, NewsFrontierInfoSlot, VideoCard } from 'components/VideoCard';
 import VideoThumbnail from 'components/VideoThumbnail';
 import { newsFrontierData, photoHighlightsData, replayRecommendations } from 'data/cards';
-import NoteItem from 'components/NoteItem';
+import { NoteItem } from 'components/NoteItem';
 import PortraitCard from 'components/PortraitCard';
 import BottomIndicator from 'components/BottomIndicator';
 
