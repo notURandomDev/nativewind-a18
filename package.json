@@ -29,6 +29,7 @@
     "expo-splash-screen": "~0.29.22",
     "expo-status-bar": "~2.0.1",
     "expo-video": "~2.0.5",
+    "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "mock-socket": "^9.3.1",
     "nativewind": "latest",
@@ -54,6 +55,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@types/lodash": "^4.17.16",
     "@types/react": "~18.3.12",
     "@typescript-eslint/eslint-plugin": "^7.7.0",
     "@typescript-eslint/parser": "^7.7.0",

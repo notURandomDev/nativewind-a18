@@ -28,8 +28,8 @@ const MyTextInput = forwardRef<TextInput, MyTextInputProps>(
         paddingHorizontal: 8,
       },
       sm: {
-        fontSize: 18,
-        paddingHorizontal: 6,
+        fontSize: 16,
+        paddingHorizontal: 8,
       },
     };
 
