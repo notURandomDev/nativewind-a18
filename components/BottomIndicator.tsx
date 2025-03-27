@@ -3,7 +3,7 @@ import React from 'react';
 
 const BottomIndicator = () => {
   return (
-    <View className="items-center justify-center pb-6">
+    <View className="items-center justify-center">
       <Text className="text-sm font-light text-gray-tertiary">—— 已到底部 ——</Text>
     </View>
   );

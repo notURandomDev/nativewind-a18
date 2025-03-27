@@ -173,6 +173,14 @@ const photoHighlightsData = [
     label: '企业资源入表',
     imgSrc: require('../assets/imgs/ph-2.png'),
   },
+  {
+    label: '企业资源入表',
+    imgSrc: require('../assets/imgs/ph-2.png'),
+  },
+  {
+    label: '企业资源入表',
+    imgSrc: require('../assets/imgs/ph-2.png'),
+  },
 ];
 
 const pptGalleryData = [

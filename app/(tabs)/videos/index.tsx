@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import CustomLink from 'components/CustomLink';
-import VideoCard from 'components/VideoCard';
+import { VideoCard } from 'components/VideoCard';
 import { replayRecommendations } from 'data/cards';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MyCarousel from 'components/MyCarousel';

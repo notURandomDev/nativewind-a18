@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, FlatList } from 'react-native';
 import React from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,19 +8,43 @@ import TouchableIcon from 'components/TouchableIcon';
 import { Ionicons } from '@expo/vector-icons';
 import MyTextInput from 'components/MyTextInput';
 import CustomLink from 'components/CustomLink';
-import { InfoSlot, VideoCard } from 'components/VideoCard';
+import { InfoSlot, NewsFrontierInfoSlot, VideoCard } from 'components/VideoCard';
 import VideoThumbnail from 'components/VideoThumbnail';
-import { replayRecommendations } from 'data/cards';
+import { newsFrontierData, photoHighlightsData, replayRecommendations } from 'data/cards';
+import NoteItem from 'components/NoteItem';
+import PortraitCard from 'components/PortraitCard';
+import BottomIndicator from 'components/BottomIndicator';
 
-const LIVESTREAM_THUMBNAIL = replayRecommendations[0];
+const LIVESTREAM_DATA = replayRecommendations[0];
+const REPLAY_DATA = replayRecommendations[1];
+const NEWS_DATA = newsFrontierData[0];
+const PHOTOS_DATA = photoHighlightsData;
+
+const NOTE_ITEMS = [
+  {
+    id: 1,
+    title: '云计算与AI融合：共创数字智能新时代',
+    date: '2025年5月18日',
+    subtitle: '随着大语言模型与云的结合，技...',
+    category: 'UNCATEGORIZED',
+  },
+  {
+    id: 2,
+    title: '云计算与AI融合：共创数字智能新时代',
+    date: '2025年5月18日',
+    subtitle: '随着大语言模型与云的结合，技...',
+    category: 'PRIVATE',
+  },
+];
+
 const SearchResult = () => {
   const { search_keyword } = useLocalSearchParams();
   console.log('search_keyword', search_keyword);
 
   return (
-    <SafeAreaView className="relative flex-1 gap-4 bg-white p-4">
+    <SafeAreaView className="relative flex-1 gap-4 bg-white py-4">
       <LinearGradient4Page />
-      <View className="flex-row gap-2">
+      <View className="flex-row gap-2 px-4">
         <TouchableIcon onPress={() => router.back()}>
           <Ionicons size={30} name="chevron-back-outline" />
         </TouchableIcon>
@@ -28,7 +52,7 @@ const SearchResult = () => {
           <Text className="text-3xl">{search_keyword}</Text>
         </View>
       </View>
-      <ScrollView contentContainerStyle={{ gap: 20 }} className="px-2">
+      <ScrollView contentContainerStyle={{ gap: 20 }} style={{ paddingHorizontal: 16 }}>
         <View
           className="flex-row items-center justify-between rounded-3xl border border-gray bg-white py-4"
           style={{ paddingLeft: 30, paddingRight: 16 }}>
@@ -42,26 +66,53 @@ const SearchResult = () => {
           <CustomLink title="会议直播" />
           <VideoCard
             leftSlot={
-              <VideoThumbnail
-                imgSrc={LIVESTREAM_THUMBNAIL.imgSrc}
-                views={LIVESTREAM_THUMBNAIL.views}
-              />
+              <VideoThumbnail imgSrc={LIVESTREAM_DATA.imgSrc} views={LIVESTREAM_DATA.views} />
             }
-            rightSlot={<InfoSlot {...LIVESTREAM_THUMBNAIL} />}
+            rightSlot={<InfoSlot {...LIVESTREAM_DATA} />}
           />
         </View>
         <View className="gap-4">
           <CustomLink title="会议回放" />
+          <VideoCard
+            leftSlot={
+              <VideoThumbnail imgSrc={LIVESTREAM_DATA.imgSrc} views={LIVESTREAM_DATA.views} />
+            }
+            rightSlot={<InfoSlot {...LIVESTREAM_DATA} />}
+          />
         </View>
         <View className="gap-4">
           <CustomLink title="我的笔记" />
+          {NOTE_ITEMS.map((note) => (
+            <NoteItem category="DEFAULT" />
+          ))}
         </View>
         <View className="gap-4">
           <CustomLink title="新闻前线" />
+          <VideoCard
+            leftSlot={
+              <PortraitCard
+                alignMode="center"
+                variant="square"
+                img={NEWS_DATA.img.src}
+                label={NEWS_DATA.img.label}
+              />
+            }
+            rightSlot={<NewsFrontierInfoSlot {...NEWS_DATA} />}
+          />
         </View>
         <View className="gap-4">
           <CustomLink title="精彩图片" />
+          <FlatList
+            showsHorizontalScrollIndicator={false}
+            horizontal
+            contentContainerClassName="gap-4"
+            data={PHOTOS_DATA}
+            renderItem={({ item: { label, imgSrc } }) => (
+              <PortraitCard label={label} img={imgSrc} variant="square" alignMode="center" />
+            )}
+          />
         </View>
+        <BottomIndicator />
       </ScrollView>
     </SafeAreaView>
   );
