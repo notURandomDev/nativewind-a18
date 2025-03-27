@@ -2,7 +2,7 @@ import { View, Text, ScrollView, FlatList } from 'react-native';
 import React from 'react';
 import CustomLink from 'components/CustomLink';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import VideoCard from 'components/VideoCard';
+import { VideoCard } from 'components/VideoCard';
 import { newsFrontierData, photoHighlightsData, videoHighlightsData } from 'data/cards';
 import PortraitCard from 'components/PortraitCard';
 import VideoThumbnail from 'components/VideoThumbnail';

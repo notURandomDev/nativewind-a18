@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MyTextInput from 'components/MyTextInput';
@@ -8,6 +8,7 @@ import TouchableIcon from 'components/TouchableIcon';
 import { router } from 'expo-router';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 import { debounce } from 'lodash';
+import { LinearGradient4Page } from 'components/MyLinearGradients';
 
 const HISTORY_TAGS = ['AI', '安恒大模型', '服务', '开发者', '服务', '全球领先', '安恒大模型'];
 const RECOMM_OPTIONS = [
@@ -38,20 +39,6 @@ const SEARCH_RESULTS = [
   '西湖论剑亮点速览',
 ];
 
-const LinearGradient4Page = () => (
-  <LinearGradient
-    colors={['rgba(21, 86, 240, 0.25)', 'rgba(255, 255, 255, 0)']}
-    start={{ x: 0, y: 0 }}
-    end={{ x: 0, y: 1 }}
-    style={{
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      height: 256,
-    }}
-  />
-);
 const LinearGradient4Item1 = () => (
   <LinearGradient
     locations={[0, 0.32, 1]}
@@ -106,20 +93,25 @@ const Search = () => {
   const DynamicSearchViewContent = () => (
     <ScrollView>
       {searchResults.map((result, index) => (
-        <View
-          className="flex-row items-center gap-3 border-b border-gray py-3"
-          key={`{search-result-${index}}`}>
+        <TouchableOpacity
+          onPress={() => router.push(`search_result/${result}`)}
+          key={`{search-result-${index}}`}
+          className="flex-row items-center gap-3 border-b border-gray py-3">
           <Ionicons color="#8b8b8b" size={20} name="search-outline" />
           <Text className="text-xl font-light">
             {
               // 对搜索结果项的每一个字进行判断，如果用户输入的文本包含这一个字
               // 就反向说明了搜索结果项包含了用户的输入，将这个字展示为蓝色
-              result.split('').map((ch) => (
-                <Text className={`${textInputValue.includes(ch) ? 'text-blue' : ''}`}>{ch}</Text>
+              result.split('').map((ch, idx) => (
+                <Text
+                  key={`result-${index}-ch-${idx}`}
+                  className={`${textInputValue.includes(ch) ? 'text-blue' : ''}`}>
+                  {ch}
+                </Text>
               ))
             }
           </Text>
-        </View>
+        </TouchableOpacity>
       ))}
     </ScrollView>
   );
@@ -151,12 +143,14 @@ const StaticSearchViewContent = () => (
       <Text className="text-xl font-medium">历史记录</Text>
       <View style={{ flexWrap: 'wrap' }} className="flex-row gap-3">
         {HISTORY_TAGS.map((tag, index) => (
-          <View
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => router.push(`search_result/${tag}`)}
             key={`history-tag-${index}`}
             className="items-center justify-center rounded-2xl border bg-white px-2 py-1"
             style={{ borderColor: '#9F9F9F', minWidth: 40 }}>
             <Text className="text-lg font-light">{tag}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
         <View
           className="items-center justify-center rounded-2xl border bg-white px-2 py-1"

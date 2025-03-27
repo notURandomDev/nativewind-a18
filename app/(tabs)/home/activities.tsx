@@ -9,8 +9,7 @@ import {
   strive12Data,
 } from 'data/carousels';
 import { securityBootcampData } from 'data/cards';
-import { InfoSlot } from '.';
-import VideoCard from 'components/VideoCard';
+import { VideoCard, InfoSlot } from 'components/VideoCard';
 import PortraitCard from 'components/PortraitCard';
 import BottomIndicator from 'components/BottomIndicator';
 

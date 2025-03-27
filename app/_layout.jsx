@@ -41,6 +41,7 @@ export default function RootLayout() {
         />
         <Stack.Screen name="videos_id/[vid]" options={{ headerShown: false }} />
         <Stack.Screen name="search" options={{ headerShown: false }} />
+        <Stack.Screen name="search_result/[search_keyword]" options={{ headerShown: false }} />
       </Stack>
     </GestureHandlerRootView>
   );

@@ -7,7 +7,7 @@ import { committeeCardsData } from 'data/cards';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { speechListData } from '../../../data/cards';
-import VideoCard from 'components/VideoCard';
+import { VideoCard } from 'components/VideoCard';
 import BottomIndicator from 'components/BottomIndicator';
 
 interface speechRightSlotProps {
