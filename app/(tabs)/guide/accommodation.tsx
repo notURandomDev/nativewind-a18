@@ -67,8 +67,8 @@ const AccommodationTabView = () => {
       className="relative py-3">
       <View className="gap-4">
         <CustomLink title="酒店安排" />
-        {HOTELS.map((hotel) => (
-          <HotelCard {...hotel} />
+        {HOTELS.map((hotel, index) => (
+          <HotelCard key={`hotel-${index}`} {...hotel} />
         ))}
       </View>
     </ScrollView>

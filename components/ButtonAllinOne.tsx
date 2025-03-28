@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import React, { ReactNode } from 'react';
 import * as Haptics from 'expo-haptics';
+import { twMerge } from 'tailwind-merge';
 
 interface ButtonAllinOneProps {
   children?: ReactNode;
@@ -23,7 +24,7 @@ const ButtonAllinOne = ({
   rounded = 'xl',
   borderColor = 'border-blue',
   label,
-  containerStyles,
+  containerStyles = '',
   disabled = false,
   onPress = () => {
     console.log('button pressed');
@@ -49,7 +50,12 @@ const ButtonAllinOne = ({
     ghost: 'text-blue', // Add a style for the ghost variant
   };
 
-  const combinedStyles = `${baseStyles} ${roundedStyles[rounded]} ${variantStyles[variant]} ${containerStyles}`;
+  const combinedStyles = twMerge(
+    baseStyles,
+    roundedStyles[rounded],
+    variantStyles[variant],
+    containerStyles
+  );
 
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

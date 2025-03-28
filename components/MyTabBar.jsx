@@ -1,7 +1,6 @@
 import React from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Animated, Text, TouchableOpacity, View } from 'react-native';
-import { useTabAnimation } from '@react-navigation/material-top-tabs';
 import ButtonAllinOne from './ButtonAllinOne';
 import { router } from 'expo-router';
 
@@ -12,7 +11,7 @@ const MyTabBar = ({ state, descriptors, navigation, variant = 'default' }) => {
   const isDefault = variant !== 'mini';
 
   return (
-    <View className="flex-row items-center bg-transparent px-3">
+    <View className={`flex-row items-center bg-transparent ${isDefault ? 'px-3' : ''}`}>
       {/* Left Icon */}
 
       {isDefault && (
