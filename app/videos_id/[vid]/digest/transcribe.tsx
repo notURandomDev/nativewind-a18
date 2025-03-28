@@ -9,6 +9,8 @@ const appKey = process.env.EXPO_PUBLIC_APP_KEY;
 const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
 
 import TRANSCRIPTION_DATA from '../../../../test/enhance_output_cards.json';
+import { HoldItem } from 'react-native-hold-menu';
+import { MyCustomEvents } from 'utils/eventSourceTypes';
 TRANSCRIPTION_DATA.sort((a, b) => a.sentenceId - b.sentenceId);
 
 const SSE_RES_4_TESTING_NO_CARDS = {
@@ -75,8 +77,6 @@ interface TranscriptionProps {
   timestamp: bigint;
   type: 'raw' | 'enhanced';
 }
-
-type MyCustomEvents = 'transcription' | 'meeting-created';
 
 const RealtimeTranscribe = () => {
   // const [transcription, setTranscription] = useState<Array<SentenceProps>>(TRANSCRIPTION_DATA);

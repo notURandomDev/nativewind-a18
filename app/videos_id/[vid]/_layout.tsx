@@ -13,6 +13,7 @@ import { withLayoutContext } from 'expo-router';
 import { ParamListBase, TabNavigationState } from '@react-navigation/native';
 import MyTabBar from 'components/MyTabBar';
 import BottomIndicator from 'components/BottomIndicator';
+import { HoldItem } from 'react-native-hold-menu';
 
 // Create the Material Top Tab Navigator
 const Tab = createMaterialTopTabNavigator();

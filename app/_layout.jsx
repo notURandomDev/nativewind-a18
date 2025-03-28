@@ -6,8 +6,7 @@ import '../global.css';
 import { useFonts } from 'expo-font';
 import { useEffect } from 'react';
 import { Text, View } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import Octicons from '@expo/vector-icons/Octicons';
+import { HoldMenuProvider } from 'react-native-hold-menu';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,16 +32,18 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="chat"
-          options={{ presentation: 'modal', headerShown: false, gestureEnabled: false }}
-        />
-        <Stack.Screen name="videos_id/[vid]" options={{ headerShown: false }} />
-        <Stack.Screen name="search" options={{ headerShown: false }} />
-        <Stack.Screen name="search_result/[search_keyword]" options={{ headerShown: false }} />
-      </Stack>
+      <HoldMenuProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="chat"
+            options={{ presentation: 'modal', headerShown: false, gestureEnabled: false }}
+          />
+          <Stack.Screen name="videos_id/[vid]" options={{ headerShown: false }} />
+          <Stack.Screen name="search" options={{ headerShown: false }} />
+          <Stack.Screen name="search_result/[search_keyword]" options={{ headerShown: false }} />
+        </Stack>
+      </HoldMenuProvider>
     </GestureHandlerRootView>
   );
 }

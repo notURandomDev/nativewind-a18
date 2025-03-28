@@ -1,13 +1,10 @@
 import {
   View,
-  Text,
   Keyboard,
   KeyboardAvoidingView,
   TextInput,
   ScrollView,
   TouchableOpacity,
-  FlatList,
-  ActivityIndicator,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
@@ -19,12 +16,42 @@ import MyTextInput from 'components/MyTextInput';
 import { getSign } from 'utils/getSign';
 import * as Progress from 'react-native-progress';
 import Markdown from 'react-native-markdown-display';
+import EventSource, { EventSourceListener } from 'react-native-sse';
+import { MyCustomEvents } from 'utils/eventSourceTypes';
 
 const appKey = process.env.EXPO_PUBLIC_APP_KEY;
 const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
 
-interface messageProps {
-  id?: string;
+interface ReferenceProps {
+  description: string;
+  location: string;
+  meetingId: string;
+  startTime: string;
+  endTime: string;
+  title: string;
+}
+
+interface AgentResponseDataProps {
+  text: string;
+  message_id: string;
+  timestamp: number;
+}
+interface AgentResponseProps {
+  type: 'answer' | 'reference';
+  data: AgentResponseDataProps;
+  timestamp: number;
+  _final: boolean;
+}
+
+interface TestResponseProps {
+  testing: boolean;
+  sse_dev: string;
+  msg: string;
+  now: number;
+}
+
+interface LocalMessageProps {
+  id?: number;
   text: string;
   sender: number;
 }
@@ -32,7 +59,10 @@ interface messageProps {
 const USER = 0;
 const AI = 1;
 
-const MessageBubble = ({ text, sender }: messageProps) => (
+const URL_4_TEST = `https://sse.dev/test`;
+const URL_4_REAL = `http://192.168.125.53:8088/Chat`;
+
+const MessageBubble = ({ text, sender }: LocalMessageProps) => (
   <View className={`${sender === USER && 'justify-end'} flex-row `}>
     <View
       style={{
@@ -63,24 +93,32 @@ const MessageBubble = ({ text, sender }: messageProps) => (
 
 const Modal = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [messages, setMessages] = useState<Array<any>>([]);
+  const [messages, setMessages] = useState<Array<LocalMessageProps>>([]);
   const [replyMessage, setReplyMessage] = useState('');
   const [textInputValue, setTextInputValue] = useState('');
-  const [bottomInset, setBottomInset] = useState(0);
-
-  const flatListRef = useRef<FlatList>(null);
-  const textInputRef = useRef<TextInput>(null);
-  const messagesRef = useRef<Array<messageProps>>(messages);
-  const scrollViewRef = useRef<ScrollView>(null);
-  const wsRef = useRef<WebSocket | null>(null);
-
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
-  // console.log('modal re-render triggered');
+  const textInputRef = useRef<TextInput>(null);
+  const replyMessageRef = useRef('');
+  const messagesRef = useRef<Array<LocalMessageProps>>(messages);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const wsRef = useRef<WebSocket | null>(null);
+  const esRef = useRef<EventSource<MyCustomEvents> | null>(null);
 
-  const initChat = async () => {
-    const chatData = await loadChat(1);
-    setMessages([...chatData]);
+  const esListener: EventSourceListener<MyCustomEvents> = (event) => {
+    if (event.type === 'open') {
+      console.log('Event Source Opened');
+    } else if (event.type === 'chat') {
+      console.log('raw event', event);
+      if (event.data) {
+        const res = JSON.parse(event.data) as AgentResponseProps;
+        console.log('message received from sse', res);
+        setReplyMessage((prev) => prev + res.data.text);
+      }
+    } else if (event.type === 'complete') {
+      console.log('Event Source Closed');
+      saveSSEResponse();
+    }
   };
 
   const initKbdCfg = () => {
@@ -100,7 +138,12 @@ const Modal = () => {
     }, 100);
   };
 
-  const initWs = () => {
+  const initChat = async () => {
+    const chatData = await loadChat(1);
+    setMessages([...chatData]);
+  };
+
+  const initWebSocket = () => {
     const sign = getSign(appKey, appSecret);
     const ws = new WebSocket(`https://www.das-ai.com/open/ws/chat?appKey=${appKey}&sign=${sign}`);
     wsRef.current = ws;
@@ -115,7 +158,7 @@ const Modal = () => {
 
       if (res.status === 0) {
         setMessages((prevMsgs) => {
-          const newMsg = { id: Date.now().toString(), text: res.answer, sender: AI };
+          const newMsg = { id: Date.now(), text: res.answer, sender: AI };
           return [...prevMsgs, newMsg];
         });
         setIsLoading(false);
@@ -135,19 +178,68 @@ const Modal = () => {
     return ws;
   };
 
-  const quitChat = async () => {
-    const res = await saveChat(1, messagesRef.current);
+  const initEventSource = () => {
+    if (esRef.current) {
+      esRef.current.addEventListener('open', esListener);
+      esRef.current.addEventListener('chat', esListener);
+      esRef.current.addEventListener('complete', esListener);
+    }
+  };
+
+  const sendSSERequest = () => {
+    const req = JSON.stringify({
+      input: textInputValue,
+      isInMeeting: false,
+    });
+    console.log('Request Body:', req);
+    const es = new EventSource(URL_4_REAL, {
+      method: 'POST',
+      body: req,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    esRef.current = es;
+    initEventSource();
+  };
+
+  const saveSSEResponse = () => {
+    console.log('sync-replyMessage before saving:', replyMessageRef.current);
+    const sseResponse = { id: Date.now(), text: replyMessageRef.current, sender: AI };
+    setMessages((prevMsgs) => {
+      return [...prevMsgs, sseResponse];
+    });
+    setIsLoading(false);
+  };
+
+  const terminateEventSource = () => {
+    if (esRef.current) {
+      esRef.current.close();
+      esRef.current = null;
+      console.log('Event Source Terminated');
+    }
+  };
+
+  const saveChatAsync = async () => {
+    await saveChat(1, messagesRef.current);
+  };
+
+  const clearChatAsync = async () => {
+    clearChat();
+    setMessages([]);
+    messagesRef.current = [];
   };
 
   useEffect(() => {
     console.log('---modal mounted---');
     initChat();
     initKbdCfg();
-    initWs();
+    // initWebSocket();
 
     return () => {
-      quitChat();
-      wsRef.current && wsRef.current.close();
+      terminateEventSource();
+      saveChatAsync();
+      // wsRef.current && wsRef.current.close();
       console.log('unmounted');
     };
   }, []);
@@ -156,69 +248,29 @@ const Modal = () => {
     messagesRef.current = messages;
   }, [messages]);
 
-  /* useEffect(() => {
-    
-
-    return () => {
-      keyboardDidShow.remove();
-      keyboardDidHide.remove();
-    };
-  }, []); */
+  useEffect(() => {
+    replyMessageRef.current = replyMessage;
+  }, [replyMessage]);
 
   const handleSubmit = async () => {
     setReplyMessage('');
     setIsLoading(true);
 
     const newMessage = {
-      id: Date.now().toString(),
+      id: Date.now(),
       text: textInputValue,
       sender: USER,
     };
     Keyboard.dismiss();
 
     setMessages((prevMessages) => [...prevMessages, newMessage]);
-
-    wsRef.current &&
-      wsRef.current.send(
-        JSON.stringify({
-          query: textInputValue,
-        })
-      );
-
+    sendSSERequest();
     setTextInputValue('');
-    // mockSSE();
   };
 
-  /*   const mockSSE = () => {
-    const reply =
-      'Lorem Ipsum生成器，也称虚拟文本生成器，乱数假文生成器，支持随机生成指定数量段落的测试文章，用于测试不同字型和版型下的排版效果。\n当设计师或排版师需要填充内容时，Lorem Ipsum是一种常用的占位文本。它的目的是让人专注于布局、字体、颜色等设计元素，而不是实际的内容。Lorem Ipsum是一个拉丁文的占位文本，通常用于填充书籍、杂志、网页等排版设计中。\nLorem Ipsum生成器是一种工具，用于生成指定数量段落和指定长度的Lorem Ipsum文本。它可以节省设计师和排版师的时间，因为他们不需要手动编写和排版Lorem Ipsum文本。相反，他们可以使用Lorem Ipsum生成器来快速生成所需数量的Lorem Ipsum文本，并将其直接插入设计中，可以帮助设计师和排版师更好地进行视觉设计工作，并且可以提高工作效率。'.split(
-        ''
-      );
-    setIsLoading(true);
-    let accReply = '';
-
-    const interval = setInterval(() => {
-      if (reply.length) {
-        const ch = reply.shift();
-        accReply += ch;
-        setReplyMessage(accReply);
-        scrollViewRef.current?.scrollToEnd();
-      } else {
-        clearInterval(interval);
-
-        setMessages((prevMsgs) => {
-          const newMsg = { id: Date.now().toString(), text: accReply, sender: AI };
-          setReplyMessage('');
-          return [...prevMsgs, newMsg];
-        });
-        setIsLoading(false);
-      }
-    }, 10);
-  }; */
-
   const MemorizedMessages = useMemo(() => {
-    return messages.map(({ text, sender, id }: messageProps) => (
-      <MessageBubble key={`message-${id}`} text={text} sender={sender} />
+    return messages.map(({ text, sender, id }: LocalMessageProps) => (
+      <MessageBubble id={id} key={`message-${id}`} text={text} sender={sender} />
     ));
   }, [messages]);
 
@@ -269,8 +321,8 @@ const Modal = () => {
             <Feather name="file-plus" size={24} color="#1556F0" />
           </View>
           <View className="flex-row gap-2">
-            <ButtonAllinOne label="导入笔记" variant="outline" />
-            <ButtonAllinOne label="+ AI会议总结" variant="outline" />
+            <ButtonAllinOne onPress={clearChatAsync} label="清空对话" variant="outline" />
+            <ButtonAllinOne onPress={terminateEventSource} label="断开SSE" variant="outline" />
             <TouchableOpacity
               onPress={textInputValue ? handleSubmit : () => {}}
               className={`${isLoading || !textInputValue.length ? 'bg-blue-faint' : 'bg-blue'} rounded-full`}

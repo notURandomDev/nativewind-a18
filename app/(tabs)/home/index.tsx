@@ -6,6 +6,7 @@ import {
   ImageBackground,
   ImageSourcePropType,
   Modal,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -23,10 +24,10 @@ import VideoThumbnail from 'components/VideoThumbnail';
 import { rrData } from 'data/carousels';
 import BottomIndicator from 'components/BottomIndicator';
 import { Link } from 'expo-router';
+import { MenuView, MenuComponentRef } from '@react-native-menu/menu';
 
 function App() {
   const [modalVisible, setModalVisible] = React.useState(false);
-
   return (
     <ScrollView
       contentContainerClassName="gap-8"
@@ -52,6 +53,7 @@ function App() {
           )}
         />
       </View>
+
       <Link href="../../chat" asChild>
         <TouchableOpacity
           onPress={() => setModalVisible(true)}
