@@ -22,19 +22,27 @@ import { MyCustomEvents } from 'utils/eventSourceTypes';
 const appKey = process.env.EXPO_PUBLIC_APP_KEY;
 const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
 
-interface ReferenceProps {
-  description: string;
-  location: string;
+interface Reference4MeetingProps {
   meetingId: string;
+  title: string;
+  location: string;
+  description: string;
   startTime: string;
   endTime: string;
-  title: string;
+}
+
+interface Reference4TranscriptionProps {
+  sentenceId: number;
+  startTime: number;
+  endTime: number;
+  text: string;
 }
 
 interface AgentResponseDataProps {
-  text: string;
+  text?: string;
   message_id: string;
   timestamp: number;
+  reference?: Array<Reference4MeetingProps>;
 }
 interface AgentResponseProps {
   type: 'answer' | 'reference';
@@ -59,7 +67,30 @@ interface LocalMessageProps {
 const USER = 0;
 const AI = 1;
 
-const URL_4_TEST = `https://sse.dev/test`;
+const TEST_DATA: AgentResponseProps = {
+  type: 'reference',
+  timestamp: 1743174269356,
+  _final: false,
+  data: {
+    message_id: '7634640000004581',
+    timestamp: 0,
+    reference: [
+      {
+        meetingId: '5',
+        title: '技术展示与演示',
+        location: '杭州国际博览中心-505E',
+        description: '展示最新的数字安全技术与产品',
+        startTime: '2025-04-15T14:00:00',
+        endTime: '2025-04-15T17:00:00',
+      },
+    ],
+  },
+};
+const queryString = new URLSearchParams({
+  jsonobj: JSON.stringify(TEST_DATA),
+}).toString();
+
+const URL_4_TEST = `https://sse.dev/test?${queryString}`;
 const URL_4_REAL = `http://192.168.125.53:8088/Chat`;
 
 const MessageBubble = ({ text, sender }: LocalMessageProps) => (
@@ -100,6 +131,7 @@ const Modal = () => {
 
   const textInputRef = useRef<TextInput>(null);
   const replyMessageRef = useRef('');
+  const referenceRef = useRef<Reference4MeetingProps[]>([]);
   const messagesRef = useRef<Array<LocalMessageProps>>(messages);
   const scrollViewRef = useRef<ScrollView>(null);
   const wsRef = useRef<WebSocket | null>(null);
@@ -108,14 +140,22 @@ const Modal = () => {
   const esListener: EventSourceListener<MyCustomEvents> = (event) => {
     if (event.type === 'open') {
       console.log('Event Source Opened');
-    } else if (event.type === 'chat') {
+    } else if (event.type === 'chat' || event.type === 'message') {
       console.log('raw event', event);
       if (event.data) {
         const res = JSON.parse(event.data) as AgentResponseProps;
         console.log('message received from sse', res);
-        setReplyMessage((prev) => prev + res.data.text);
+        if (res.type === 'answer') {
+          setReplyMessage((prev) => prev + res.data.text);
+        }
+        if (res.type === 'reference') {
+          referenceRef.current = [
+            ...referenceRef.current,
+            ...(res.data.reference as Reference4MeetingProps[]),
+          ];
+        }
       }
-    } else if (event.type === 'complete') {
+    } else if (event.type === 'complete' || event.type === 'close') {
       console.log('Event Source Closed');
       saveSSEResponse();
     }
@@ -180,10 +220,19 @@ const Modal = () => {
 
   const initEventSource = () => {
     if (esRef.current) {
+      esRef.current.addEventListener('message', esListener);
+
       esRef.current.addEventListener('open', esListener);
       esRef.current.addEventListener('chat', esListener);
       esRef.current.addEventListener('complete', esListener);
+      esRef.current.addEventListener('close', esListener);
     }
+  };
+
+  const sendTestSSERequest = () => {
+    const es = new EventSource(URL_4_TEST);
+    esRef.current = es;
+    initEventSource();
   };
 
   const sendSSERequest = () => {
@@ -192,7 +241,7 @@ const Modal = () => {
       isInMeeting: false,
     });
     console.log('Request Body:', req);
-    const es = new EventSource(URL_4_REAL, {
+    const es = new EventSource(URL_4_TEST, {
       method: 'POST',
       body: req,
       headers: {
@@ -209,6 +258,7 @@ const Modal = () => {
     setMessages((prevMsgs) => {
       return [...prevMsgs, sseResponse];
     });
+    console.log('referenceRef current data', referenceRef.current);
     setIsLoading(false);
   };
 
@@ -216,7 +266,6 @@ const Modal = () => {
     if (esRef.current) {
       esRef.current.close();
       esRef.current = null;
-      console.log('Event Source Terminated');
     }
   };
 
@@ -264,7 +313,8 @@ const Modal = () => {
     Keyboard.dismiss();
 
     setMessages((prevMessages) => [...prevMessages, newMessage]);
-    sendSSERequest();
+    sendTestSSERequest();
+    // sendSSERequest();
     setTextInputValue('');
   };
 
