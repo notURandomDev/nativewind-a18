@@ -36,6 +36,7 @@
     "nativewind": "latest",
     "react": "18.3.1",
     "react-native": "0.76.7",
+    "react-native-autogrow-textinput": "^5.4.0",
     "react-native-collapsible": "github:sheff3rd/react-native-collapsible#master",
     "react-native-context-menu-view": "^1.18.0",
     "react-native-dashed-line": "^1.1.0",
