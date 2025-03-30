@@ -20,7 +20,7 @@ import * as Progress from 'react-native-progress';
 import Markdown from 'react-native-markdown-display';
 import EventSource, { EventSourceListener } from 'react-native-sse';
 import { MyCustomEvents } from 'utils/eventSourceTypes';
-import { MeetingRefCard } from 'components/ReferenceCards';
+import { MeetingRefCard, TranscriptionRefCard } from 'components/ReferenceCards';
 
 const appKey = process.env.EXPO_PUBLIC_APP_KEY;
 const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
@@ -97,6 +97,7 @@ const TEST_DATA: AgentResponseProps = {
     ],
   },
 };
+
 const queryString = new URLSearchParams({
   jsonobj: JSON.stringify(TEST_DATA),
 }).toString();
@@ -354,6 +355,15 @@ const Modal = () => {
           TEST_DATA.data.reference.map((item) => (
             <MeetingRefCard imgSource={require('../../assets/imgs/carousel-bg.png')} {...item} />
           ))}
+        <TranscriptionRefCard
+          imgSource={require('../../assets/imgs/carousel-bg.png')}
+          {...{
+            sentenceId: 44,
+            startTime: 745380,
+            endTime: 761310,
+            text: '到了我这一块，我将简短明了地分享汇报内容，不占用大家的午休时间。我的汇报主题是面向大模型训练和推理的数据保护机密计算产品。',
+          }}
+        />
 
         {isLoading &&
           (replyMessage === '' ? (

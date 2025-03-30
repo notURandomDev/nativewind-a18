@@ -58,4 +58,70 @@ const MeetingRefCard = (props: MeetingRefCardProps) => {
   );
 };
 
-export { MeetingRefCard };
+interface TranscriptionRefCardProps {
+  sentenceId: number;
+  startTime: number;
+  endTime: number;
+  text: string;
+  imgSource: ImageSourcePropType;
+}
+
+const TranscriptionRefCard = ({
+  sentenceId,
+  startTime,
+  endTime,
+  text,
+  imgSource,
+}: TranscriptionRefCardProps) => {
+  const { ss: startSS, mm: startMM } = formatTime(startTime);
+  const { ss: endSS, mm: endMM } = formatTime(endTime);
+
+  const startTimeStr = startMM + ':' + startSS;
+  const endTimeStr = endMM + ':' + endSS;
+  return (
+    <View style={{ borderRadius: 17 }} className="relative flex-row items-center">
+      <LinearGradient
+        locations={[0, 0.32, 1]}
+        colors={['#1556f050', '#90aff850', '#ffffff']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          borderRadius: 16,
+          opacity: 0.5,
+        }}
+      />
+      <Image
+        style={{
+          width: '26%',
+          aspectRatio: 4 / 3,
+          height: '100%',
+          borderTopLeftRadius: 17,
+          borderBottomLeftRadius: 17,
+        }}
+        source={imgSource}
+      />
+      <View className="flex-1 px-4 py-2">
+        <Text className="text-4xl font-semibold text-blue">{`${startTimeStr}-${endTimeStr}`}</Text>
+        <Text numberOfLines={2} className="text-sm font-light text-gray-solid">
+          {text}
+        </Text>
+      </View>
+      <View className="px-6">
+        <Ionicons size={36} color="#1556F0" name="arrow-forward-circle-outline" />
+      </View>
+    </View>
+  );
+};
+
+const formatTime = (millisecond: number) => {
+  const mm = Math.floor(millisecond / 1000 / 60);
+  const ss = Math.floor((millisecond / 1000) % 60);
+  return { mm, ss };
+};
+
+export { MeetingRefCard, TranscriptionRefCard };
