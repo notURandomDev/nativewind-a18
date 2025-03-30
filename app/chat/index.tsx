@@ -5,6 +5,8 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
+  Text,
+  Image,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
@@ -18,6 +20,7 @@ import * as Progress from 'react-native-progress';
 import Markdown from 'react-native-markdown-display';
 import EventSource, { EventSourceListener } from 'react-native-sse';
 import { MyCustomEvents } from 'utils/eventSourceTypes';
+import { MeetingRefCard } from 'components/ReferenceCards';
 
 const appKey = process.env.EXPO_PUBLIC_APP_KEY;
 const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
@@ -75,6 +78,14 @@ const TEST_DATA: AgentResponseProps = {
     message_id: '7634640000004581',
     timestamp: 0,
     reference: [
+      {
+        meetingId: '2',
+        title: '人工智能与安全分论坛',
+        location: '杭州国际博览中心-202B',
+        description: '探讨人工智能在安全领域的应用与挑战',
+        startTime: '2025-04-15T13:00:00',
+        endTime: '2025-04-15T16:00:00',
+      },
       {
         meetingId: '5',
         title: '技术展示与演示',
@@ -339,6 +350,10 @@ const Modal = () => {
         contentContainerStyle={{ flexGrow: 1 }}
         style={{ backgroundColor: '#ffffff' }}>
         {MemorizedMessages}
+        {TEST_DATA.data.reference &&
+          TEST_DATA.data.reference.map((item) => (
+            <MeetingRefCard imgSource={require('../../assets/imgs/carousel-bg.png')} {...item} />
+          ))}
 
         {isLoading &&
           (replyMessage === '' ? (

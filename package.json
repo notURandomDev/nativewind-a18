@@ -37,6 +37,7 @@
     "react": "18.3.1",
     "react-native": "0.76.7",
     "react-native-collapsible": "github:sheff3rd/react-native-collapsible#master",
+    "react-native-context-menu-view": "^1.18.0",
     "react-native-dashed-line": "^1.1.0",
     "react-native-hold-menu": "^0.1.6",
     "react-native-keyboard-controller": "^1.16.7",
