@@ -1,8 +1,9 @@
-import { Ref, useRef } from 'react';
-import EventSource, { EventSourceEvent, EventSourceListener, EventType } from 'react-native-sse';
-import { MyCustomEvents } from 'utils/eventSourceTypes';
+import { useRef } from 'react';
+import EventSource, { EventSourceEvent, EventSourceListener } from 'react-native-sse';
 
 const TEST_BASEURL = 'https://sse.dev/test';
+
+export type MyCustomEvents = 'transcription' | 'meeting-created' | 'chat' | 'complete';
 
 interface ListenerFunctionProps {
   onMessage?: EventSourceListener<MyCustomEvents, 'message'>;
@@ -10,6 +11,7 @@ interface ListenerFunctionProps {
   onChat?: EventSourceListener<MyCustomEvents, 'chat'>;
   onComplete?: EventSourceListener<MyCustomEvents, 'complete'>;
   onClose?: EventSourceListener<MyCustomEvents, 'close'>;
+  onTranscription?: EventSourceListener<MyCustomEvents, 'transcription'>;
 }
 
 export const useSSE = (lf: ListenerFunctionProps) => {
@@ -22,6 +24,7 @@ export const useSSE = (lf: ListenerFunctionProps) => {
       lf.onChat && esRef.current.addEventListener('chat', lf.onChat);
       lf.onComplete && esRef.current.addEventListener('complete', lf.onComplete);
       lf.onClose && esRef.current.addEventListener('close', lf.onClose);
+      lf.onTranscription && esRef.current.addEventListener('transcription', lf.onTranscription);
     }
   };
 

@@ -1,16 +1,16 @@
 import { View, Text, ScrollView, Alert, TextStyle } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import TintedBackground from 'components/TintedBackground';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 import BottomIndicator from 'components/BottomIndicator';
-import EventSource, { EventSourceListener } from 'react-native-sse';
+import EventSource, { EventSourceEvent } from 'react-native-sse';
 
 const appKey = process.env.EXPO_PUBLIC_APP_KEY;
 const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
 
 import TRANSCRIPTION_DATA from '../../../../test/enhance_output_cards.json';
-import { HoldItem } from 'react-native-hold-menu';
-import { MyCustomEvents } from 'utils/eventSourceTypes';
+import { MyCustomEvents } from 'hooks/useSSE';
+import { useSSE } from 'hooks/useSSE';
 TRANSCRIPTION_DATA.sort((a, b) => a.sentenceId - b.sentenceId);
 
 const SSE_RES_4_TESTING_NO_CARDS = {
@@ -79,56 +79,39 @@ interface TranscriptionProps {
 }
 
 const RealtimeTranscribe = () => {
-  // const [transcription, setTranscription] = useState<Array<SentenceProps>>(TRANSCRIPTION_DATA);
   const [transcription, setTranscription] = useState<Array<TranscriptionProps>>([]);
   const [loading, setLoading] = useState(false);
-  const esRef = useRef<EventSource | null>(null);
+
+  const onTranscription = (event: EventSourceEvent<MyCustomEvents>) => {
+    if (event.data) {
+      const newTranscription: TranscriptionProps = JSON.parse(event.data);
+      console.log('newTranscription received', newTranscription);
+      const { id, ...rest } = newTranscription;
+      setTranscription((prev) => [...prev, { id: Date.now().toString(), ...rest }]);
+    }
+  };
+  const onClose = () => {
+    console.log('on es close');
+  };
+
+  const { terminateEventSourceConnection, sendEventSourcePostRequest, sendEventSourceDevRequest } =
+    useSSE({
+      onTranscription,
+      onMessage: onTranscription,
+      onComplete: onClose,
+      onClose: onClose,
+    });
+
   const scrollviewRef = useRef<ScrollView>(null);
 
-  const listener: EventSourceListener<MyCustomEvents> = (event) => {
-    if (event.type === 'open') {
-      console.log('on es open');
-    } else if (event.type === 'transcription' || event.type === 'message') {
-      if (event.data) {
-        const newTranscription: TranscriptionProps = JSON.parse(event.data);
-        console.log('newTranscription received', newTranscription);
-        const { id, ...rest } = newTranscription;
-        setTranscription((prev) => [...prev, { id: Date.now().toString(), ...rest }]);
-      }
-    } else if (event.type === 'close') {
-      console.log('on es close');
-    }
-  };
-
-  const startTest = (url: string) => {
-    console.log('Sending Request to:', url);
+  const startES = () => {
     setLoading(true);
-
-    const es = new EventSource<MyCustomEvents>(url);
-    es.addEventListener('open', listener);
-    es.addEventListener('message', listener);
-    es.addEventListener('transcription', listener);
-    es.addEventListener('close', listener);
-    esRef.current = es;
+    sendEventSourceDevRequest(SSE_RES_4_TESTING_WITH_CARDS);
   };
 
-  const endTest = () => {
-    clearES();
+  const endES = () => {
+    terminateEventSourceConnection();
   };
-
-  const clearES = () => {
-    if (esRef.current) {
-      esRef.current.close();
-      esRef.current.removeAllEventListeners();
-      esRef.current = null;
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      clearES();
-    };
-  }, []);
 
   return (
     <ScrollView
@@ -144,14 +127,10 @@ const RealtimeTranscribe = () => {
       <View className="gap-4">
         <TintedBackground label="实时转写">
           <View className="flex-row justify-between">
-            <ButtonAllinOne
-              disabled={loading}
-              onPress={() => {
-                startTest(URL_SSE_DEV);
-              }}>
+            <ButtonAllinOne disabled={loading} onPress={startES}>
               <Text className="text-white">开始测试</Text>
             </ButtonAllinOne>
-            <ButtonAllinOne onPress={endTest} variant="outline">
+            <ButtonAllinOne onPress={endES} variant="outline">
               <Text>结束测试</Text>
             </ButtonAllinOne>
           </View>

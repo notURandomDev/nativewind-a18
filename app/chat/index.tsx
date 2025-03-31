@@ -12,7 +12,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { clearChat, loadChat, saveChat } from 'storage/fakeDatabase';
 import * as Progress from 'react-native-progress';
 import EventSource, { EventSourceEvent, EventSourceListener } from 'react-native-sse';
-import { MyCustomEvents } from 'utils/eventSourceTypes';
 import { MeetingRefCard } from 'components/ReferenceCards';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
@@ -33,7 +32,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { useSSE } from 'hooks/useSSE';
+import { MyCustomEvents, useSSE } from 'hooks/useSSE';
 
 const appKey = process.env.EXPO_PUBLIC_APP_KEY;
 const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
@@ -57,7 +56,7 @@ const Modal = () => {
   >([]);
   const [replyMessage, setReplyMessage] = useState('');
 
-  const onChatnMessage = (event: { data: string | null }) => {
+  const onChatnMessage = (event: EventSourceEvent<MyCustomEvents>) => {
     console.log('raw event', event);
     if (event.data !== null) {
       const res = JSON.parse(event.data) as AgentResponseProps;
