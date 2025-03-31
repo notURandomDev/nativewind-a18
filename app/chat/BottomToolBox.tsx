@@ -22,12 +22,14 @@ const BottomToolBox = ({ textInputRef, onSubmit, onKeyboardToggle }: BottomToolB
   return (
     <View className="gap-3 p-4" style={{ paddingBottom: 40 }}>
       <View
-        style={{
-          borderRadius: 17,
-          paddingTop: 10,
-          paddingBottom: 16,
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        }}
+        style={[
+          {
+            borderRadius: 17,
+            paddingTop: 10,
+            paddingBottom: 16,
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+          },
+        ]}
         className="gap-4 rounded-lg border border-gray-tertiary px-4">
         <View className="flex-row justify-center gap-4">
           <ButtonAllinOne variant="ghost" onPress={onKeyboardToggle}>

@@ -13,6 +13,7 @@ import { AgentResponseProps, LocalMessageProps, Reference4MeetingProps } from '.
 import { MessageBubble } from './MessageBubble';
 import BottomToolBox from './BottomToolBox';
 import { TEST_DATA } from './data';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const appKey = process.env.EXPO_PUBLIC_APP_KEY;
 const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
@@ -209,13 +210,30 @@ const Modal = () => {
       className="flex-1"
       behavior="padding"
       style={{ backgroundColor: '#ffffff', marginBottom: 55 }}>
-      <View className="flex-1">
+      <View className="relative flex-1">
+        <LinearGradient
+          locations={[0, 1]}
+          colors={['#ffffff', '#ffffff00']}
+          start={{ x: 0, y: 1 }}
+          end={{ x: 0, y: 0 }}
+          style={{
+            position: 'absolute',
+            height: 50,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            marginHorizontal: 12,
+
+            zIndex: 10,
+          }}
+        />
         <ScrollView
           onContentSizeChange={() => {
             scrollViewRef.current?.scrollToEnd({ animated: true });
           }}
           ref={scrollViewRef}
-          contentContainerClassName="gap-4 p-4"
+          contentContainerStyle={{ gap: 20 }}
+          contentContainerClassName="p-4"
           style={{ backgroundColor: '#ffffff' }}>
           {MemorizedMessages}
           {TEST_DATA.data.reference &&
