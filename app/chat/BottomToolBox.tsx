@@ -5,22 +5,31 @@ import { TextInput, View, TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import Foundation from '@expo/vector-icons/Foundation';
 
 import * as Haptics from 'expo-haptics';
 import { BottomToolBoxProps } from './types';
 
-const BottomToolBox = ({ textInputRef, onSubmit, onKeyboardToggle }: BottomToolBoxProps) => {
+const BottomToolBox = ({
+  textInputRef,
+  onSubmit,
+  onKeyboardToggle,
+  onDeleteChat,
+  onDisconnectSSE,
+  sseLinkState,
+}: BottomToolBoxProps) => {
   const [textInputValue, setTextInputValue] = useState('');
 
   const handleSubmit = () => {
     if (textInputValue) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       onSubmit(textInputValue);
+      setTextInputValue('');
     }
   };
 
   return (
-    <View className="gap-3 p-4" style={{ paddingBottom: 40 }}>
+    <View className="gap-3 px-4" style={{ paddingBottom: 40 }}>
       <View
         style={[
           {
@@ -59,26 +68,32 @@ const BottomToolBox = ({ textInputRef, onSubmit, onKeyboardToggle }: BottomToolB
             <View className="rounded-lg border border-gray-tertiary p-2">
               <Feather name="file-plus" size={20} color="#626262" />
             </View>
+            <ButtonAllinOne variant="ghost" onPress={onDeleteChat}>
+              <Ionicons name="trash-outline" size={20} color="red" />
+            </ButtonAllinOne>
+            {/* {sseLinkState && (
+              <ButtonAllinOne variant="ghost" onPress={onDisconnectSSE}>
+                <Foundation name="unlink" size={20} color="red" />
+              </ButtonAllinOne>
+            )} */}
           </View>
           <TouchableOpacity
             activeOpacity={1}
-            onPress={handleSubmit}
+            onPress={sseLinkState ? onDisconnectSSE : handleSubmit}
             className={`items-center justify-center rounded-full`}
             style={{ width: 36, height: 36 }}>
-            <Ionicons
-              size={24}
-              color={`${textInputValue.length ? '#1556F0' : '#F5F8FF'}`}
-              name="paper-plane"
-            />
+            {sseLinkState ? (
+              <Foundation name="unlink" size={20} color="red" />
+            ) : (
+              <Ionicons
+                size={24}
+                color={`${textInputValue.length ? '#1556F0' : '#F5F8FF'}`}
+                name="paper-plane"
+              />
+            )}
           </TouchableOpacity>
         </View>
       </View>
-      {/* <View className="flex-row items-center justify-between">
-    <View className="flex-row gap-2">
-      <ButtonAllinOne onPress={clearChatAsync} label="清空对话" variant="outline" />
-      <ButtonAllinOne onPress={terminateEventSource} label="断开SSE" variant="outline" />
-    </View>
-  </View> */}
     </View>
   );
 };

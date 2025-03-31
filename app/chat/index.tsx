@@ -1,19 +1,38 @@
-import { View, Keyboard, KeyboardAvoidingView, ScrollView, TextInput } from 'react-native';
+import {
+  View,
+  Keyboard,
+  KeyboardAvoidingView,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { clearChat, loadChat, saveChat } from 'storage/fakeDatabase';
-import { getSign } from 'utils/getSign';
 import * as Progress from 'react-native-progress';
 import EventSource, { EventSourceListener } from 'react-native-sse';
 import { MyCustomEvents } from 'utils/eventSourceTypes';
-import { MeetingRefCard, TranscriptionRefCard } from 'components/ReferenceCards';
+import { MeetingRefCard } from 'components/ReferenceCards';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import * as Haptics from 'expo-haptics';
 
-import { AgentResponseProps, LocalMessageProps, Reference4MeetingProps } from './types';
+import {
+  AgentResponseProps,
+  LocalChatMessageProps,
+  LocalMeetingRefMessageProps,
+} from './messageTypes';
 import { MessageBubble } from './MessageBubble';
 import BottomToolBox from './BottomToolBox';
-import { TEST_DATA } from './data';
+import { TEST_DATA_REFERENCE, TEST_DATA_ANSWER } from './data';
 import { LinearGradient } from 'expo-linear-gradient';
+import ButtonAllinOne from 'components/ButtonAllinOne';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 const appKey = process.env.EXPO_PUBLIC_APP_KEY;
 const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
@@ -22,7 +41,7 @@ const USER = 0;
 const AI = 1;
 
 const queryString = new URLSearchParams({
-  jsonobj: JSON.stringify(TEST_DATA),
+  jsonobj: JSON.stringify(TEST_DATA_ANSWER),
 }).toString();
 
 const URL_4_TEST = `https://sse.dev/test?${queryString}`;
@@ -31,42 +50,63 @@ const URL_4_REAL = `http://192.168.125.53:8088/Chat`;
 const Modal = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [linked, setLinked] = useState(false);
 
   const [textInputValue, setTextInputValue] = useState('');
 
-  const [messages, setMessages] = useState<Array<LocalMessageProps>>([]);
+  const [messages, setMessages] = useState<
+    Array<LocalChatMessageProps | LocalMeetingRefMessageProps>
+  >([]);
   const [replyMessage, setReplyMessage] = useState('');
 
   const textInputRef = useRef<TextInput>(null);
   const scrollViewRef = useRef<ScrollView>(null);
 
   const replyMessageRef = useRef('');
-  const referenceRef = useRef<Reference4MeetingProps[]>([]);
-  const messagesRef = useRef<Array<LocalMessageProps>>(messages);
+  const referenceRef = useRef<LocalMeetingRefMessageProps[]>([]);
+  const messagesRef = useRef<Array<LocalChatMessageProps | LocalMeetingRefMessageProps>>(messages);
 
   const esRef = useRef<EventSource<MyCustomEvents> | null>(null);
+
+  const backToBottomOpacity = useSharedValue(100);
+  const animatedButtonStyle = useAnimatedStyle(() => ({
+    opacity: withTiming(backToBottomOpacity.value, {
+      duration: 1000,
+      easing: Easing.inOut(Easing.cubic),
+    }),
+  }));
 
   const esListener: EventSourceListener<MyCustomEvents> = (event) => {
     if (event.type === 'open') {
       console.log('Event Source Opened');
+      setLinked(true);
     } else if (event.type === 'chat' || event.type === 'message') {
       console.log('raw event', event);
       if (event.data) {
         const res = JSON.parse(event.data) as AgentResponseProps;
         console.log('message received from sse', res);
+
         if (res.type === 'answer') {
           setReplyMessage((prev) => prev + res.data.text);
         }
-        if (res.type === 'reference') {
-          referenceRef.current = [
-            ...referenceRef.current,
-            ...(res.data.reference as Reference4MeetingProps[]),
-          ];
+
+        if (res.type === 'reference' && res.data.reference) {
+          const referenceResponse: LocalMeetingRefMessageProps[] = res.data.reference.map((ref) => {
+            console.log('ref here', ref);
+            return {
+              type: 'reference',
+              id: Date.now() + parseInt(ref.meetingId),
+              reference: ref,
+            };
+          });
+
+          referenceRef.current = [...referenceRef.current, ...referenceResponse];
         }
       }
     } else if (event.type === 'complete' || event.type === 'close') {
       console.log('Event Source Closed');
       saveSSEResponse();
+      setLinked(false);
     }
   };
 
@@ -90,6 +130,12 @@ const Modal = () => {
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
+
+  const scrollToEnd = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    scrollViewRef.current?.scrollToEnd();
+  };
+
   const initChat = async () => {
     const chatData = await loadChat(1);
     setMessages([...chatData]);
@@ -129,12 +175,25 @@ const Modal = () => {
   };
 
   const saveSSEResponse = () => {
-    console.log('sync-replyMessage before saving:', replyMessageRef.current);
-    const sseResponse = { id: Date.now(), text: replyMessageRef.current, sender: AI };
+    // 保存响应的文本数据
+    const answerResponse: LocalChatMessageProps = {
+      type: 'chat',
+      id: Date.now(),
+      text: replyMessageRef.current,
+      sender: AI,
+    };
     setMessages((prevMsgs) => {
-      return [...prevMsgs, sseResponse];
+      return [...prevMsgs, answerResponse];
     });
-    console.log('referenceRef current data', referenceRef.current);
+    replyMessageRef.current = '';
+
+    // 如果有reference数据，在保存完聊天数据之后将其进行保存
+    if (referenceRef.current) {
+      setMessages((prevMsgs) => {
+        return [...prevMsgs, ...referenceRef.current];
+      });
+    }
+
     setIsLoading(false);
   };
 
@@ -159,18 +218,17 @@ const Modal = () => {
     console.log('---modal mounted---');
     initChat();
     initKbdCfg();
-    // initWebSocket();
 
     return () => {
       terminateEventSource();
       saveChatAsync();
-      // wsRef.current && wsRef.current.close();
       console.log('unmounted');
     };
   }, []);
 
   useEffect(() => {
     messagesRef.current = messages;
+    referenceRef.current = [];
   }, [messages]);
 
   useEffect(() => {
@@ -182,10 +240,11 @@ const Modal = () => {
     setIsLoading(true);
     setTextInputValue(textinput);
 
-    const newMessage = {
+    const newMessage: LocalChatMessageProps = {
       id: Date.now(),
       text: textinput,
       sender: USER,
+      type: 'chat',
     };
     Keyboard.dismiss();
 
@@ -199,9 +258,25 @@ const Modal = () => {
   };
 
   const MemorizedMessages = useMemo(() => {
-    return messages.map(({ text, sender, id }: LocalMessageProps) => (
-      <MessageBubble id={id} key={`message-${id}`} text={text} sender={sender} />
-    ));
+    return messages.map((message) => {
+      if (message.type === 'chat') {
+        const { text, id, sender } = message as LocalChatMessageProps;
+        if (text.length)
+          return (
+            <MessageBubble type="chat" id={id} key={`message-${id}`} text={text} sender={sender} />
+          );
+      }
+      if (message.type === 'reference') {
+        const { reference, id } = message as LocalMeetingRefMessageProps;
+        return (
+          <MeetingRefCard
+            key={`ref-meeting-${id}`}
+            imgSource={require('../../assets/imgs/carousel-bg.png')}
+            {...reference}
+          />
+        );
+      }
+    });
   }, [messages]);
 
   return (
@@ -209,47 +284,56 @@ const Modal = () => {
       keyboardVerticalOffset={25}
       className="flex-1"
       behavior="padding"
-      style={{ backgroundColor: '#ffffff', marginBottom: 55 }}>
+      style={{ backgroundColor: '#ffffff', marginBottom: 0 }}>
       <View className="relative flex-1">
         <LinearGradient
-          locations={[0, 1]}
-          colors={['#ffffff', '#ffffff00']}
+          colors={['#ffffff', '#ffffff', '#ffffff00']}
           start={{ x: 0, y: 1 }}
           end={{ x: 0, y: 0 }}
+          locations={[0, 0.3, 1]}
           style={{
             position: 'absolute',
-            height: 50,
+            height: 30,
             left: 0,
             right: 0,
             bottom: 0,
-            marginHorizontal: 12,
-
             zIndex: 10,
           }}
         />
+        <View className="absolute" style={{ bottom: 32, right: 20, zIndex: 10 }}>
+          <Animated.View style={animatedButtonStyle}>
+            <TouchableOpacity
+              onPress={scrollToEnd}
+              activeOpacity={1}
+              className="rounded-full border border-gray bg-white p-2">
+              <Ionicons size={20} name="arrow-down-outline" />
+            </TouchableOpacity>
+          </Animated.View>
+        </View>
         <ScrollView
+          onScroll={(e) => {
+            if (
+              e.nativeEvent.contentSize.height - e.nativeEvent.contentOffset.y >= 700 &&
+              backToBottomOpacity.value === 0
+            ) {
+              backToBottomOpacity.value = 100;
+            }
+            // 接近底部
+            if (
+              backToBottomOpacity.value === 100 &&
+              e.nativeEvent.contentSize.height - e.nativeEvent.contentOffset.y < 700
+            ) {
+              backToBottomOpacity.value = 0;
+            }
+          }}
           onContentSizeChange={() => {
             scrollViewRef.current?.scrollToEnd({ animated: true });
           }}
           ref={scrollViewRef}
-          contentContainerStyle={{ gap: 20 }}
+          contentContainerStyle={{ gap: 20, paddingBottom: 30 }}
           contentContainerClassName="p-4"
           style={{ backgroundColor: '#ffffff' }}>
           {MemorizedMessages}
-          {TEST_DATA.data.reference &&
-            TEST_DATA.data.reference.map((item) => (
-              <MeetingRefCard imgSource={require('../../assets/imgs/carousel-bg.png')} {...item} />
-            ))}
-          <TranscriptionRefCard
-            imgSource={require('../../assets/imgs/carousel-bg.png')}
-            {...{
-              sentenceId: 44,
-              startTime: 745380,
-              endTime: 761310,
-              text: '到了我这一块，我将简短明了地分享汇报内容，不占用大家的午休时间。我的汇报主题是面向大模型训练和推理的数据保护机密计算产品。',
-            }}
-          />
-
           {isLoading &&
             (replyMessage === '' ? (
               <View className="" style={{ paddingHorizontal: 18 }}>
@@ -261,13 +345,16 @@ const Modal = () => {
                 />
               </View>
             ) : (
-              <MessageBubble text={replyMessage} sender={AI} />
+              <MessageBubble type="chat" id={Date.now()} text={replyMessage} sender={AI} />
             ))}
         </ScrollView>
       </View>
 
       {/* Bottom Toolbar */}
       <BottomToolBox
+        sseLinkState={linked}
+        onDeleteChat={clearChatAsync}
+        onDisconnectSSE={terminateEventSource}
         textInputRef={textInputRef}
         onSubmit={handleSubmit}
         onKeyboardToggle={keyboardVisible ? dismissKeyboard : showKeyboard}
