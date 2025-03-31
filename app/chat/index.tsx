@@ -11,7 +11,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { clearChat, loadChat, saveChat } from 'storage/fakeDatabase';
 import * as Progress from 'react-native-progress';
-import EventSource, { EventSourceListener } from 'react-native-sse';
+import EventSource, { EventSourceEvent, EventSourceListener } from 'react-native-sse';
 import { MyCustomEvents } from 'utils/eventSourceTypes';
 import { MeetingRefCard } from 'components/ReferenceCards';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -33,18 +33,16 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import { useSSE } from 'hooks/useSSE';
 
 const appKey = process.env.EXPO_PUBLIC_APP_KEY;
 const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
 
-const USER = 0;
-const AI = 1;
+enum SenderType {
+  USER = 0,
+  AI = 1,
+}
 
-const queryString = new URLSearchParams({
-  jsonobj: JSON.stringify(TEST_DATA_ANSWER),
-}).toString();
-
-const URL_4_TEST = `https://sse.dev/test?${queryString}`;
 const URL_4_REAL = `http://192.168.125.53:8088/Chat`;
 
 const Modal = () => {
@@ -58,6 +56,47 @@ const Modal = () => {
     Array<LocalChatMessageProps | LocalMeetingRefMessageProps>
   >([]);
   const [replyMessage, setReplyMessage] = useState('');
+
+  const onChatnMessage = (event: { data: string | null }) => {
+    console.log('raw event', event);
+    if (event.data !== null) {
+      const res = JSON.parse(event.data) as AgentResponseProps;
+      console.log('message received from sse', res);
+
+      if (res.type === 'answer') {
+        setReplyMessage((prev) => prev + res.data.text);
+      }
+
+      if (res.type === 'reference' && res.data.reference) {
+        const referenceResponse: LocalMeetingRefMessageProps[] = res.data.reference.map((ref) => {
+          console.log('ref here', ref);
+          return {
+            type: 'reference',
+            id: Date.now() + parseInt(ref.meetingId),
+            reference: ref,
+          };
+        });
+
+        referenceRef.current = [...referenceRef.current, ...referenceResponse];
+      }
+    }
+  };
+  const onCompletenClose = () => {
+    console.log('Event Source Closed');
+    saveSSEResponse();
+    setLinked(false);
+  };
+  const { sendEventSourceDevRequest, sendEventSourcePostRequest, terminateEventSourceConnection } =
+    useSSE({
+      onChat: onChatnMessage,
+      onMessage: onChatnMessage,
+      onComplete: onCompletenClose,
+      onClose: onCompletenClose,
+      onOpen: () => {
+        console.log('Event Source Opened');
+        setLinked(true);
+      },
+    });
 
   const textInputRef = useRef<TextInput>(null);
   const scrollViewRef = useRef<ScrollView>(null);
@@ -75,40 +114,6 @@ const Modal = () => {
       easing: Easing.inOut(Easing.cubic),
     }),
   }));
-
-  const esListener: EventSourceListener<MyCustomEvents> = (event) => {
-    if (event.type === 'open') {
-      console.log('Event Source Opened');
-      setLinked(true);
-    } else if (event.type === 'chat' || event.type === 'message') {
-      console.log('raw event', event);
-      if (event.data) {
-        const res = JSON.parse(event.data) as AgentResponseProps;
-        console.log('message received from sse', res);
-
-        if (res.type === 'answer') {
-          setReplyMessage((prev) => prev + res.data.text);
-        }
-
-        if (res.type === 'reference' && res.data.reference) {
-          const referenceResponse: LocalMeetingRefMessageProps[] = res.data.reference.map((ref) => {
-            console.log('ref here', ref);
-            return {
-              type: 'reference',
-              id: Date.now() + parseInt(ref.meetingId),
-              reference: ref,
-            };
-          });
-
-          referenceRef.current = [...referenceRef.current, ...referenceResponse];
-        }
-      }
-    } else if (event.type === 'complete' || event.type === 'close') {
-      console.log('Event Source Closed');
-      saveSSEResponse();
-      setLinked(false);
-    }
-  };
 
   const initKbdCfg = () => {
     Keyboard.addListener('keyboardDidShow', () => {
@@ -141,46 +146,13 @@ const Modal = () => {
     setMessages([...chatData]);
   };
 
-  const initEventSource = () => {
-    if (esRef.current) {
-      esRef.current.addEventListener('message', esListener);
-      esRef.current.addEventListener('open', esListener);
-      esRef.current.addEventListener('chat', esListener);
-      esRef.current.addEventListener('complete', esListener);
-      esRef.current.addEventListener('close', esListener);
-    }
-  };
-
-  const sendTestSSERequest = () => {
-    const es = new EventSource(URL_4_TEST);
-    esRef.current = es;
-    initEventSource();
-  };
-
-  const sendSSERequest = () => {
-    const req = JSON.stringify({
-      input: textInputValue,
-      isInMeeting: false,
-    });
-    console.log('Request Body:', req);
-    const es = new EventSource(URL_4_TEST, {
-      method: 'POST',
-      body: req,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    esRef.current = es;
-    initEventSource();
-  };
-
   const saveSSEResponse = () => {
     // 保存响应的文本数据
     const answerResponse: LocalChatMessageProps = {
       type: 'chat',
       id: Date.now(),
       text: replyMessageRef.current,
-      sender: AI,
+      sender: SenderType.AI,
     };
     setMessages((prevMsgs) => {
       return [...prevMsgs, answerResponse];
@@ -195,13 +167,6 @@ const Modal = () => {
     }
 
     setIsLoading(false);
-  };
-
-  const terminateEventSource = () => {
-    if (esRef.current) {
-      esRef.current.close();
-      esRef.current = null;
-    }
   };
 
   const saveChatAsync = async () => {
@@ -220,7 +185,7 @@ const Modal = () => {
     initKbdCfg();
 
     return () => {
-      terminateEventSource();
+      terminateEventSourceConnection();
       saveChatAsync();
       console.log('unmounted');
     };
@@ -243,7 +208,7 @@ const Modal = () => {
     const newMessage: LocalChatMessageProps = {
       id: Date.now(),
       text: textinput,
-      sender: USER,
+      sender: SenderType.USER,
       type: 'chat',
     };
     Keyboard.dismiss();
@@ -252,7 +217,7 @@ const Modal = () => {
       ...prevMessages,
       { ...newMessage, text: newMessage.text || '' },
     ]);
-    sendTestSSERequest();
+    sendEventSourceDevRequest(TEST_DATA_ANSWER);
     // sendSSERequest();
     setTextInputValue('');
   };
@@ -345,7 +310,12 @@ const Modal = () => {
                 />
               </View>
             ) : (
-              <MessageBubble type="chat" id={Date.now()} text={replyMessage} sender={AI} />
+              <MessageBubble
+                type="chat"
+                id={Date.now()}
+                text={replyMessage}
+                sender={SenderType.AI}
+              />
             ))}
         </ScrollView>
       </View>
@@ -354,7 +324,7 @@ const Modal = () => {
       <BottomToolBox
         sseLinkState={linked}
         onDeleteChat={clearChatAsync}
-        onDisconnectSSE={terminateEventSource}
+        onDisconnectSSE={terminateEventSourceConnection}
         textInputRef={textInputRef}
         onSubmit={handleSubmit}
         onKeyboardToggle={keyboardVisible ? dismissKeyboard : showKeyboard}

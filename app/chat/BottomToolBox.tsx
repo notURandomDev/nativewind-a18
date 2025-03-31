@@ -78,8 +78,12 @@ const BottomToolBox = ({
             )} */}
           </View>
           <TouchableOpacity
+            disabled={!textInputValue.length && !sseLinkState}
             activeOpacity={1}
-            onPress={sseLinkState ? onDisconnectSSE : handleSubmit}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              sseLinkState ? onDisconnectSSE() : handleSubmit();
+            }}
             className={`items-center justify-center rounded-full`}
             style={{ width: 36, height: 36 }}>
             {sseLinkState ? (
