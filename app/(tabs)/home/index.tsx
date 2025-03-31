@@ -1,33 +1,16 @@
 import * as React from 'react';
-import {
-  Dimensions,
-  FlatList,
-  Image,
-  ImageBackground,
-  ImageSourcePropType,
-  Modal,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { useSharedValue } from 'react-native-reanimated';
-import Carousel, { ICarouselInstance, Pagination } from 'react-native-reanimated-carousel';
+import { FlatList, Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import CustomLink from 'components/CustomLink';
 import { VideoCard, InfoSlot } from 'components/VideoCard';
 import { replayRecommendations } from 'data/cards';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import MyCarousel from 'components/MyCarousel';
 import VideoThumbnail from 'components/VideoThumbnail';
 import { rrData } from 'data/carousels';
 import BottomIndicator from 'components/BottomIndicator';
 import { Link } from 'expo-router';
-import { MenuView, MenuComponentRef } from '@react-native-menu/menu';
+import ChatActivator from 'components/ChatActivator';
 
 function App() {
-  const [modalVisible, setModalVisible] = React.useState(false);
   return (
     <ScrollView
       contentContainerClassName="gap-8"
@@ -53,28 +36,6 @@ function App() {
           )}
         />
       </View>
-
-      <Link href="../../chat" asChild>
-        <TouchableOpacity
-          onPress={() => setModalVisible(true)}
-          className="absolute items-center justify-center"
-          style={{
-            backgroundColor: '#ffffff',
-            top: 360,
-            right: 5,
-            height: 65,
-            width: 65,
-            borderRadius: 13,
-            borderColor: '#1556f010',
-            borderWidth: 2,
-          }}>
-          <Image
-            style={{ height: 40, width: 40 }}
-            resizeMode="contain"
-            source={require('../../../assets/imgs/favicon-1.png')}
-          />
-        </TouchableOpacity>
-      </Link>
       <BottomIndicator />
     </ScrollView>
   );

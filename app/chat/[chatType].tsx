@@ -5,6 +5,7 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Text,
 } from 'react-native';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -12,7 +13,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { clearChat, loadChat, saveChat } from 'storage/fakeDatabase';
 import * as Progress from 'react-native-progress';
 import EventSource, { EventSourceEvent, EventSourceListener } from 'react-native-sse';
-import { MeetingRefCard } from 'components/ReferenceCards';
+import { MeetingRefCard, TranscriptionRefCard } from 'components/ReferenceCards';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
 
@@ -20,6 +21,7 @@ import {
   AgentResponseProps,
   LocalChatMessageProps,
   LocalMeetingRefMessageProps,
+  LocalTranscriptionRefMessageProps,
 } from './messageTypes';
 import { MessageBubble } from './MessageBubble';
 import BottomToolBox from './BottomToolBox';
@@ -33,6 +35,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { MyCustomEvents, useSSE } from 'hooks/useSSE';
+import { useLocalSearchParams } from 'expo-router';
 
 const appKey = process.env.EXPO_PUBLIC_APP_KEY;
 const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
@@ -42,9 +45,14 @@ enum SenderType {
   AI = 1,
 }
 
+type ChatTypes = 'insindeMeeting' | 'outsideMeeting';
+
 const URL_4_REAL = `http://192.168.125.53:8088/Chat`;
 
 const Modal = () => {
+  const { chatType } = useLocalSearchParams<ChatTypes>();
+  console.log('chat-type', chatType);
+
   const [isLoading, setIsLoading] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [linked, setLinked] = useState(false);
@@ -52,7 +60,7 @@ const Modal = () => {
   const [textInputValue, setTextInputValue] = useState('');
 
   const [messages, setMessages] = useState<
-    Array<LocalChatMessageProps | LocalMeetingRefMessageProps>
+    Array<LocalChatMessageProps | LocalMeetingRefMessageProps | LocalTranscriptionRefMessageProps>
   >([]);
   const [replyMessage, setReplyMessage] = useState('');
 
@@ -67,7 +75,9 @@ const Modal = () => {
       }
 
       if (res.type === 'reference' && res.data.reference) {
-        const referenceResponse: LocalMeetingRefMessageProps[] = res.data.reference.map((ref) => {
+        const referenceResponse: Array<
+          LocalMeetingRefMessageProps | LocalTranscriptionRefMessageProps
+        > = res.data.reference.map((ref) => {
           console.log('ref here', ref);
           return {
             type: 'reference',
@@ -101,10 +111,13 @@ const Modal = () => {
   const scrollViewRef = useRef<ScrollView>(null);
 
   const replyMessageRef = useRef('');
-  const referenceRef = useRef<LocalMeetingRefMessageProps[]>([]);
-  const messagesRef = useRef<Array<LocalChatMessageProps | LocalMeetingRefMessageProps>>(messages);
-
-  const esRef = useRef<EventSource<MyCustomEvents> | null>(null);
+  const referenceRef = useRef<
+    Array<LocalMeetingRefMessageProps | LocalTranscriptionRefMessageProps>
+  >([]);
+  const messagesRef =
+    useRef<
+      Array<LocalChatMessageProps | LocalMeetingRefMessageProps | LocalTranscriptionRefMessageProps>
+    >(messages);
 
   const backToBottomOpacity = useSharedValue(100);
   const animatedButtonStyle = useAnimatedStyle(() => ({
@@ -216,29 +229,55 @@ const Modal = () => {
       ...prevMessages,
       { ...newMessage, text: newMessage.text || '' },
     ]);
-    sendEventSourceDevRequest(TEST_DATA_ANSWER);
+    sendEventSourceDevRequest(TEST_DATA_REFERENCE);
     // sendSSERequest();
     setTextInputValue('');
   };
 
   const MemorizedMessages = useMemo(() => {
-    return messages.map((message) => {
+    return messages.map((message, index, array) => {
       if (message.type === 'chat') {
         const { text, id, sender } = message as LocalChatMessageProps;
-        if (text.length)
+        if (text.trim().length)
           return (
             <MessageBubble type="chat" id={id} key={`message-${id}`} text={text} sender={sender} />
           );
       }
       if (message.type === 'reference') {
-        const { reference, id } = message as LocalMeetingRefMessageProps;
-        return (
-          <MeetingRefCard
-            key={`ref-meeting-${id}`}
-            imgSource={require('../../assets/imgs/carousel-bg.png')}
-            {...reference}
-          />
-        );
+        const prevItem = array[index - 1];
+        if (chatType === 'insideMeeting') {
+          const { reference, id } = message as LocalTranscriptionRefMessageProps;
+          return (
+            <View key={`ref-meeting-${id}`} className="gap-3">
+              {prevItem.type === 'chat' && (
+                <View className="flex-1 items-center">
+                  <Text className="font-semibold text-gray-solid">——推荐会议——</Text>
+                </View>
+              )}
+              <TranscriptionRefCard
+                imgSource={require('../../assets/imgs/carousel-bg.png')}
+                {...reference}
+              />
+            </View>
+          );
+        }
+
+        if (chatType === 'outsideMeeting') {
+          const { reference, id } = message as LocalMeetingRefMessageProps;
+          return (
+            <View key={`ref-meeting-${id}`} className="gap-3">
+              {prevItem.type === 'chat' && (
+                <View className="flex-1 items-center">
+                  <Text className="font-semibold text-gray-solid">——推荐会议——</Text>
+                </View>
+              )}
+              <MeetingRefCard
+                imgSource={require('../../assets/imgs/carousel-bg.png')}
+                {...reference}
+              />
+            </View>
+          );
+        }
       }
     });
   }, [messages]);

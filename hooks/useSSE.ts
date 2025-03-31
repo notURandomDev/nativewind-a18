@@ -34,7 +34,7 @@ export const useSSE = (lf: ListenerFunctionProps) => {
       const queryString = new URLSearchParams({
         jsonobj: JSON.stringify(queryObj),
       }).toString();
-      url += `?${queryString}`;
+      url += `?${queryString}&interval=15`;
     }
 
     const es = new EventSource(url);

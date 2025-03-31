@@ -7,14 +7,6 @@ export const TEST_DATA_REFERENCE: import('./messageTypes').AgentResponseProps = 
     timestamp: 0,
     reference: [
       {
-        meetingId: '2',
-        title: '人工智能与安全分论坛',
-        location: '杭州国际博览中心-202B',
-        description: '探讨人工智能在安全领域的应用与挑战',
-        startTime: '2025-04-15T13:00:00',
-        endTime: '2025-04-15T16:00:00',
-      },
-      {
         meetingId: '5',
         title: '技术展示与演示',
         location: '杭州国际博览中心-505E',
@@ -29,12 +21,47 @@ export const TEST_DATA_REFERENCE: import('./messageTypes').AgentResponseProps = 
 export const TEST_DATA_ANSWER = {
   type: 'answer',
   data: {
-    text: '技术展示与演示将于2025年4月15日14:00开始。',
+    text: '技术展示与演示将于2025年4月15日14:00开始。此信息基于当前安排，如有变动，请以官方最新通知为准。',
     message_id: '7427092700001401',
     timestamp: 0,
   },
   timestamp: 1743174269356,
   _final: false,
+};
+
+export const TEST_DATA_REF_TRANS = {
+  reference: [
+    {
+      sentenceId: 10,
+      startTime: 171050,
+      endTime: 184230,
+      text: '下面我向大家汇报我们在防火墙和AI融合方面增强的一些发布的功能。我们知道防火墙实际上是一个历史非常长的产品。',
+    },
+    {
+      sentenceId: 32,
+      startTime: 533780,
+      endTime: 551050,
+      text: '最后一部分，我简单介绍一下防火墙安全运营方面的增强。我们引入了阿凡达，在大模型框架加持下，给防火墙内置了两个AI小助手，小恒和小安。注意，此处将“阿凡提”修正为更符合语境的“阿凡达”。',
+    },
+    {
+      sentenceId: 36,
+      startTime: 603760,
+      endTime: 621260,
+      text: '从单体角度看，未来的发展空间有限。要进化到下一代真正智能的防火墙，必须在一体化安全运营和体系化的AI体系中发挥作用。',
+    },
+    {
+      sentenceId: 38,
+      startTime: 631730,
+      endTime: 652930,
+      text: '通过这样的协同，我们能够打通数据日志分析和处置的整个流程，并充分发挥安全产品每种类型、每个层次的特点和优势。从而，我们能为用户提供防火墙一体化的MS云托管服务。',
+    },
+    {
+      sentenceId: 39,
+      startTime: 652930,
+      endTime: 665730,
+      text: '如果客户在节假日希望将防火墙托管到云端，可以使用安恒的MS云托管服务。',
+    },
+  ],
 };
 
 // 会议内问答返回的格式（转录数据）

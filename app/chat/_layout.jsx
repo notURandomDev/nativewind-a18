@@ -14,7 +14,7 @@ const CustomChatHeader = () => (
     </ButtonAllinOne>
     <View className="flex-row items-center gap-2">
       <Feather name="edit-3" size={20} color="black" />
-      <Text className="text-2xl font-medium">新对话</Text>
+      <Text className="text-2xl font-medium">技术展示与演示会议时间咨询</Text>
     </View>
     <ButtonAllinOne variant="ghost" onPress={() => router.replace('/chat/history')}>
       <Octicons name="history" size={22} />
@@ -40,12 +40,11 @@ export default function ModalLayout() {
   return (
     <Stack screenOptions={{ gestureEnabled: false }}>
       <Stack.Screen
-        name="index"
+        name="[chatType]"
         options={{
           animation: 'none',
           presentation: 'modal',
           headerShadowVisible: false,
-          headerBackVisible: true,
           gestureEnabled: false,
           header: () => <CustomChatHeader />,
         }}

@@ -54,5 +54,5 @@ export interface LocalMeetingRefMessageProps extends LocalMessageBaseProps {
 }
 
 export interface LocalTranscriptionRefMessageProps extends LocalMessageBaseProps {
-  reference: Reference4MeetingProps;
+  reference: Reference4TranscriptionProps;
 }

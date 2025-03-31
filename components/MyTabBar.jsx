@@ -3,19 +3,24 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Animated, Text, TouchableOpacity, View } from 'react-native';
 import ButtonAllinOne from './ButtonAllinOne';
 import { router } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 
 // Custom Tab Bar Component
 const MyTabBar = ({ state, descriptors, navigation, variant = 'default' }) => {
   // const { position } = useTabAnimation();
 
   const isDefault = variant !== 'mini';
+  const drawerNavigation = useNavigation();
 
   return (
     <View className={`flex-row items-center bg-transparent ${isDefault ? 'px-3' : ''}`}>
       {/* Left Icon */}
 
       {isDefault && (
-        <ButtonAllinOne variant="ghost" containerStyles="pb-3">
+        <ButtonAllinOne
+          onPress={drawerNavigation.openDrawer}
+          variant="ghost"
+          containerStyles="pb-3">
           <Ionicons size={24} name="menu-outline" />
         </ButtonAllinOne>
       )}
