@@ -81,8 +81,8 @@ const TranscriptionRefCard = ({
   const { ss: startSS, mm: startMM } = formatTime(startTime);
   const { ss: endSS, mm: endMM } = formatTime(endTime);
 
-  const startTimeStr = startMM + ':' + startSS;
-  const endTimeStr = endMM + ':' + endSS;
+  const startTimeStr = startMM.padStart(2, '0') + ':' + startSS.padStart(2, '0');
+  const endTimeStr = endMM.padStart(2, '0') + ':' + endSS.padStart(2, '0');
   return (
     <View style={{ borderRadius: 17 }} className="relative flex-row items-center">
       <LinearGradient
@@ -124,8 +124,8 @@ const TranscriptionRefCard = ({
 };
 
 const formatTime = (millisecond: number) => {
-  const mm = Math.floor(millisecond / 1000 / 60);
-  const ss = Math.floor((millisecond / 1000) % 60);
+  const mm = Math.floor(millisecond / 1000 / 60).toString();
+  const ss = Math.floor((millisecond / 1000) % 60).toString();
   return { mm, ss };
 };
 

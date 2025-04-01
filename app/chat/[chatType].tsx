@@ -22,10 +22,17 @@ import {
   LocalChatMessageProps,
   LocalMeetingRefMessageProps,
   LocalTranscriptionRefMessageProps,
+  Reference4MeetingProps,
+  Reference4TranscriptionProps,
 } from './messageTypes';
 import { MessageBubble } from './MessageBubble';
 import BottomToolBox from './BottomToolBox';
-import { TEST_DATA_REFERENCE, TEST_DATA_ANSWER } from './data';
+import {
+  TEST_DATA_REF_MEETING,
+  TEST_DATA_ANSWER,
+  TEST_DATA_REF_TRANSCRIPTION,
+  TRANSCRIPTION_THUMBNAILS,
+} from './data';
 import { LinearGradient } from 'expo-linear-gradient';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 import Animated, {
@@ -45,12 +52,12 @@ enum SenderType {
   AI = 1,
 }
 
-type ChatTypes = 'insindeMeeting' | 'outsideMeeting';
+type ChatTypes = 'insideMeeting' | 'outsideMeeting';
 
 const URL_4_REAL = `http://192.168.125.53:8088/Chat`;
 
 const Modal = () => {
-  const { chatType } = useLocalSearchParams<ChatTypes>();
+  const { chatType }: { chatType: ChatTypes } = useLocalSearchParams();
   console.log('chat-type', chatType);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -77,13 +84,25 @@ const Modal = () => {
       if (res.type === 'reference' && res.data.reference) {
         const referenceResponse: Array<
           LocalMeetingRefMessageProps | LocalTranscriptionRefMessageProps
-        > = res.data.reference.map((ref) => {
+        > = res.data.reference.map((ref: Reference4TranscriptionProps | Reference4MeetingProps) => {
           console.log('ref here', ref);
-          return {
-            type: 'reference',
-            id: Date.now() + parseInt(ref.meetingId),
-            reference: ref,
-          };
+          if (chatType === 'insideMeeting') {
+            const { sentenceId } = ref as Reference4TranscriptionProps;
+            return {
+              type: 'ref-transcription',
+              id: sentenceId,
+              reference: ref,
+            };
+          }
+
+          if (chatType === 'outsideMeeting') {
+            const { meetingId } = ref as Reference4MeetingProps;
+            return {
+              type: 'ref-meeting',
+              id: Date.now() + parseInt(meetingId),
+              reference: ref,
+            };
+          }
         });
 
         referenceRef.current = [...referenceRef.current, ...referenceResponse];
@@ -229,7 +248,7 @@ const Modal = () => {
       ...prevMessages,
       { ...newMessage, text: newMessage.text || '' },
     ]);
-    sendEventSourceDevRequest(TEST_DATA_REFERENCE);
+    sendEventSourceDevRequest(TEST_DATA_REF_TRANSCRIPTION);
     // sendSSERequest();
     setTextInputValue('');
   };
@@ -243,44 +262,44 @@ const Modal = () => {
             <MessageBubble type="chat" id={id} key={`message-${id}`} text={text} sender={sender} />
           );
       }
-      if (message.type === 'reference') {
-        const prevItem = array[index - 1];
-        if (chatType === 'insideMeeting') {
-          const { reference, id } = message as LocalTranscriptionRefMessageProps;
-          return (
-            <View key={`ref-meeting-${id}`} className="gap-3">
-              {prevItem.type === 'chat' && (
-                <View className="flex-1 items-center">
-                  <Text className="font-semibold text-gray-solid">——推荐会议——</Text>
-                </View>
-              )}
-              <TranscriptionRefCard
-                imgSource={require('../../assets/imgs/carousel-bg.png')}
-                {...reference}
-              />
-            </View>
-          );
-        }
 
-        if (chatType === 'outsideMeeting') {
-          const { reference, id } = message as LocalMeetingRefMessageProps;
-          return (
-            <View key={`ref-meeting-${id}`} className="gap-3">
-              {prevItem.type === 'chat' && (
-                <View className="flex-1 items-center">
-                  <Text className="font-semibold text-gray-solid">——推荐会议——</Text>
-                </View>
-              )}
-              <MeetingRefCard
-                imgSource={require('../../assets/imgs/carousel-bg.png')}
-                {...reference}
-              />
-            </View>
-          );
-        }
+      const prevItem = array[index - 1];
+      console.log('current item', message);
+
+      if (message.type === 'ref-transcription' && chatType === 'insideMeeting') {
+        const { reference, id } = message as LocalTranscriptionRefMessageProps;
+        const imgSource =
+          TRANSCRIPTION_THUMBNAILS.get(id) ?? require('../../assets/imgs/carousel-bg.png');
+        return (
+          <View key={`ref-meeting-${id}`} className="gap-3">
+            {prevItem.type === 'chat' && (
+              <View className="flex-1 items-center">
+                <Text className="font-semibold text-gray-tertiary">——推荐转录内容——</Text>
+              </View>
+            )}
+            <TranscriptionRefCard imgSource={imgSource} {...reference} />
+          </View>
+        );
+      }
+
+      if (message.type === 'ref-meeting' && chatType === 'outsideMeeting') {
+        const { reference, id } = message as LocalMeetingRefMessageProps;
+        return (
+          <View key={`ref-meeting-${id}`} className="gap-3">
+            {prevItem.type === 'chat' && (
+              <View className="flex-1 items-center">
+                <Text className="font-semibold text-gray-tertiary">——推荐会议——</Text>
+              </View>
+            )}
+            <MeetingRefCard
+              imgSource={require('../../assets/imgs/carousel-bg.png')}
+              {...reference}
+            />
+          </View>
+        );
       }
     });
-  }, [messages]);
+  }, [messages, chatType]);
 
   return (
     <KeyboardAvoidingView
@@ -333,7 +352,7 @@ const Modal = () => {
             scrollViewRef.current?.scrollToEnd({ animated: true });
           }}
           ref={scrollViewRef}
-          contentContainerStyle={{ gap: 20, paddingBottom: 30 }}
+          contentContainerStyle={{ gap: 12, paddingBottom: 30 }}
           contentContainerClassName="p-4"
           style={{ backgroundColor: '#ffffff' }}>
           {MemorizedMessages}

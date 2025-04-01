@@ -35,8 +35,8 @@ export interface TestResponseProps {
   now: number;
 }
 
-interface LocalMessageBaseProps {
-  type: 'chat' | 'reference';
+export interface LocalMessageBaseProps {
+  type: 'chat' | 'ref-transcription' | 'ref-meeting';
   id: number;
 }
 

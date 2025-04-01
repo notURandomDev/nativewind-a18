@@ -8,10 +8,11 @@ const AI = 1;
 export const MessageBubble = (props: LocalChatMessageProps) => {
   const { text, sender } = props;
   return (
-    <View className={`${sender === USER && 'justify-end'} flex-row `}>
+    <View className={`${sender === USER && 'justify-end'} flex-1 flex-row`}>
       <View
         className={`${sender === AI ? 'bg-white' : 'bg-blue'}`}
         style={{
+          width: sender === AI ? '100%' : 'auto',
           borderTopRightRadius: 12,
           borderTopLeftRadius: 12,
           borderBottomLeftRadius: sender === USER ? 12 : 0,
@@ -23,6 +24,7 @@ export const MessageBubble = (props: LocalChatMessageProps) => {
           style={{
             body: {
               flex: 1,
+              width: '100%',
               fontSize: 20,
               lineHeight: 32,
               fontWeight: 300,
