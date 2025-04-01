@@ -6,8 +6,6 @@ import '../global.css';
 import { useFonts } from 'expo-font';
 import { useEffect } from 'react';
 import { Text, View } from 'react-native';
-import { HoldMenuProvider } from 'react-native-hold-menu';
-import { NavigationContainer } from '@react-navigation/native';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -42,6 +40,7 @@ export default function RootLayout() {
         <Stack.Screen name="videos_id/[vid]" options={{ headerShown: false }} />
         <Stack.Screen name="search" options={{ headerShown: false }} />
         <Stack.Screen name="search_result/[search_keyword]" options={{ headerShown: false }} />
+        <Stack.Screen name="namecard" options={{ headerShown: false }} />
       </Stack>
     </GestureHandlerRootView>
   );

@@ -18,6 +18,18 @@ export const TEST_DATA_REF_MEETING: import('./messageTypes').AgentResponseProps 
   },
 };
 
+export const TEST_TRANSCRIPTION_RAW = {
+  _final: false,
+  data: {
+    beginTime: 634600,
+    index: 37,
+    taskKey: 'ed1d9bd8-f206-46e8-819f-1e0b8f503aeb',
+    text: '我们的防火墙目前应该是走在路上的这个阶段，我们实现了跟这个平台和周边产品的联动。跟很好的对接。通过这样的一些协同，我们能够',
+  },
+  timestamp: 1743511045671,
+  type: 'raw',
+};
+
 export const TEST_DATA_ANSWER = {
   type: 'answer',
   data: {

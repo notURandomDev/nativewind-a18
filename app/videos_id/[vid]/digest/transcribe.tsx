@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, Alert, TextStyle } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import TintedBackground from 'components/TintedBackground';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 import BottomIndicator from 'components/BottomIndicator';
@@ -14,7 +14,7 @@ import { useSSE } from 'hooks/useSSE';
 TRANSCRIPTION_DATA.sort((a, b) => a.sentenceId - b.sentenceId);
 
 const SSE_RES_4_TESTING_NO_CARDS = {
-  _final: false,
+  _final: true,
   data: {
     beginTime: 16600,
     index: 0,
@@ -38,13 +38,7 @@ const SSE_RES_4_TESTING_WITH_CARDS = {
   type: 'enhanced',
 };
 
-// 将 JSON 对象转为查询字符串
-const queryString = new URLSearchParams({
-  jsonobj: JSON.stringify(SSE_RES_4_TESTING_WITH_CARDS),
-}).toString();
-
-const URL_SSE_DEV = `https://sse.dev/test?${queryString}`;
-const URL_REAL_BACKEND = `http://192.168.125.53:8088/subscribe/${Date.now().toString()}?audioFilePath=D:%5C%5Coutput_audio.pcm`;
+const URL_REAL_BACKEND = `http://10.249.12.195:8088/subscribe?audioFilePath=D:%5C%5Coutput_audio.pcm`;
 
 interface KnowledgeDataProps {
   term: string;
@@ -73,45 +67,101 @@ interface SentenceProps {
 interface TranscriptionProps {
   _final: boolean;
   data: SentenceProps;
-  id: string;
   timestamp: bigint;
   type: 'raw' | 'enhanced';
 }
 
 const RealtimeTranscribe = () => {
   const [transcription, setTranscription] = useState<Array<TranscriptionProps>>([]);
+  // const [transcription, setTranscription] = useState('');
+  const [currentTranscription, setCurrentTranscription] = useState<TranscriptionProps | null>();
   const [loading, setLoading] = useState(false);
 
+  const taskKeyRef = useRef<string | null>(null);
+  const scrollviewRef = useRef<ScrollView>(null);
+
+  const onMeetingCreated = (event: EventSourceEvent<MyCustomEvents>) => {
+    if (event.data) {
+      const res = JSON.parse(event.data);
+      console.log('taskKey', res);
+      taskKeyRef.current = res.taskKey;
+    }
+  };
   const onTranscription = (event: EventSourceEvent<MyCustomEvents>) => {
     if (event.data) {
       const newTranscription: TranscriptionProps = JSON.parse(event.data);
       console.log('newTranscription received', newTranscription);
-      const { id, ...rest } = newTranscription;
-      setTranscription((prev) => [...prev, { id: Date.now().toString(), ...rest }]);
+
+      // const prevItems = transcription.slice(transcription.length);
+      if (newTranscription._final) {
+        if (transcription.length) {
+          setTranscription((prev) => [...prev, newTranscription]);
+        } else {
+          setTranscription([newTranscription]);
+        }
+        setCurrentTranscription(null);
+      } else {
+        if (currentTranscription) {
+          setCurrentTranscription((prev) => {
+            if (prev) {
+              const {
+                data: { text, ...dataRest },
+                ...rest
+              } = prev;
+              return { ...rest, data: { text: newTranscription.data.text, ...dataRest } };
+            }
+            return prev; // Ensure a valid return value
+          });
+        } else {
+          setCurrentTranscription(newTranscription);
+        }
+      }
     }
   };
   const onClose = () => {
     console.log('on es close');
   };
 
-  const { terminateEventSourceConnection, sendEventSourcePostRequest, sendEventSourceDevRequest } =
+  const { terminateEventSourceConnection, sendEventSourceGetRequest, sendEventSourceDevRequest } =
     useSSE({
+      onOpen: () => console.log(`es-opened-${Date.now()}`),
       onTranscription,
       onMessage: onTranscription,
       onComplete: onClose,
       onClose: onClose,
+      onMeetingCreated,
     });
 
-  const scrollviewRef = useRef<ScrollView>(null);
+  const MemoizedParagraphs = useMemo(
+    () =>
+      transcription.map((item) => (
+        <HighlightableParagraph
+          type={item.type}
+          key={`paragraph-${item.timestamp}`}
+          sentence={item.data}
+        />
+      )),
+    [transcription]
+  );
 
   const startES = () => {
     setLoading(true);
-    sendEventSourceDevRequest(SSE_RES_4_TESTING_WITH_CARDS);
+    sendEventSourceDevRequest(SSE_RES_4_TESTING_NO_CARDS);
+    // sendEventSourceGetRequest(URL_REAL_BACKEND);
   };
 
   const endES = () => {
+    console.log(`es-terminated-${Date.now()}`);
     terminateEventSourceConnection();
   };
+
+  useEffect(() => {
+    return endES;
+  }, []);
+
+  useEffect(() => {
+    console.log('currentTranscription:', currentTranscription);
+  }, [currentTranscription]);
 
   return (
     <ScrollView
@@ -138,16 +188,16 @@ const RealtimeTranscribe = () => {
             className="flex-1 gap-3 bg-white px-4"
             style={{ paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10 }}>
             <Text className="text-lg font-medium">{'SSE测试'}</Text>
-            {
-              // 对转录数据进行遍历
-              transcription.map((item) => (
+            {MemoizedParagraphs}
+            {currentTranscription && (
+              <View className="bg-blue">
                 <HighlightableParagraph
-                  type={item.type}
-                  key={`paragraph-${item.id}`}
-                  sentence={item.data}
+                  type={currentTranscription.type}
+                  key={`paragraph-${currentTranscription.timestamp}`}
+                  sentence={currentTranscription.data}
                 />
-              ))
-            }
+              </View>
+            )}
           </View>
         </TintedBackground>
       </View>

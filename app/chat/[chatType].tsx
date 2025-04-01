@@ -64,12 +64,14 @@ const Modal = () => {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [linked, setLinked] = useState(false);
 
-  const [textInputValue, setTextInputValue] = useState('');
-
   const [messages, setMessages] = useState<
     Array<LocalChatMessageProps | LocalMeetingRefMessageProps | LocalTranscriptionRefMessageProps>
   >([]);
   const [replyMessage, setReplyMessage] = useState('');
+
+  useEffect(() => {
+    console.log('useEffect-replyMessage-changed', replyMessage);
+  }, [replyMessage]);
 
   const onChatnMessage = (event: EventSourceEvent<MyCustomEvents>) => {
     console.log('raw event', event);
@@ -129,7 +131,7 @@ const Modal = () => {
   const textInputRef = useRef<TextInput>(null);
   const scrollViewRef = useRef<ScrollView>(null);
 
-  const replyMessageRef = useRef('');
+  // const replyMessageRef = useRef('');
   const referenceRef = useRef<
     Array<LocalMeetingRefMessageProps | LocalTranscriptionRefMessageProps>
   >([]);
@@ -179,16 +181,18 @@ const Modal = () => {
 
   const saveSSEResponse = () => {
     // 保存响应的文本数据
+    console.log('reply message', replyMessage);
     const answerResponse: LocalChatMessageProps = {
       type: 'chat',
       id: Date.now(),
-      text: replyMessageRef.current,
+      // text: replyMessageRef.current,
+      text: replyMessage,
       sender: SenderType.AI,
     };
     setMessages((prevMsgs) => {
       return [...prevMsgs, answerResponse];
     });
-    replyMessageRef.current = '';
+    // replyMessageRef.current = '';
 
     // 如果有reference数据，在保存完聊天数据之后将其进行保存
     if (referenceRef.current) {
@@ -227,14 +231,13 @@ const Modal = () => {
     referenceRef.current = [];
   }, [messages]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     replyMessageRef.current = replyMessage;
-  }, [replyMessage]);
+  }, [replyMessage]); */
 
   const handleSubmit = async (textinput: string) => {
     setReplyMessage('');
     setIsLoading(true);
-    setTextInputValue(textinput);
 
     const newMessage: LocalChatMessageProps = {
       id: Date.now(),
@@ -248,58 +251,65 @@ const Modal = () => {
       ...prevMessages,
       { ...newMessage, text: newMessage.text || '' },
     ]);
-    sendEventSourceDevRequest(TEST_DATA_REF_TRANSCRIPTION);
+    sendEventSourceDevRequest(TEST_DATA_ANSWER);
     // sendSSERequest();
-    setTextInputValue('');
   };
 
-  const MemorizedMessages = useMemo(() => {
-    return messages.map((message, index, array) => {
-      if (message.type === 'chat') {
-        const { text, id, sender } = message as LocalChatMessageProps;
-        if (text.trim().length)
+  const MemorizedMessages = useMemo(
+    () =>
+      messages.map((message, index, array) => {
+        if (message.type === 'chat') {
+          const { text, id, sender } = message as LocalChatMessageProps;
+          if (text.trim().length)
+            return (
+              <MessageBubble
+                type="chat"
+                id={id}
+                key={`message-${id}`}
+                text={text}
+                sender={sender}
+              />
+            );
+        }
+
+        const prevItem = array[index - 1];
+        console.log('current item', message);
+
+        if (message.type === 'ref-transcription' && chatType === 'insideMeeting') {
+          const { reference, id } = message as LocalTranscriptionRefMessageProps;
+          const imgSource =
+            TRANSCRIPTION_THUMBNAILS.get(id) ?? require('../../assets/imgs/carousel-bg.png');
           return (
-            <MessageBubble type="chat" id={id} key={`message-${id}`} text={text} sender={sender} />
+            <View key={`ref-meeting-${id}`} className="gap-3">
+              {prevItem.type === 'chat' && (
+                <View className="flex-1 items-center">
+                  <Text className="font-semibold text-gray-tertiary">——推荐转录内容——</Text>
+                </View>
+              )}
+              <TranscriptionRefCard imgSource={imgSource} {...reference} />
+            </View>
           );
-      }
+        }
 
-      const prevItem = array[index - 1];
-      console.log('current item', message);
-
-      if (message.type === 'ref-transcription' && chatType === 'insideMeeting') {
-        const { reference, id } = message as LocalTranscriptionRefMessageProps;
-        const imgSource =
-          TRANSCRIPTION_THUMBNAILS.get(id) ?? require('../../assets/imgs/carousel-bg.png');
-        return (
-          <View key={`ref-meeting-${id}`} className="gap-3">
-            {prevItem.type === 'chat' && (
-              <View className="flex-1 items-center">
-                <Text className="font-semibold text-gray-tertiary">——推荐转录内容——</Text>
-              </View>
-            )}
-            <TranscriptionRefCard imgSource={imgSource} {...reference} />
-          </View>
-        );
-      }
-
-      if (message.type === 'ref-meeting' && chatType === 'outsideMeeting') {
-        const { reference, id } = message as LocalMeetingRefMessageProps;
-        return (
-          <View key={`ref-meeting-${id}`} className="gap-3">
-            {prevItem.type === 'chat' && (
-              <View className="flex-1 items-center">
-                <Text className="font-semibold text-gray-tertiary">——推荐会议——</Text>
-              </View>
-            )}
-            <MeetingRefCard
-              imgSource={require('../../assets/imgs/carousel-bg.png')}
-              {...reference}
-            />
-          </View>
-        );
-      }
-    });
-  }, [messages, chatType]);
+        if (message.type === 'ref-meeting' && chatType === 'outsideMeeting') {
+          const { reference, id } = message as LocalMeetingRefMessageProps;
+          return (
+            <View key={`ref-meeting-${id}`} className="gap-3">
+              {prevItem.type === 'chat' && (
+                <View className="flex-1 items-center">
+                  <Text className="font-semibold text-gray-tertiary">——推荐会议——</Text>
+                </View>
+              )}
+              <MeetingRefCard
+                imgSource={require('../../assets/imgs/carousel-bg.png')}
+                {...reference}
+              />
+            </View>
+          );
+        }
+      }),
+    [messages, chatType]
+  );
 
   return (
     <KeyboardAvoidingView

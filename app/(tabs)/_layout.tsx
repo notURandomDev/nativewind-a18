@@ -5,6 +5,8 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { createDrawerNavigator, DrawerContentScrollView } from '@react-navigation/drawer';
 import { LinearGradient } from 'expo-linear-gradient';
+import Avatar from 'components/Avatar';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const Drawer = createDrawerNavigator();
 
@@ -134,29 +136,65 @@ const TabLayout = () => {
 };
 
 const DrawerLayout = () => (
-  <DrawerContentScrollView style={{ position: 'relative', flexGrow: 1 }}>
+  <DrawerContentScrollView
+    scrollEnabled={false}
+    contentContainerStyle={{ flex: 1 }}
+    style={{ position: 'relative' }}>
     <LinearGradient
       style={{
         position: 'absolute',
-        bottom: 0,
         left: 0,
         right: 0,
         top: 0,
-        borderWidth: 1,
-        flexGrow: 1,
+        bottom: 0,
       }}
       colors={['#1556f050', '#ffffff00']}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
     />
-    <OptionItem icon={<Ionicons name="settings-outline" />} label="邀请好友入会" />
+    <View style={{ marginBottom: 8 }} className="flex-row items-center justify-between py-2">
+      <View className="flex-row items-center gap-3">
+        <Image
+          className="rounded-full"
+          style={{ width: 40, aspectRatio: 1 }}
+          source={require('../../assets/imgs/lipu.png')}
+        />
+        <Text className="text-2xl text-white">厘小普</Text>
+      </View>
+      <View style={{ gap: 20 }} className="flex-row items-center">
+        <MaterialCommunityIcons name="line-scan" size={28} color="#ffffff" />
+        <Ionicons size={28} name="chevron-forward-outline" color="#ffffff" />
+      </View>
+    </View>
+
+    <OptionContainer>
+      <OptionItem icon={<Ionicons size={20} name="person-add-outline" />} label="邀请好友参会" />
+    </OptionContainer>
+
+    <OptionContainer>
+      <OptionItem icon={<Ionicons size={20} name="settings-outline" />} label="设置" />
+      <OptionItem icon={<Ionicons size={20} name="person-circle-outline" />} label="修改个人资料" />
+      <OptionItem icon={<Ionicons size={20} name="help-circle-outline" />} label="帮助与客服" />
+    </OptionContainer>
+
+    <OptionContainer>
+      <OptionItem icon={<Ionicons size={20} name="eye-outline" />} label="浏览记录" />
+    </OptionContainer>
   </DrawerContentScrollView>
 );
 
+const OptionContainer = (props: { children: ReactNode }) => (
+  <View
+    style={{ borderRadius: 17, marginBottom: 20, borderWidth: 1, borderColor: '#E8E8E8' }}
+    className="bg-white">
+    {props.children}
+  </View>
+);
+
 const OptionItem = ({ icon, label }: { icon: ReactNode; label: string }) => (
-  <View className="flex-row">
+  <View style={{ borderRadius: 17 }} className="flex-row items-center gap-2  p-4">
     {icon}
-    <Text>asdf</Text>
+    <Text className="text-xl font-light">{label}</Text>
   </View>
 );
 

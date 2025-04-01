@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import EventSource, { EventSourceEvent, EventSourceListener } from 'react-native-sse';
 
 const TEST_BASEURL = 'https://sse.dev/test';
@@ -12,19 +12,36 @@ interface ListenerFunctionProps {
   onComplete?: EventSourceListener<MyCustomEvents, 'complete'>;
   onClose?: EventSourceListener<MyCustomEvents, 'close'>;
   onTranscription?: EventSourceListener<MyCustomEvents, 'transcription'>;
+  onMeetingCreated?: EventSourceListener<MyCustomEvents, 'meeting-created'>;
 }
 
 export const useSSE = (lf: ListenerFunctionProps) => {
   const esRef = useRef<EventSource<MyCustomEvents> | null>(null);
+  const { onMessage, onOpen, onChat, onComplete, onClose, onMeetingCreated, onTranscription } = lf;
+  const eventListeners = useMemo(
+    () => [
+      { type: 'message', handler: onMessage },
+      { type: 'open', handler: onOpen },
+      { type: 'chat', handler: onChat },
+      { type: 'complete', handler: onComplete },
+      { type: 'close', handler: onClose },
+      { type: 'transcription', handler: onTranscription },
+      { type: 'meeting-created', handler: onMeetingCreated },
+    ],
+    [onMessage, onOpen, onChat, onComplete, onClose, onMeetingCreated, onTranscription]
+  );
 
-  const initEventSource = () => {
+  const bindEventListeners = () => {
     if (esRef.current) {
-      lf.onMessage && esRef.current.addEventListener('message', lf.onMessage);
-      lf.onOpen && esRef.current.addEventListener('open', lf.onOpen);
-      lf.onChat && esRef.current.addEventListener('chat', lf.onChat);
-      lf.onComplete && esRef.current.addEventListener('complete', lf.onComplete);
-      lf.onClose && esRef.current.addEventListener('close', lf.onClose);
-      lf.onTranscription && esRef.current.addEventListener('transcription', lf.onTranscription);
+      eventListeners.forEach(({ type, handler }) => {
+        if (handler) esRef.current?.addEventListener(type, handler);
+      });
+    }
+  };
+
+  const unbindEventListeners = () => {
+    if (esRef.current) {
+      esRef.current.removeAllEventListeners();
     }
   };
 
@@ -34,12 +51,18 @@ export const useSSE = (lf: ListenerFunctionProps) => {
       const queryString = new URLSearchParams({
         jsonobj: JSON.stringify(queryObj),
       }).toString();
-      url += `?${queryString}&interval=15`;
+      url += `?${queryString}`;
     }
 
     const es = new EventSource(url);
     esRef.current = es;
-    initEventSource();
+    bindEventListeners();
+  };
+
+  const sendEventSourceGetRequest = (url: string) => {
+    const es = new EventSource(url);
+    esRef.current = es;
+    bindEventListeners();
   };
 
   const sendEventSourcePostRequest = (req: string, url: string) => {
@@ -52,7 +75,7 @@ export const useSSE = (lf: ListenerFunctionProps) => {
     };
     const es = new EventSource(url, options);
     esRef.current = es;
-    initEventSource();
+    bindEventListeners();
   };
 
   const terminateEventSourceConnection = () => {
@@ -62,5 +85,15 @@ export const useSSE = (lf: ListenerFunctionProps) => {
     }
   };
 
-  return { sendEventSourcePostRequest, sendEventSourceDevRequest, terminateEventSourceConnection };
+  useEffect(() => {
+    bindEventListeners();
+    return unbindEventListeners;
+  }, [eventListeners]);
+
+  return {
+    sendEventSourceGetRequest,
+    sendEventSourcePostRequest,
+    sendEventSourceDevRequest,
+    terminateEventSourceConnection,
+  };
 };
