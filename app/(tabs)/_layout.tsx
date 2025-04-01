@@ -1,6 +1,6 @@
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import React, { ReactNode } from 'react';
-import { Tabs } from 'expo-router';
+import { Link, router, Tabs } from 'expo-router';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { createDrawerNavigator, DrawerContentScrollView } from '@react-navigation/drawer';
@@ -22,118 +22,120 @@ const TabLayout = () => {
         options={{
           drawerItemStyle: { display: 'none' },
         }}
-        component={() => (
-          <Tabs
-            screenOptions={{
-              headerShown: false,
-              tabBarActiveTintColor: '#1556F0',
-            }}>
-            <Tabs.Screen
-              name="home"
-              options={{
-                title: '首页',
-                tabBarIcon: ({ focused }) =>
-                  focused ? (
-                    <Image
-                      resizeMode="contain"
-                      style={{ width: 20, height: 20 }}
-                      source={require('../../assets/imgs/indicators/home-active.png')}
-                    />
-                  ) : (
-                    <Image
-                      resizeMode="contain"
-                      style={{ width: 20, height: 20 }}
-                      source={require('../../assets/imgs/indicators/home-inactive.png')}
-                    />
-                  ),
-              }}
-            />
-            <Tabs.Screen
-              name="guide"
-              options={{
-                title: '参会指南',
-                tabBarIcon: ({ focused }) =>
-                  focused ? (
-                    <Image
-                      resizeMode="contain"
-                      style={{ width: 20, height: 20 }}
-                      source={require('../../assets/imgs/indicators/guide-active.png')}
-                    />
-                  ) : (
-                    <Image
-                      resizeMode="contain"
-                      style={{ width: 20, height: 20 }}
-                      source={require('../../assets/imgs/indicators/guide-inactive.png')}
-                    />
-                  ),
-              }}
-            />
-            <Tabs.Screen
-              name="videos"
-              options={{
-                title: '大会视频',
-                tabBarIcon: ({ focused }) =>
-                  focused ? (
-                    <Image
-                      resizeMode="contain"
-                      style={{ width: 20, height: 20 }}
-                      source={require('../../assets/imgs/indicators/video-active.png')}
-                    />
-                  ) : (
-                    <Image
-                      resizeMode="contain"
-                      style={{ width: 20, height: 20 }}
-                      source={require('../../assets/imgs/indicators/video-inactive.png')}
-                    />
-                  ),
-              }}
-            />
-            <Tabs.Screen
-              name="notes"
-              options={{
-                title: '智能笔记',
-                tabBarIcon: ({ focused }) =>
-                  focused ? (
-                    <Image
-                      resizeMode="contain"
-                      style={{ width: 20, height: 20 }}
-                      source={require('../../assets/imgs/indicators/notes-active.png')}
-                    />
-                  ) : (
-                    <Image
-                      resizeMode="contain"
-                      style={{ width: 20, height: 20 }}
-                      source={require('../../assets/imgs/indicators/notes-inactive.png')}
-                    />
-                  ),
-              }}
-            />
-            <Tabs.Screen
-              name="profile"
-              options={{
-                title: '我的',
-                tabBarIcon: ({ focused }) =>
-                  focused ? (
-                    <Image
-                      resizeMode="contain"
-                      style={{ width: 20, height: 20 }}
-                      source={require('../../assets/imgs/indicators/profile-active.png')}
-                    />
-                  ) : (
-                    <Image
-                      resizeMode="contain"
-                      style={{ width: 20, height: 20 }}
-                      source={require('../../assets/imgs/indicators/profile-inactive.png')}
-                    />
-                  ),
-              }}
-            />
-          </Tabs>
-        )}
+        component={TabsLayout}
       />
     </Drawer.Navigator>
   );
 };
+
+const TabsLayout = () => (
+  <Tabs
+    screenOptions={{
+      headerShown: false,
+      tabBarActiveTintColor: '#1556F0',
+    }}>
+    <Tabs.Screen
+      name="home"
+      options={{
+        title: '首页',
+        tabBarIcon: ({ focused }) =>
+          focused ? (
+            <Image
+              resizeMode="contain"
+              style={{ width: 20, height: 20 }}
+              source={require('../../assets/imgs/indicators/home-active.png')}
+            />
+          ) : (
+            <Image
+              resizeMode="contain"
+              style={{ width: 20, height: 20 }}
+              source={require('../../assets/imgs/indicators/home-inactive.png')}
+            />
+          ),
+      }}
+    />
+    <Tabs.Screen
+      name="guide"
+      options={{
+        title: '参会指南',
+        tabBarIcon: ({ focused }) =>
+          focused ? (
+            <Image
+              resizeMode="contain"
+              style={{ width: 20, height: 20 }}
+              source={require('../../assets/imgs/indicators/guide-active.png')}
+            />
+          ) : (
+            <Image
+              resizeMode="contain"
+              style={{ width: 20, height: 20 }}
+              source={require('../../assets/imgs/indicators/guide-inactive.png')}
+            />
+          ),
+      }}
+    />
+    <Tabs.Screen
+      name="videos"
+      options={{
+        title: '大会视频',
+        tabBarIcon: ({ focused }) =>
+          focused ? (
+            <Image
+              resizeMode="contain"
+              style={{ width: 20, height: 20 }}
+              source={require('../../assets/imgs/indicators/video-active.png')}
+            />
+          ) : (
+            <Image
+              resizeMode="contain"
+              style={{ width: 20, height: 20 }}
+              source={require('../../assets/imgs/indicators/video-inactive.png')}
+            />
+          ),
+      }}
+    />
+    <Tabs.Screen
+      name="notes"
+      options={{
+        title: '智能笔记',
+        tabBarIcon: ({ focused }) =>
+          focused ? (
+            <Image
+              resizeMode="contain"
+              style={{ width: 20, height: 20 }}
+              source={require('../../assets/imgs/indicators/notes-active.png')}
+            />
+          ) : (
+            <Image
+              resizeMode="contain"
+              style={{ width: 20, height: 20 }}
+              source={require('../../assets/imgs/indicators/notes-inactive.png')}
+            />
+          ),
+      }}
+    />
+    <Tabs.Screen
+      name="profile"
+      options={{
+        title: '我的',
+        tabBarIcon: ({ focused }) =>
+          focused ? (
+            <Image
+              resizeMode="contain"
+              style={{ width: 20, height: 20 }}
+              source={require('../../assets/imgs/indicators/profile-active.png')}
+            />
+          ) : (
+            <Image
+              resizeMode="contain"
+              style={{ width: 20, height: 20 }}
+              source={require('../../assets/imgs/indicators/profile-inactive.png')}
+            />
+          ),
+      }}
+    />
+  </Tabs>
+);
 
 const DrawerLayout = () => (
   <DrawerContentScrollView
@@ -168,7 +170,11 @@ const DrawerLayout = () => (
     </View>
 
     <OptionContainer>
-      <OptionItem icon={<Ionicons size={20} name="person-add-outline" />} label="邀请好友参会" />
+      <OptionItem
+        path="../namecard"
+        icon={<Ionicons size={20} name="person-add-outline" />}
+        label="邀请好友参会"
+      />
     </OptionContainer>
 
     <OptionContainer>
@@ -191,11 +197,13 @@ const OptionContainer = (props: { children: ReactNode }) => (
   </View>
 );
 
-const OptionItem = ({ icon, label }: { icon: ReactNode; label: string }) => (
-  <View style={{ borderRadius: 17 }} className="flex-row items-center gap-2  p-4">
-    {icon}
-    <Text className="text-xl font-light">{label}</Text>
-  </View>
+const OptionItem = ({ icon, label, path }: { icon: ReactNode; label: string; path?: string }) => (
+  <TouchableOpacity activeOpacity={1} onPress={() => (path ? router.push(path) : {})}>
+    <View style={{ borderRadius: 17 }} className="flex-row items-center gap-2  p-4">
+      {icon}
+      <Text className="text-xl font-light">{label}</Text>
+    </View>
+  </TouchableOpacity>
 );
 
 export default TabLayout;
