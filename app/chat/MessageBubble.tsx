@@ -13,21 +13,23 @@ export const MessageBubble = (props: LocalChatMessageProps) => {
         className={`${sender === AI ? 'bg-white' : 'bg-blue'}`}
         style={{
           width: sender === AI ? '100%' : 'auto',
-          borderTopRightRadius: 12,
-          borderTopLeftRadius: 12,
-          borderBottomLeftRadius: sender === USER ? 12 : 0,
-          borderBottomRightRadius: sender === USER ? 0 : 12,
+          borderTopRightRadius: 24,
+          borderTopLeftRadius: 24,
+          borderBottomLeftRadius: sender === USER ? 24 : 8,
+          borderBottomRightRadius: sender === USER ? 8 : 24,
           paddingHorizontal: 16,
+          paddingVertical: sender === AI ? 2 : 0,
           boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
         }}>
         <Markdown
           style={{
             body: {
+              paddingVertical: 0,
               flex: 1,
               width: '100%',
-              fontSize: 20,
-              lineHeight: 32,
-              fontWeight: 300,
+              fontSize: 18,
+              lineHeight: 28,
+              fontWeight: 400,
               color: sender === USER ? '#ffffff' : '',
             },
             list_item: { marginBottom: 8 },

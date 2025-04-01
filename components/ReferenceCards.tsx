@@ -21,7 +21,9 @@ const MeetingRefCard = (props: MeetingRefCardProps) => {
   const [year, month, day] = date.split('-');
 
   return (
-    <View style={{ borderRadius: 17 }} className="relative gap-1.5 px-4 py-4 pb-4">
+    <View
+      style={{ borderRadius: 17, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+      className="relative gap-1.5 px-4 py-4 pb-4">
       <LinearGradient
         colors={['#158AF030', '#ffffff']}
         start={{ x: 0, y: 0 }}
@@ -84,7 +86,13 @@ const TranscriptionRefCard = ({
   const startTimeStr = startMM.padStart(2, '0') + ':' + startSS.padStart(2, '0');
   const endTimeStr = endMM.padStart(2, '0') + ':' + endSS.padStart(2, '0');
   return (
-    <View style={{ borderRadius: 17 }} className="relative flex-row items-center">
+    <View
+      style={{
+        borderRadius: 17,
+
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+      }}
+      className="relative flex-row items-center">
       <LinearGradient
         locations={[0, 0.32, 1]}
         colors={['#1556f050', '#90aff850', '#ffffff']}

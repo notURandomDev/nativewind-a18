@@ -3,31 +3,32 @@ import React from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { chatHistoryData1, chatHistoryData2, chatHistoryData3 } from 'data/chat';
 
-interface historyListSectionProps {
+interface HistoryListSectionProps {
   label: string;
   data: Array<any>;
 }
 
-const HistoryListSection = ({ label, data }: historyListSectionProps) => (
+const HistoryListSection = ({ label, data }: HistoryListSectionProps) => (
   <View className="gap-4">
     <Text className="text-xl text-gray-solid">{label}</Text>
     <FlatList
       scrollEnabled={false}
       contentContainerStyle={{ gap: 20 }}
       data={data}
-      renderItem={({ item: { subject, date } }) => <HistoryListItem subject={subject} />}
+      renderItem={({ item }) => <HistoryListItem {...item} />}
     />
   </View>
 );
 
 interface historyListItemProp {
-  subject: string;
+  title: string;
+  chatId: number;
 }
 
-const HistoryListItem = ({ subject }: historyListItemProp) => (
+const HistoryListItem = ({ title, chatId }: historyListItemProp) => (
   <View className="flex-row items-center gap-4">
     <Ionicons name="chatbubble-outline" size={24} color="black" />
-    <Text className="text-xl">{subject}</Text>
+    <Text className="text-xl">{title}</Text>
   </View>
 );
 
