@@ -7,6 +7,7 @@ import ButtonAllinOne from 'components/ButtonAllinOne';
 import * as Haptics from 'expo-haptics';
 import { ScrollView } from 'react-native-gesture-handler';
 import { NoteItem } from 'components/NoteItem';
+import { NoteCategory } from 'storage/noteStorage';
 
 const NOTE_ITEMS = [
   {
@@ -47,7 +48,7 @@ const NOTE_ITEMS = [
 ];
 
 interface NoteItemProps {
-  category?: 'PRIVATE' | 'WORK' | 'MEETING' | 'NEW' | 'DEFAULT' | 'UNCATEGORIZED';
+  category?: NoteCategory;
   updateSelectedNote?: () => void;
   cb?: () => void;
 }

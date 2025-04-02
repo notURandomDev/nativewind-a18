@@ -6,18 +6,35 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import { createNoteData } from 'storage/noteStorage';
 
 const NewNote = () => {
-  const handleSaveNote = () => {
+  const [title, setTitle] = useState('未命名笔记');
+  const [textInputValue, setTextInputValue] = useState('');
+
+  const handleSaveNote = async () => {
+    await createNoteData(textInputValue, 'personal', title);
     router.back();
+  };
+
+  const handleBack = () => {
+    if (title === '未命名笔记' && textInputValue === '') {
+      router.back();
+    } else {
+      Alert.alert('您有未保存的笔记', '确定要退出吗？', [
+        { text: '取消', style: 'cancel' },
+        { text: '确定', style: 'default', onPress: () => router.back() },
+      ]);
+    }
   };
 
   return (
@@ -37,31 +54,31 @@ const NewNote = () => {
       />
       <TouchableOpacity activeOpacity={1} onPress={Keyboard.dismiss}>
         <View className="flex-row justify-between px-4 py-3">
-          <ButtonAllinOne variant="ghost" onPress={() => router.back()}>
+          <ButtonAllinOne variant="ghost" onPress={handleBack}>
             <Ionicons size={24} name="chevron-back-outline" />
           </ButtonAllinOne>
           <View className="flex-row items-center gap-2">
             <Feather name="edit-3" size={24} color="black" />
-            <Text className="text-2xl font-medium">{`标题`}</Text>
+            <TextInput onChangeText={setTitle} value={title} className="text-2xl font-medium" />
           </View>
-          <ButtonAllinOne variant="ghost" onPress={handleSaveNote}>
-            <Ionicons size={24} name="save-outline" />
+          <ButtonAllinOne disabled={textInputValue === ''} variant="ghost" onPress={handleSaveNote}>
+            <Ionicons
+              color={textInputValue === '' ? '#8B8B8B' : '#000000'}
+              size={24}
+              name="save-outline"
+            />
           </ButtonAllinOne>
         </View>
       </TouchableOpacity>
-      <MyTextInput />
+      <TextInput
+        onChangeText={setTextInputValue}
+        value={textInputValue}
+        multiline={true}
+        placeholder="字句之间，写下你的想法"
+        style={{ paddingHorizontal: 28, paddingVertical: 12, height: '50%' }}
+        className="text-2xl font-light"
+      />
     </SafeAreaView>
-  );
-};
-
-const MyTextInput = () => {
-  return (
-    <TextInput
-      multiline={true}
-      placeholder="字句之间，写下你的想法"
-      style={{ paddingHorizontal: 28, paddingVertical: 12, height: '50%' }}
-      className="text-2xl font-light"
-    />
   );
 };
 

@@ -1,10 +1,11 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import MyTextInput from 'components/MyTextInput';
 import { NoteItem, NoteItemProps } from 'components/NoteItem';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { getNoteData, NoteProps } from 'storage/noteStorage';
 
 const NOTES_DATA: Array<NoteItemProps> = [
   {
@@ -38,6 +39,21 @@ const NOTES_DATA: Array<NoteItemProps> = [
 ];
 
 const MyNotes = () => {
+  const [notes, setNotes] = useState<NoteProps[]>([]);
+
+  useEffect(() => {
+    getNoteDataAsync();
+  }, []);
+
+  useEffect(() => {
+    console.log('Notes:', notes);
+  }, [notes]);
+
+  const getNoteDataAsync = async () => {
+    const res = await getNoteData();
+    setNotes(res);
+  };
+
   return (
     <View className="flex-1" style={{ paddingTop: 16 }}>
       <View className="px-4 text-blue">
