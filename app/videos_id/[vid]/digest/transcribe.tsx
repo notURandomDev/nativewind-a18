@@ -12,7 +12,10 @@ const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
 import TRANSCRIPTION_DATA from '../../../../test/enhance_output_cards.json';
 import { MyCustomEvents } from 'hooks/useSSE';
 import { useSSE } from 'hooks/useSSE';
-import CustomContextMenu, { CustomContextMenuProps } from 'components/ContextMenu';
+import CustomContextMenu, {
+  CustomContextMenuCbProps,
+  CustomContextMenuProps,
+} from 'components/ContextMenu';
 import {
   deleteTranscriptionData,
   getTranscriptionData,
@@ -53,15 +56,6 @@ interface KnowledgeDataProps {
   positions: Array<Array<number>>;
 }
 
-/* interface SentenceProps {
-  sentenceId: string;
-  text: string;
-  startTime: number;
-  endTime: number;
-  card: string;
-} */
-
-// new scheme
 interface SentenceProps {
   beginTime?: number;
   text: string;
@@ -70,7 +64,7 @@ interface SentenceProps {
   card?: string;
 }
 
-type NoteTags = 'none' | 'question' | 'todo' | 'mark';
+export type NoteTags = 'none' | 'question' | 'todo' | 'mark';
 export interface TranscriptionProps {
   _final: boolean;
   data: SentenceProps;
@@ -288,7 +282,7 @@ const HighlightableParagraph = ({
 
   const textDecorationStyles: { [key in NoteTags]: TextStyle } = {
     none: {
-      textDecorationLine: 'none',
+      backgroundColor: isActive ? '#F5F8FF' : '',
     },
     mark: {
       textDecorationStyle: 'double',
@@ -312,9 +306,10 @@ const HighlightableParagraph = ({
     setIsActive(false);
   };
 
-  const cbs: CustomContextMenuProps = {
+  const cbs: CustomContextMenuCbProps = {
     onMark: () => withActiveCb(() => modifyNoteTagCb(sentence.index, 'mark')),
     onQuestion: () => withActiveCb(() => modifyNoteTagCb(sentence.index, 'question')),
+    onTodo: () => withActiveCb(() => modifyNoteTagCb(sentence.index, 'todo')),
     onReset: () => withActiveCb(() => modifyNoteTagCb(sentence.index, 'none')),
   };
 
@@ -340,7 +335,7 @@ const HighlightableParagraph = ({
         <Text style={[{ lineHeight: 26 }, textDecorationStyles[noteTag]]}>
           <Text>{sentence.text}</Text>;
         </Text>
-        {isActive && <CustomContextMenu {...cbs} />}
+        {isActive && <CustomContextMenu cbs={cbs} currentTag={noteTag} />}
       </TouchableOpacity>
     );
   }
@@ -373,7 +368,7 @@ const HighlightableParagraph = ({
           )
         }
       </Text>
-      {isActive && <CustomContextMenu {...cbs} />}
+      {isActive && <CustomContextMenu cbs={cbs} currentTag={noteTag} />}
     </TouchableOpacity>
   );
 };
