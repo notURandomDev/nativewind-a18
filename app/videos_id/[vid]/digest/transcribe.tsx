@@ -13,6 +13,11 @@ import TRANSCRIPTION_DATA from '../../../../test/enhance_output_cards.json';
 import { MyCustomEvents } from 'hooks/useSSE';
 import { useSSE } from 'hooks/useSSE';
 import CustomContextMenu, { CustomContextMenuProps } from 'components/ContextMenu';
+import {
+  deleteTranscriptionData,
+  getTranscriptionData,
+  updateTranscriptionData,
+} from 'storage/transcriptionStorage';
 TRANSCRIPTION_DATA.sort((a, b) => a.sentenceId - b.sentenceId);
 
 const SSE_RES_4_TESTING_NO_CARDS = {
@@ -66,7 +71,7 @@ interface SentenceProps {
 }
 
 type NoteTags = 'none' | 'question' | 'todo' | 'mark';
-interface TranscriptionProps {
+export interface TranscriptionProps {
   _final: boolean;
   data: SentenceProps;
   timestamp: bigint;
@@ -75,12 +80,12 @@ interface TranscriptionProps {
 }
 
 const RealtimeTranscribe = () => {
-  const [transcription, setTranscription] = useState<Array<TranscriptionProps>>([]);
+  const [transcription, setTranscription] = useState<TranscriptionProps[] | []>([]);
   // const [transcription, setTranscription] = useState('');
   const [currentTranscription, setCurrentTranscription] = useState<TranscriptionProps | null>();
   const [loading, setLoading] = useState(false);
 
-  const taskKeyRef = useRef<string | null>(null);
+  const taskKeyRef = useRef<string>('temporary-task-key');
   const scrollviewRef = useRef<ScrollView>(null);
 
   const onMeetingCreated = (event: EventSourceEvent<MyCustomEvents>) => {
@@ -122,6 +127,7 @@ const RealtimeTranscribe = () => {
     }
   };
   const onClose = () => {
+    updateTranscriptionDataAsync();
     console.log('on es close');
   };
 
@@ -136,8 +142,8 @@ const RealtimeTranscribe = () => {
     });
 
   const handleNoteTagModify: ModifyNoteTagCbProps = (index, newNoteTag) => {
-    setTranscription((prev) =>
-      prev.map((item) => {
+    setTranscription((prev) => {
+      const newData = prev.map((item) => {
         if (item.data.index === index) {
           return {
             ...item,
@@ -145,8 +151,10 @@ const RealtimeTranscribe = () => {
           };
         }
         return item;
-      })
-    );
+      });
+      updateTranscriptionData(taskKeyRef.current, newData);
+      return newData;
+    });
   };
 
   const MemoizedParagraphs = useMemo(
@@ -175,12 +183,41 @@ const RealtimeTranscribe = () => {
   };
 
   useEffect(() => {
-    return endES;
+    return () => {
+      endES();
+    };
   }, []);
 
   useEffect(() => {
     console.log('currentTranscription:', currentTranscription);
   }, [currentTranscription]);
+
+  useEffect(() => {
+    getTranscriptionDataAsync();
+  }, [taskKeyRef.current]);
+
+  const getTranscriptionDataAsync = async () => {
+    const res = await getTranscriptionData(taskKeyRef.current);
+    setTranscription(res);
+  };
+
+  const updateTranscriptionDataAsync = () => {
+    updateTranscriptionData(taskKeyRef.current, transcription);
+  };
+
+  const deleteTranscriptionDataAsync = async () => {
+    Alert.alert(taskKeyRef.current, `你确定要删除转录数据吗？`, [
+      { text: '取消', style: 'cancel' },
+      {
+        text: '删除',
+        style: 'destructive',
+        onPress: async () => {
+          await deleteTranscriptionData(taskKeyRef.current);
+          setTranscription([]);
+        },
+      },
+    ]);
+  };
 
   return (
     <ScrollView
@@ -200,14 +237,15 @@ const RealtimeTranscribe = () => {
             <ButtonAllinOne disabled={loading} onPress={startES}>
               <Text className="text-white">开始测试</Text>
             </ButtonAllinOne>
-            <ButtonAllinOne onPress={endES} variant="outline">
-              <Text>结束测试</Text>
+            <ButtonAllinOne variant="ghost" onPress={deleteTranscriptionDataAsync}>
+              <Text style={{ color: '#F66348' }}>删除转录数据</Text>
             </ButtonAllinOne>
+            <ButtonAllinOne onPress={endES} variant="outline" label="结束测试" />
           </View>
           <View
             className="flex-1 gap-3 bg-white px-4"
             style={{ paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10 }}>
-            <Text className="text-lg font-medium">{'SSE测试'}</Text>
+            <Text className="text-lg font-medium">{`taskKey: ${taskKeyRef.current}`}</Text>
             {MemoizedParagraphs}
             {currentTranscription && (
               <View className="bg-blue-faint">

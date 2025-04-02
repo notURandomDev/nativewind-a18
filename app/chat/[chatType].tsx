@@ -10,7 +10,7 @@ import {
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-import { clearChat, loadChat, saveChat } from 'storage/fakeDatabase';
+import { clearChat, loadChat, saveChat } from 'storage/chatStorage';
 import * as Progress from 'react-native-progress';
 import EventSource, { EventSourceEvent, EventSourceListener } from 'react-native-sse';
 import { MeetingRefCard, TranscriptionRefCard } from 'components/ReferenceCards';

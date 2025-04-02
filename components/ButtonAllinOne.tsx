@@ -67,7 +67,7 @@ const ButtonAllinOne = ({
       activeOpacity={1}
       className={combinedStyles}
       onPress={disabled ? () => {} : handlePress}>
-      {label && <Text className={`${textStyles[variant]} ${textColor}`}>{label}</Text>}
+      {label && <Text className={twMerge(textStyles[variant], textColor)}>{label}</Text>}
       {children}
     </TouchableOpacity>
   );

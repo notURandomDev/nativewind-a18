@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
  * @param chatId 测试的时候，chatId为1
  * @param messages 以数组的形式传入，存储时会转成字符串
  */
-const saveChat = async (chatId, messages) => {
+export const saveChat = async (chatId, messages) => {
   try {
     await AsyncStorage.setItem(`chat_${chatId}`, JSON.stringify(messages));
     console.log(`[${Date.now().toString()}] Messages Saved!`);
@@ -20,7 +20,7 @@ const saveChat = async (chatId, messages) => {
  *
  * @param chatId 测试的时候，chatId为1
  */
-const loadChat = async (chatId) => {
+export const loadChat = async (chatId) => {
   try {
     const data = await AsyncStorage.getItem(`chat_${chatId}`);
     console.log(`[${Date.now().toString()}] Messages Fetched!`);
@@ -30,12 +30,10 @@ const loadChat = async (chatId) => {
   }
 };
 
-const clearChat = async (chatId) => {
+export const clearChat = async (chatId) => {
   try {
     await AsyncStorage.removeItem(`chat_${chatId}`);
   } catch (e) {
     console.error(e);
   }
 };
-
-export { saveChat, loadChat, clearChat };
