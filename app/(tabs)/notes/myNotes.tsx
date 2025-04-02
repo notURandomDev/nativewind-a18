@@ -3,6 +3,8 @@ import React from 'react';
 import MyTextInput from 'components/MyTextInput';
 import { NoteItem, NoteItemProps } from 'components/NoteItem';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { router } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 
 const NOTES_DATA: Array<NoteItemProps> = [
   {
@@ -47,6 +49,10 @@ const MyNotes = () => {
         ))}
       </ScrollView>
       <TouchableOpacity
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          router.push('../../../newNote');
+        }}
         activeOpacity={1}
         style={{
           paddingVertical: 16,

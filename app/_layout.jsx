@@ -45,6 +45,7 @@ export default function RootLayout() {
           <Stack.Screen name="search" options={{ headerShown: false }} />
           <Stack.Screen name="search_result/[search_keyword]" options={{ headerShown: false }} />
           <Stack.Screen name="namecard" options={{ headerShown: false }} />
+          <Stack.Screen name="newNote" options={{ headerShown: false }} />
         </Stack>
       </MenuProvider>
     </GestureHandlerRootView>
