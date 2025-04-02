@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ColorValue } from 'react-native';
+import { View, Text, TouchableOpacity, ColorValue, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import MyTextInput from 'components/MyTextInput';
 
