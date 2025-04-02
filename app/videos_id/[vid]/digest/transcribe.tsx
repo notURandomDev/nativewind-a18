@@ -1,9 +1,10 @@
-import { View, Text, ScrollView, Alert, TextStyle } from 'react-native';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { View, Text, ScrollView, Alert, TextStyle, Image, TouchableOpacity } from 'react-native';
+import React, { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import TintedBackground from 'components/TintedBackground';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 import BottomIndicator from 'components/BottomIndicator';
 import EventSource, { EventSourceEvent } from 'react-native-sse';
+import * as Haptics from 'expo-haptics';
 
 const appKey = process.env.EXPO_PUBLIC_APP_KEY;
 const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
@@ -11,6 +12,7 @@ const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
 import TRANSCRIPTION_DATA from '../../../../test/enhance_output_cards.json';
 import { MyCustomEvents } from 'hooks/useSSE';
 import { useSSE } from 'hooks/useSSE';
+import CustomContextMenu, { CustomContextMenuProps } from 'components/ContextMenu';
 TRANSCRIPTION_DATA.sort((a, b) => a.sentenceId - b.sentenceId);
 
 const SSE_RES_4_TESTING_NO_CARDS = {
@@ -60,15 +62,16 @@ interface SentenceProps {
   text: string;
   index: number;
   taskKey: string;
-  id: string;
   card?: string;
 }
 
+type NoteTags = 'none' | 'question' | 'todo' | 'mark';
 interface TranscriptionProps {
   _final: boolean;
   data: SentenceProps;
   timestamp: bigint;
   type: 'raw' | 'enhanced';
+  noteTag: NoteTags;
 }
 
 const RealtimeTranscribe = () => {
@@ -132,10 +135,26 @@ const RealtimeTranscribe = () => {
       onMeetingCreated,
     });
 
+  const handleNoteTagModify: ModifyNoteTagCbProps = (index, newNoteTag) => {
+    setTranscription((prev) =>
+      prev.map((item) => {
+        if (item.data.index === index) {
+          return {
+            ...item,
+            noteTag: newNoteTag,
+          };
+        }
+        return item;
+      })
+    );
+  };
+
   const MemoizedParagraphs = useMemo(
     () =>
       transcription.map((item) => (
         <HighlightableParagraph
+          modifyNoteTagCb={handleNoteTagModify}
+          noteTag={item.noteTag}
           type={item.type}
           key={`paragraph-${item.timestamp}`}
           sentence={item.data}
@@ -165,6 +184,7 @@ const RealtimeTranscribe = () => {
 
   return (
     <ScrollView
+      onContentSizeChange={() => scrollviewRef.current?.scrollToEnd({ animated: true })}
       ref={scrollviewRef}
       contentContainerStyle={{
         display: 'flex',
@@ -190,8 +210,10 @@ const RealtimeTranscribe = () => {
             <Text className="text-lg font-medium">{'SSE测试'}</Text>
             {MemoizedParagraphs}
             {currentTranscription && (
-              <View className="bg-blue">
+              <View className="bg-blue-faint">
                 <HighlightableParagraph
+                  modifyNoteTagCb={handleNoteTagModify}
+                  noteTag="none"
                   type={currentTranscription.type}
                   key={`paragraph-${currentTranscription.timestamp}`}
                   sentence={currentTranscription.data}
@@ -207,29 +229,81 @@ const RealtimeTranscribe = () => {
   );
 };
 
+interface ModifyNoteTagCbProps {
+  (index: number, newNoteTag: NoteTags): void;
+}
+
 interface HighlightableParagraphProps {
   sentence: SentenceProps;
   type: 'enhanced' | 'raw';
+  noteTag: NoteTags;
+  modifyNoteTagCb: ModifyNoteTagCbProps;
 }
 
-const HighlightableParagraph = ({ sentence, type }: HighlightableParagraphProps) => {
+const HighlightableParagraph = ({
+  sentence,
+  type,
+  noteTag = 'none',
+  modifyNoteTagCb,
+}: HighlightableParagraphProps) => {
   const [isActive, setIsActive] = useState(false);
 
-  const textDecorationStyles: TextStyle = {
-    textDecorationLine: 'underline',
-    textDecorationColor: '#FFD84E',
+  const textDecorationStyles: { [key in NoteTags]: TextStyle } = {
+    none: {
+      textDecorationLine: 'none',
+    },
+    mark: {
+      textDecorationStyle: 'double',
+      textDecorationLine: 'underline',
+      textDecorationColor: '#F66348',
+    },
+    todo: {
+      textDecorationStyle: 'solid',
+      textDecorationLine: 'underline',
+      textDecorationColor: '#FFD84E',
+    },
+    question: {
+      textDecorationStyle: 'dotted',
+      textDecorationLine: 'underline',
+      textDecorationColor: '#00BBFF',
+    },
+  };
+
+  const withActiveCb = (fn: () => void) => {
+    fn();
+    setIsActive(false);
+  };
+
+  const cbs: CustomContextMenuProps = {
+    onMark: () => withActiveCb(() => modifyNoteTagCb(sentence.index, 'mark')),
+    onQuestion: () => withActiveCb(() => modifyNoteTagCb(sentence.index, 'question')),
+    onReset: () => withActiveCb(() => modifyNoteTagCb(sentence.index, 'none')),
+  };
+
+  const handlePress = () => {
+    if (isActive) setIsActive(false);
+  };
+
+  const handleLongPress = () => {
+    setIsActive(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+    console.log('on-long-press');
   };
 
   const hasTerms = sentence?.card && JSON.parse(sentence.card)['terms'].length;
   // 如果是未增强过的转录数据，或增强过的转录数据中知识卡片数组为空，就直接将原句返回
   if (type === 'raw' || !hasTerms) {
     return (
-      <Text
-        onPressOut={() => setIsActive(false)}
-        style={[{ lineHeight: 26 }, isActive && textDecorationStyles]}
-        onLongPress={() => setIsActive(true)}>
-        <Text>{sentence.text}</Text>;
-      </Text>
+      <TouchableOpacity
+        className="relative"
+        activeOpacity={1}
+        onLongPress={handleLongPress}
+        onPress={handlePress}>
+        <Text style={[{ lineHeight: 26 }, textDecorationStyles[noteTag]]}>
+          <Text>{sentence.text}</Text>;
+        </Text>
+        {isActive && <CustomContextMenu {...cbs} />}
+      </TouchableOpacity>
     );
   }
 
@@ -237,28 +311,32 @@ const HighlightableParagraph = ({ sentence, type }: HighlightableParagraphProps)
   const segmentedSentence = segmentSentence(sentence);
 
   return (
-    <Text
-      onPressOut={() => setIsActive(false)}
-      style={[{ lineHeight: 26 }, isActive && textDecorationStyles]}
-      onLongPress={() => setIsActive(true)}>
-      {
-        // 对切片数组进行遍历
-        // 通过判断是不是知识卡片，返回相应的样式
-        segmentedSentence.map((segment) =>
-          segment.isTerm ? (
-            <Text
-              key={segment.segmentId}
-              suppressHighlighting={true}
-              onPress={() => Alert.alert(segment.text, segment.explanation)}
-              className="text-blue">
-              {segment.text}
-            </Text>
-          ) : (
-            <Text key={segment.segmentId}>{segment.text}</Text>
+    <TouchableOpacity
+      className="relative"
+      activeOpacity={1}
+      onLongPress={handleLongPress}
+      onPress={handlePress}>
+      <Text style={[{ lineHeight: 26 }, isActive && textDecorationStyles[noteTag]]}>
+        {
+          // 对切片数组进行遍历
+          // 通过判断是不是知识卡片，返回相应的样式
+          segmentedSentence.map((segment) =>
+            segment.isTerm ? (
+              <Text
+                key={segment.segmentId}
+                suppressHighlighting={true}
+                onPress={() => Alert.alert(segment.text, segment.explanation)}
+                className="text-blue">
+                {segment.text}
+              </Text>
+            ) : (
+              <Text key={segment.segmentId}>{segment.text}</Text>
+            )
           )
-        )
-      }
-    </Text>
+        }
+      </Text>
+      {isActive && <CustomContextMenu {...cbs} />}
+    </TouchableOpacity>
   );
 };
 
@@ -290,7 +368,7 @@ const segmentSentence = (sentence: SentenceProps) => {
     // 如果两个term不是连在一起的，才用对plainText进行切割
     if (plainTextStartIndex !== termTextStartIndex) {
       const plainText = sentence.text.slice(plainTextStartIndex, termTextStartIndex);
-      const segmentId = `sentence-${sentence.id}-segment-${index}-plain-${plainTextStartIndex}`;
+      const segmentId = `sentence-${sentence.index}-segment-${index}-plain-${plainTextStartIndex}`;
       segments.push({
         text: plainText,
         isTerm: false,
@@ -299,7 +377,7 @@ const segmentSentence = (sentence: SentenceProps) => {
     }
 
     // 2. 再将当前遍历到的知识卡片push到切片数组中
-    const segmentId = `sentence-${sentence.id}-segment-${index}-term`;
+    const segmentId = `sentence-${sentence.index}-segment-${index}-term`;
     segments.push({
       text: term.term,
       isTerm: true,
@@ -314,7 +392,7 @@ const segmentSentence = (sentence: SentenceProps) => {
   // 如果最后一张知识卡片不是位于一句话的末尾，要将最后一张知识卡片之后的普通文本进行切片，并push到切片数组中
   if (plainTextStartIndex < sentence.text.length) {
     const remainingText = sentence.text.slice(plainTextStartIndex);
-    const segmentId = `sentence-${sentence.id}-segment-last-text`;
+    const segmentId = `sentence-${sentence.index}-segment-last-text`;
     segments.push({
       text: remainingText,
       isTerm: false,

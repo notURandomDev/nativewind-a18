@@ -7,6 +7,9 @@ import { useFonts } from 'expo-font';
 import { useEffect } from 'react';
 import { Text, View } from 'react-native';
 
+// import { HoldMenuProvider } from 'react-native-hold-menu';
+import { MenuProvider } from 'react-native-popup-menu';
+
 SplashScreen.preventAutoHideAsync();
 
 const CustomHeaderTitle = () => (
@@ -31,17 +34,19 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="chat"
-          options={{ presentation: 'modal', headerShown: false, gestureEnabled: false }}
-        />
-        <Stack.Screen name="videos_id/[vid]" options={{ headerShown: false }} />
-        <Stack.Screen name="search" options={{ headerShown: false }} />
-        <Stack.Screen name="search_result/[search_keyword]" options={{ headerShown: false }} />
-        <Stack.Screen name="namecard" options={{ headerShown: false }} />
-      </Stack>
+      <MenuProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="chat"
+            options={{ presentation: 'modal', headerShown: false, gestureEnabled: false }}
+          />
+          <Stack.Screen name="videos_id/[vid]" options={{ headerShown: false }} />
+          <Stack.Screen name="search" options={{ headerShown: false }} />
+          <Stack.Screen name="search_result/[search_keyword]" options={{ headerShown: false }} />
+          <Stack.Screen name="namecard" options={{ headerShown: false }} />
+        </Stack>
+      </MenuProvider>
     </GestureHandlerRootView>
   );
 }

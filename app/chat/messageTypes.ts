@@ -18,7 +18,7 @@ export interface AgentResponseDataProps {
   text?: string;
   message_id: string;
   timestamp: number;
-  reference?: Reference4MeetingProps[];
+  references?: Reference4MeetingProps[];
 }
 
 export interface AgentResponseProps {
@@ -50,9 +50,9 @@ export interface LocalChatMessageProps extends LocalMessageBaseProps {
 }
 
 export interface LocalMeetingRefMessageProps extends LocalMessageBaseProps {
-  reference: Reference4MeetingProps;
+  references: Reference4MeetingProps;
 }
 
 export interface LocalTranscriptionRefMessageProps extends LocalMessageBaseProps {
-  reference: Reference4TranscriptionProps;
+  references: Reference4TranscriptionProps;
 }

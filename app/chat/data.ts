@@ -5,7 +5,7 @@ export const TEST_DATA_REF_MEETING: import('./messageTypes').AgentResponseProps 
   data: {
     message_id: '7634640000004581',
     timestamp: 0,
-    reference: [
+    references: [
       {
         meetingId: '5',
         title: '技术展示与演示',
