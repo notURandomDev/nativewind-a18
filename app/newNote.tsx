@@ -1,28 +1,21 @@
-import {
-  View,
-  Text,
-  TextInput,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  Keyboard,
-  Alert,
-} from 'react-native';
-import React, { useState } from 'react';
+import { View, TextInput, TouchableOpacity, Keyboard, Alert } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { createNoteData } from 'storage/noteStorage';
+import { createNote } from 'storage/noteStorage';
 
 const NewNote = () => {
   const [title, setTitle] = useState('未命名笔记');
   const [textInputValue, setTextInputValue] = useState('');
 
+  const textInputRef = useRef<TextInput>(null);
+
   const handleSaveNote = async () => {
-    await createNoteData(textInputValue, 'personal', title);
+    await createNote(textInputValue.trim(), 'default', title);
     router.back();
   };
 
@@ -36,6 +29,10 @@ const NewNote = () => {
       ]);
     }
   };
+
+  useEffect(() => {
+    setTimeout(() => textInputRef.current?.focus(), 500);
+  }, []);
 
   return (
     <SafeAreaView className="relative flex-1 bg-white">
@@ -71,6 +68,7 @@ const NewNote = () => {
         </View>
       </TouchableOpacity>
       <TextInput
+        ref={textInputRef}
         onChangeText={setTextInputValue}
         value={textInputValue}
         multiline={true}

@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Terminal } from 'utils/terminalLog';
 
 const LOG_PREFIX = 'ASYNC-STORAGE:';
 
@@ -12,8 +13,10 @@ export type NoteProps = {
   timestamp: number;
 };
 
-export const createNoteData = async (content: string, category: NoteCategory, title: string) => {
-  const LOG_CONTENT = 'Creating Note Data';
+const terminal = Terminal(LOG_PREFIX);
+
+export const createNote = async (content: string, category: NoteCategory, title: string) => {
+  const LOG_CONTENT = 'Creating Note';
   const timestamp = Date.now();
   const note: NoteProps = { content, id: `note-${timestamp}`, timestamp, category, title };
   try {
@@ -24,24 +27,78 @@ export const createNoteData = async (content: string, category: NoteCategory, ti
   }
 };
 
+export const updateNoteCategory = async (noteId: string, newCategory: NoteCategory) => {
+  const LOG_CONTENT = 'Updating Note for' + noteId;
+  try {
+    const oldNote: NoteProps = await AsyncStorage.getItem(noteId).then(
+      (note) => note && JSON.parse(note)
+    );
+    const newNote = { ...oldNote, category: newCategory };
+    await AsyncStorage.setItem(noteId, JSON.stringify(newNote));
+    terminal.success(LOG_CONTENT);
+  } catch (e) {
+    terminal.error(LOG_CONTENT, e);
+  }
+};
+
+const getNoteIds: () => Promise<string[] | []> = async () => {
+  const LOG_CONTENT = 'Getting Note Keys';
+  try {
+    let noteIds: string[] = [];
+    const noteKeys = await AsyncStorage.getAllKeys();
+    if (noteKeys.length) noteIds = noteKeys.filter((key) => key.startsWith('note-', 0));
+    console.log(LOG_PREFIX + 'Success' + LOG_CONTENT, noteIds);
+    return noteIds;
+  } catch (e) {
+    console.error(LOG_PREFIX + 'Error' + LOG_CONTENT, e);
+    return [];
+  }
+};
+
 type GetNoteDataProps = () => Promise<NoteProps[] | []>;
-export const getNoteData: GetNoteDataProps = async () => {
-  const LOG_CONTENT = 'Getting Note Data';
+export const getNotes: GetNoteDataProps = async () => {
+  const LOG_CONTENT = ' Getting Notes';
 
   try {
-    const noteIds = await AsyncStorage.getAllKeys().then((allKeys) =>
-      allKeys.filter((key) => key.startsWith('note-', 0))
-    );
+    const noteIds = await getNoteIds();
     if (!noteIds.length) return [];
 
-    const res = await Promise.all(
+    const notes = await Promise.all(
       noteIds.map(
         async (noteId) =>
           await AsyncStorage.getItem(noteId).then((note) => (note ? JSON.parse(note) : null))
       )
     );
-    console.log(LOG_PREFIX + 'Success' + LOG_CONTENT, res);
-    return res.filter((note): note is NoteProps => note !== null);
+    console.log(LOG_PREFIX + 'Success' + LOG_CONTENT, notes);
+    return notes
+      .filter((note): note is NoteProps => note !== null)
+      .sort((noteA, noteB) => noteB.timestamp - noteA.timestamp);
+  } catch (e) {
+    console.error(LOG_PREFIX + 'Error' + LOG_CONTENT, e);
+    return [];
+  }
+};
+
+export const deleteNote = async (noteId: string) => {
+  const LOG_CONTENT = ' Deleting Note for ' + noteId;
+  try {
+    await AsyncStorage.removeItem(noteId);
+    terminal.success(LOG_CONTENT);
+  } catch (e) {
+    terminal.error(LOG_CONTENT, e);
+  }
+};
+
+export const deleteAllNotes = async () => {
+  const LOG_CONTENT = ' Deleting Notes';
+  const noteIds = await getNoteIds();
+  try {
+    await Promise.all(
+      noteIds.map(async (noteId) => {
+        await AsyncStorage.removeItem(noteId);
+      })
+    );
+    console.log(LOG_PREFIX + 'Success' + LOG_CONTENT);
   } catch (e) {
     console.error(LOG_PREFIX + 'Error' + LOG_CONTENT, e);
   }

@@ -5,9 +5,12 @@ import { NoteItem, NoteItemProps } from 'components/NoteItem';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { getNoteData, NoteProps } from 'storage/noteStorage';
+import { deleteAllNotes, getNotes, NoteProps } from 'storage/noteStorage';
+import TouchableIcon from 'components/TouchableIcon';
+import { timestampConverter } from 'utils/timestampConverter';
+import { useModal } from 'hooks/useModal';
 
-const NOTES_DATA: Array<NoteItemProps> = [
+/* const NOTES_DATA: Array<NoteItemProps> = [
   {
     id: 1,
     title: '云计算与AI融合：共创数字智能新时代',
@@ -36,33 +39,62 @@ const NOTES_DATA: Array<NoteItemProps> = [
     preview: '随着大语言模型与云的结合，技...',
     category: 'UNCATEGORIZED',
   },
-];
+]; */
 
 const MyNotes = () => {
   const [notes, setNotes] = useState<NoteProps[]>([]);
 
   useEffect(() => {
-    getNoteDataAsync();
+    getNotesAsync();
   }, []);
 
   useEffect(() => {
     console.log('Notes:', notes);
   }, [notes]);
 
-  const getNoteDataAsync = async () => {
-    const res = await getNoteData();
+  const getNotesAsync = async () => {
+    const res = await getNotes();
     setNotes(res);
+  };
+
+  const deleteNotesAsync = async () => {
+    await deleteAllNotes();
+    setNotes([]);
   };
 
   return (
     <View className="flex-1" style={{ paddingTop: 16 }}>
-      <View className="px-4 text-blue">
-        <MyTextInput placeholder="搜索笔记内容" size="sm" />
+      <View className="flex-row items-center gap-4 px-4">
+        <TouchableIcon onPress={getNotesAsync}>
+          <Ionicons size={24} name="refresh-outline" />
+        </TouchableIcon>
+        <View className="flex-1">
+          <MyTextInput placeholder="搜索笔记内容" size="sm" />
+        </View>
+        <TouchableIcon onPress={deleteNotesAsync}>
+          <Ionicons color="red" size={24} name="trash-outline" />
+        </TouchableIcon>
       </View>
       <ScrollView contentContainerClassName="gap-4 px-4" className="relative py-5">
-        {NOTES_DATA.map((note) => (
+        {/*  {NOTES_DATA.map((note) => (
           <NoteItem category={note.category} />
-        ))}
+        ))} */}
+        {notes.map(({ title, content, timestamp, category, id }) => {
+          const { year, month, day, hour, minute } = timestampConverter(timestamp);
+          const date = `${year}年${month}月${day}日 ${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+          return (
+            <NoteItem
+              id={id}
+              key={`note-${id}`}
+              date={date}
+              preview={content}
+              title={title}
+              category={category}
+              onDelete={getNotesAsync}
+              onCategorize={() => setTimeout(getNotesAsync, 100)}
+            />
+          );
+        })}
       </ScrollView>
       <TouchableOpacity
         onPress={() => {

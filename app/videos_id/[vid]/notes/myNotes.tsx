@@ -3,11 +3,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import MyTextInput from 'components/MyTextInput';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-import ButtonAllinOne from 'components/ButtonAllinOne';
 import * as Haptics from 'expo-haptics';
 import { ScrollView } from 'react-native-gesture-handler';
 import { NoteItem } from 'components/NoteItem';
 import { NoteCategory } from 'storage/noteStorage';
+import CategorySelectionModal from 'components/CategoryModal';
 
 const NOTE_ITEMS = [
   {
@@ -96,7 +96,7 @@ const MyNotesView = () => {
               updateSelectedNote={() => setSelectedNote({ id, category })}
               category={category}
               key={`note-item-${id}`}
-              cb={() => setIsModalVisible(true)}
+              onCategorize={() => setIsModalVisible(true)}
             />
           ))}
         </ScrollView>
@@ -119,133 +119,6 @@ const MyNotesView = () => {
         isModalVisible={isModalVisible}
       />
     </View>
-  );
-};
-
-interface NoteProps {
-  id: number;
-  category: string;
-}
-
-const CategorySelectionModal = ({
-  dismissModal,
-  isModalVisible,
-  initialCategory,
-}: {
-  dismissModal: (category: string) => void;
-  isModalVisible: boolean;
-  initialCategory: NoteProps;
-}) => {
-  const [selectedCategory, setSelectedCategory] = useState(initialCategory.category);
-
-  const onDismissModal = () => {
-    dismissModal(selectedCategory);
-  };
-
-  useEffect(() => {
-    setSelectedCategory(initialCategory.category);
-  }, [initialCategory]);
-
-  return (
-    <Modal animationType="slide" transparent={true} style={{ margin: 0 }} visible={isModalVisible}>
-      <View className="flex-1 justify-end">
-        <View
-          className=" bg-white"
-          style={{
-            borderRadius: 17,
-            paddingBottom: 28,
-            paddingHorizontal: 28,
-            shadowRadius: 40,
-            shadowColor: '#00026C65',
-            shadowOffset: { width: 4, height: 4 },
-            shadowOpacity: 1,
-          }}>
-          <View className="items-center">
-            <ButtonAllinOne onPress={onDismissModal} variant="ghost">
-              <Ionicons size={28} name="chevron-down" />
-            </ButtonAllinOne>
-          </View>
-          <View>
-            <Text style={{ fontSize: 28, paddingBottom: 20 }}>请选择分类</Text>
-          </View>
-          <View className="" style={{ gap: 26, paddingBottom: 20 }}>
-            {CATEGORY_LABELS.map(({ label, category }, idx) => (
-              <Category
-                key={`cat-${idx}`}
-                isActive={category === selectedCategory}
-                label={label}
-                category={category}
-                pressCb={() => setSelectedCategory(category)}
-              />
-            ))}
-          </View>
-          <TouchableOpacity
-            onPress={onDismissModal}
-            activeOpacity={1}
-            className="items-center bg-blue-faint"
-            style={{ paddingVertical: 16, borderRadius: 17 }}>
-            <Text className="text-2xl font-medium text-blue">确认</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
-  );
-};
-
-const COLORS = new Map([
-  ['PRIVATE', '#00BBFF25'],
-  ['WORK', '#FF4E7425'],
-  ['MEETING', '#FFBB0025'],
-  ['UNCATEGORIZED', '#8b8b8b'],
-  ['NEW', '#c7c7c7'],
-]);
-
-const CATEGORY_LABELS = [
-  { label: '个人', category: 'PRIVATE' },
-  { label: '工作', category: 'WORK' },
-  { label: '圆桌会议', category: 'MEETING' },
-  { label: '未分类', category: 'UNCATEGORIZED' },
-  { label: '新建', category: 'NEW' },
-];
-
-interface CategoryProps {
-  label?: string;
-  isActive?: boolean;
-  category: string | 'UNCATEGORIZED';
-  pressCb?: () => void;
-}
-
-const Category = ({ label, category, isActive = false, pressCb = () => {} }: CategoryProps) => {
-  const ActiveCircle = () => (
-    <View className="rounded-full bg-blue">
-      <Ionicons size={30} name="ellipse" color="#ffffff" />
-    </View>
-  );
-
-  const InactiveCircle = () => (
-    <View className="">
-      <Ionicons size={30} name="ellipse-outline" color="#C7C7C7" />
-    </View>
-  );
-
-  return (
-    <TouchableOpacity
-      onPress={() => {
-        pressCb();
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }}
-      activeOpacity={1}
-      className="flex-row items-center justify-between">
-      <View className="flex-row items-center gap-4">
-        <View
-          className="bg-blue p-4"
-          style={{ borderRadius: 7.5, backgroundColor: COLORS.get(category) }}></View>
-        <Text style={{ fontSize: 20 }} className="">
-          {label}
-        </Text>
-      </View>
-      {isActive ? <ActiveCircle /> : <InactiveCircle />}
-    </TouchableOpacity>
   );
 };
 

@@ -9,6 +9,7 @@ import { Text, View } from 'react-native';
 
 // import { HoldMenuProvider } from 'react-native-hold-menu';
 import { MenuProvider } from 'react-native-popup-menu';
+import ModalProvider from 'providers/ModalProvider';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,7 +35,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView>
-      <MenuProvider>
+      <ModalProvider>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen
@@ -47,7 +48,7 @@ export default function RootLayout() {
           <Stack.Screen name="namecard" options={{ headerShown: false }} />
           <Stack.Screen name="newNote" options={{ headerShown: false }} />
         </Stack>
-      </MenuProvider>
+      </ModalProvider>
     </GestureHandlerRootView>
   );
 }

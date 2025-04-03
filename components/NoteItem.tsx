@@ -9,48 +9,38 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 import Avatar from './Avatar';
-
-const COLORS = new Map([
-  ['DEFAULT', '#F5F8FF'],
-  ['PRIVATE', '#00BBFF25'],
-  ['WORK', '#FF4E7425'],
-  ['MEETING', '#FFBB0025'],
-  ['UNCATEGORIZED', '#8b8b8b'],
-  ['NEW', '#c7c7c7'],
-]);
+import { deleteNote, NoteCategory } from 'storage/noteStorage';
+import { useModal } from 'hooks/useModal';
+import { CategoryConfigs } from 'providers/ModalProvider';
 
 interface RightActionProps {
   progress: SharedValue<number>;
   dragX: SharedValue<number>;
 }
 
+export interface RightActionCbsProps {
+  onStar: () => void;
+  onDelete: () => void;
+  onCategorize: () => void;
+  onPin: () => void;
+}
+
 const RightAction: React.FC<{
   prog: SharedValue<number>;
   drag: SharedValue<number>;
-  openModal: () => void;
   closeSwipeableCb: () => void;
-}> = ({ prog, drag, openModal, closeSwipeableCb }) => {
+  cbs: RightActionCbsProps;
+}> = ({ prog, drag, closeSwipeableCb, cbs }) => {
+  const { onCategorize, onDelete, onPin, onStar } = cbs;
   const styleAnimation = useAnimatedStyle(() => {
     return {
       transform: [{ translateX: drag.value + 228 }],
     };
   });
 
-  const handleStar = () => {
+  const withCloseSwipable = (fn: () => void) => {
     closeSwipeableCb();
-  };
-
-  const handleDelete = () => {
-    closeSwipeableCb();
-  };
-
-  const handleCategorize = () => {
-    openModal();
-    setTimeout(closeSwipeableCb, 500);
-  };
-
-  const handlePin = () => {
-    closeSwipeableCb();
+    fn();
   };
 
   return (
@@ -58,28 +48,28 @@ const RightAction: React.FC<{
       className="flex-row items-center gap-4"
       style={[styleAnimation, { paddingHorizontal: 12 }]}>
       <ButtonAllinOne
-        onPress={handlePin}
+        onPress={() => withCloseSwipable(onPin)}
         rounded="full"
         containerStyles="bg-blue-faint"
         variant="ghost">
         <Ionicons color="#1556F0" size={26} name="chevron-up" />
       </ButtonAllinOne>
       <ButtonAllinOne
-        onPress={handleCategorize}
+        onPress={onCategorize}
         rounded="full"
         containerStyles="bg-blue-faint"
         variant="ghost">
         <Ionicons color="#1556F0" size={26} name="grid-outline" />
       </ButtonAllinOne>
       <ButtonAllinOne
-        onPress={handleStar}
+        onPress={() => withCloseSwipable(onStar)}
         rounded="full"
         containerStyles="bg-blue-faint"
         variant="ghost">
         <Ionicons color="#1556F0" size={26} name="star-outline" />
       </ButtonAllinOne>
       <ButtonAllinOne
-        onPress={handleDelete}
+        onPress={() => withCloseSwipable(onDelete)}
         rounded="full"
         containerStyles="bg-blue-faint"
         variant="ghost">
@@ -89,29 +79,55 @@ const RightAction: React.FC<{
   );
 };
 
-type NoteItemCategoryType = 'PRIVATE' | 'WORK' | 'MEETING' | 'NEW' | 'DEFAULT' | 'UNCATEGORIZED';
-
 interface NoteItemProps {
-  id?: number;
+  id: string;
   title?: string;
   date?: string;
   preview?: string;
-  category?: NoteItemCategoryType;
+  category: NoteCategory;
   updateSelectedNote?: () => void;
-  cb?: () => void;
+  onStar?: () => void;
+  onDelete?: () => void;
+  onCategorize?: () => void;
+  onPin?: () => void;
 }
 
 const NoteItem = ({
+  id,
   updateSelectedNote,
-  cb,
-  category = 'UNCATEGORIZED',
+  category,
   title = '云计算与AI融合：共创数字智能新时代',
   date = '2025年5月18日',
   preview = '随着大语言模型与云的结合，技...',
+  onStar = () => {},
+  onDelete = () => {},
+  onCategorize = () => {},
+  onPin = () => {},
 }: NoteItemProps) => {
   const swipeableRef = useRef<SwipeableMethods>(null);
+  const modalContext = useModal();
 
-  const closeSwipeable = () => swipeableRef.current?.close();
+  const closeSwipeable = () => {
+    console.log('It Worked');
+    if (swipeableRef.current) {
+      swipeableRef.current.close();
+      return () => {};
+    }
+    return () => {};
+  };
+
+  const handleDelete = async () => {
+    modalContext?.setOnDismissCb(closeSwipeable);
+    onDelete();
+  };
+
+  const handleCategorize = async () => {
+    modalContext?.showModal({ id, category });
+    modalContext?.setOnDismissCb(() => {
+      closeSwipeable();
+      onCategorize();
+    });
+  };
 
   return (
     <ReanimatedSwipeable
@@ -125,7 +141,7 @@ const NoteItem = ({
           closeSwipeableCb={closeSwipeable}
           prog={progress}
           drag={dragX}
-          openModal={cb || (() => {})}
+          cbs={{ onStar, onDelete: handleDelete, onCategorize: handleCategorize, onPin }}
         />
       )}>
       <Reanimated.View
@@ -133,11 +149,11 @@ const NoteItem = ({
           {
             position: 'relative',
             borderRadius: 17,
-            backgroundColor: COLORS.get(category),
+            backgroundColor: CategoryConfigs.find((config) => config.category === category)?.color,
           },
         ]}
         className="gap-0.5 p-4">
-        {category === 'UNCATEGORIZED' && (
+        {category === 'default' && (
           <LinearGradient
             colors={['#E9E8FF', '#F5F8FF']}
             locations={[0, 1]}
@@ -156,10 +172,12 @@ const NoteItem = ({
           />
         )}
         <Text className="text-xl font-medium">{title}</Text>
-        <View className="flex-row">
+        <View className="flex-row items-center">
           <Text className="font-light text-gray-solid">{date}</Text>
           <Text>｜</Text>
-          <Text className="font-light text-gray-solid">{preview}</Text>
+          <Text numberOfLines={1} className="font-light text-gray-solid">
+            {preview}
+          </Text>
         </View>
       </Reanimated.View>
     </ReanimatedSwipeable>
@@ -199,4 +217,4 @@ const NoteNode = ({
   );
 };
 
-export { NoteItem, NoteNode, NoteItemProps, NoteItemCategoryType };
+export { NoteItem, NoteNode, NoteItemProps };
