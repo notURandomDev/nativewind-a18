@@ -20,31 +20,36 @@ interface speechRightSlotProps {
 
 const SpeechRightSlot = ({ title, subtitle, views, stars, likes }: speechRightSlotProps) => {
   return (
-    <View className="flex-1 gap-4">
-      <Text className="font-light text-gray-solid" style={{ paddingRight: 24 }} numberOfLines={1}>
-        {subtitle}
-      </Text>
-      <View className="flex-row items-center gap-1">
-        <Text numberOfLines={2} className="flex-1 text-xl font-medium">
-          {title}
-        </Text>
-        <Ionicons name="play-circle" size={40} color="#1556F0" />
-      </View>
-      <View className="flex-row items-center justify-between" style={{ paddingRight: 12 }}>
-        <View className="flex-row gap-3">
-          <View className="flex-row items-center gap-1">
-            <Ionicons name="eye-outline" size={12} color="#8B8B8B" />
-            <Text className="text-sm text-gray-solid">{views}</Text>
-          </View>
-          <View className="flex-row items-center gap-1">
-            <Ionicons name="star-outline" size={12} color="#8B8B8B" />
-            <Text className="text-sm text-gray-solid">{stars}</Text>
-          </View>
-          <View className="flex-row items-center gap-1">
-            <Ionicons name="thumbs-up-outline" size={12} color="#8B8B8B" />
-            <Text className="text-sm text-gray-solid">{likes}</Text>
+    <View className="flex-1 flex-row justify-between gap-2">
+      <View className="flex-1 justify-between gap-1 pb-1">
+        <View className="gap-1">
+          <Text numberOfLines={1} className="text-xl font-medium">
+            {title}
+          </Text>
+          <Text className="font-light text-gray-solid" numberOfLines={1}>
+            {subtitle}
+          </Text>
+        </View>
+        <View className="flex-row items-center justify-between" style={{ paddingRight: 12 }}>
+          <View className="flex-row gap-3">
+            <View className="flex-row items-center gap-1">
+              <Ionicons name="eye-outline" size={12} color="#8B8B8B" />
+              <Text className="text-sm text-gray-solid">{views}</Text>
+            </View>
+            <View className="flex-row items-center gap-1">
+              <Ionicons name="star-outline" size={12} color="#8B8B8B" />
+              <Text className="text-sm text-gray-solid">{stars}</Text>
+            </View>
+            <View className="flex-row items-center gap-1">
+              <Ionicons name="thumbs-up-outline" size={12} color="#8B8B8B" />
+              <Text className="text-sm text-gray-solid">{likes}</Text>
+            </View>
           </View>
         </View>
+      </View>
+
+      <View className="justify-center">
+        <Ionicons name="play-circle" size={40} color="#1556F0" />
       </View>
     </View>
   );

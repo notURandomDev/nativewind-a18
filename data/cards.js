@@ -29,7 +29,6 @@ const committeeCardsData = [
   { title: '邬贺铨', subtitle: '中国工程院院士', img: require('../assets/imgs/guest-p-1.png') },
   { title: '邬江兴', subtitle: '中国工程院院士', img: require('../assets/imgs/guest-p-2.png') },
   { title: '杨小牛', subtitle: '中国工程院院士', img: require('../assets/imgs/guest-p-3.png') },
-  { title: '冯登国', subtitle: '中国科学院院士', img: require('../assets/imgs/guest-p-3.png') },
 ];
 
 const speechListData = [
@@ -187,17 +186,17 @@ const pptGalleryData = [
   {
     title: '主论坛及开幕式PPT合集',
     fileSize: '6.75MB',
-    imgSrc: require('../assets/imgs/ppt-1.png'),
-  },
-  {
-    title: '主论坛及开幕式PPT合集',
-    fileSize: '6.75MB',
     imgSrc: require('../assets/imgs/ppt-2.png'),
   },
   {
-    title: '主论坛及开幕式PPT合集',
-    fileSize: '6.75MB',
+    title: '数据安全创新实践案例集发布活动',
+    fileSize: '12.75MB',
     imgSrc: require('../assets/imgs/ppt-1.png'),
+  },
+  {
+    title: '企业数字化数据出海流通会议',
+    fileSize: '8.75MB',
+    imgSrc: require('../assets/imgs/ppt-2.png'),
   },
 ];
 const policyGalleryData = [
@@ -208,47 +207,42 @@ const policyGalleryData = [
   },
   {
     title: '数据安全典型场景案例',
-    fileSize: '6.75MB',
-    imgSrc: require('../assets/imgs/policy-1.png'),
+    fileSize: '12.75MB',
+    imgSrc: require('../assets/imgs/policy-2.jpeg'),
   },
   {
     title: '重大活动网络安全保障',
-    fileSize: '6.75MB',
-    imgSrc: require('../assets/imgs/policy-1.png'),
+    fileSize: '9.75MB',
+    imgSrc: require('../assets/imgs/policy-3.png'),
   },
 ];
 const agendaPosterData = [
   {
     title: '开幕式及主题大会',
-    fileSize: '6.75MB',
+    fileSize: '3MB',
     imgSrc: require('../assets/imgs/ap-1.png'),
   },
   {
     title: '2024全国数字安全行',
-    fileSize: '6.75MB',
+    fileSize: '3MB',
     imgSrc: require('../assets/imgs/ap-2.png'),
   },
   {
     title: '云网安全·新质',
-    fileSize: '6.75MB',
+    fileSize: '3MB',
     imgSrc: require('../assets/imgs/ap-1.png'),
   },
 ];
 const guestsPosterData = [
   {
     title: '王连印/中国网络安全...',
-    fileSize: '6.75MB',
+    fileSize: '3MB',
     imgSrc: require('../assets/imgs/gp-1.png'),
   },
   {
     title: '范渊/安恒信息董事长',
-    fileSize: '6.75MB',
+    fileSize: '3MB',
     imgSrc: require('../assets/imgs/gp-2.png'),
-  },
-  {
-    title: '周亚超/安恒信息副董事长',
-    fileSize: '6.75MB',
-    imgSrc: require('../assets/imgs/gp-1.png'),
   },
 ];
 

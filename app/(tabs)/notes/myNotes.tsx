@@ -41,6 +41,7 @@ import { useModal } from 'hooks/useModal';
   },
 ]; */
 const REFRESH_DELAY_MILLIS = 500;
+const NEW_NOTE_BASEURL = '../../../newNote';
 
 const MyNotes = () => {
   const [notes, setNotes] = useState<NoteProps[]>([]);
@@ -95,6 +96,12 @@ const MyNotes = () => {
               onDelete={refreshNotes}
               onCategorize={refreshNotes}
               onPin={refreshNotes}
+              onEdit={() =>
+                setTimeout(
+                  () => router.push(NEW_NOTE_BASEURL + `?noteId=${id}`),
+                  REFRESH_DELAY_MILLIS
+                )
+              }
             />
           );
         })}
@@ -102,7 +109,7 @@ const MyNotes = () => {
       <TouchableOpacity
         onPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          router.push('../../../newNote');
+          router.push(NEW_NOTE_BASEURL);
         }}
         activeOpacity={1}
         style={{

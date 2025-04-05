@@ -27,6 +27,25 @@ export const createNote = async (content: string, category: NoteCategory, title:
   }
 };
 
+export const updateNote = async (noteId: string, newTitle: string, newContent: string) => {
+  const LOG_CONTENT = 'Updating Note for ' + noteId;
+  try {
+    const oldNote: NoteProps | undefined = await getNote(noteId);
+    if (oldNote) {
+      const newNote: NoteProps = {
+        ...oldNote,
+        title: newTitle,
+        content: newContent,
+        timestamp: Date.now(),
+      };
+      await AsyncStorage.setItem(noteId, JSON.stringify(newNote));
+      terminal.success(LOG_CONTENT);
+    }
+  } catch (e) {
+    terminal.error(LOG_CONTENT, e);
+  }
+};
+
 export const updateNoteCategory = async (noteId: string, newCategory: NoteCategory) => {
   const LOG_CONTENT = 'Updating Note Category for' + noteId;
   try {
@@ -90,6 +109,19 @@ export const getNotes: GetNoteDataProps = async () => {
   } catch (e) {
     console.error(LOG_PREFIX + 'Error' + LOG_CONTENT, e);
     return [];
+  }
+};
+
+export const getNote = async (noteId: string): Promise<NoteProps | undefined> => {
+  const LOG_CONTENT = ' Getting Note for ' + noteId;
+  try {
+    const note: NoteProps = await AsyncStorage.getItem(noteId).then(
+      (res) => res && JSON.parse(res)
+    );
+    terminal.success(LOG_CONTENT);
+    return note;
+  } catch (e) {
+    terminal.error(LOG_CONTENT, e);
   }
 };
 

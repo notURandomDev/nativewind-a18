@@ -4,18 +4,36 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 
 import { Ionicons, Feather } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { createNote } from 'storage/noteStorage';
+import { createNote, getNote, getNotes, updateNote } from 'storage/noteStorage';
 
 const NewNote = () => {
+  const { noteId }: { noteId: string } = useLocalSearchParams();
+
   const [title, setTitle] = useState('未命名笔记');
   const [textInputValue, setTextInputValue] = useState('');
 
   const textInputRef = useRef<TextInput>(null);
 
+  useEffect(() => {
+    getNoteAsync();
+  }, [noteId]);
+
+  const getNoteAsync = async () => {
+    if (noteId) {
+      const note = await getNote(noteId);
+      setTitle(note?.title || '');
+      setTextInputValue(note?.content || '');
+    }
+  };
+
   const handleSaveNote = async () => {
-    await createNote(textInputValue.trim(), 'default', title);
+    if (noteId) {
+      await updateNote(noteId, title, textInputValue);
+    } else {
+      await createNote(textInputValue.trim(), 'default', title);
+    }
     router.back();
   };
 

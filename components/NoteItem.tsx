@@ -19,7 +19,7 @@ interface RightActionProps {
 }
 
 export interface RightActionCbsProps {
-  onStar: () => void;
+  onEdit: () => void;
   onDelete: () => void;
   onCategorize: () => void;
   onPin: () => void;
@@ -31,7 +31,7 @@ const RightAction: React.FC<{
   closeSwipeableCb: () => void;
   cbs: RightActionCbsProps;
 }> = ({ prog, drag, closeSwipeableCb, cbs }) => {
-  const { onCategorize, onDelete, onPin, onStar } = cbs;
+  const { onCategorize, onDelete, onPin, onEdit } = cbs;
   const styleAnimation = useAnimatedStyle(() => {
     return {
       transform: [{ translateX: drag.value + 228 }],
@@ -62,11 +62,11 @@ const RightAction: React.FC<{
         <Ionicons color="#1556F0" size={26} name="grid-outline" />
       </ButtonAllinOne>
       <ButtonAllinOne
-        onPress={() => withCloseSwipable(onStar)}
+        onPress={() => withCloseSwipable(onEdit)}
         rounded="full"
         containerStyles="bg-blue-faint"
         variant="ghost">
-        <Ionicons color="#1556F0" size={26} name="star-outline" />
+        <Ionicons color="#1556F0" size={26} name="create-outline" />
       </ButtonAllinOne>
       <ButtonAllinOne
         onPress={() => withCloseSwipable(onDelete)}
@@ -86,7 +86,7 @@ interface NoteItemProps {
   preview?: string;
   category: NoteCategory;
   updateSelectedNote?: () => void;
-  onStar?: () => void;
+  onEdit?: () => void;
   onDelete?: () => void;
   onCategorize?: () => void;
   onPin?: () => void;
@@ -99,7 +99,7 @@ const NoteItem = ({
   title = '云计算与AI融合：共创数字智能新时代',
   date = '2025年5月18日',
   preview = '随着大语言模型与云的结合，技...',
-  onStar = () => {},
+  onEdit = () => {},
   onDelete = () => {},
   onCategorize = () => {},
   onPin = () => {},
@@ -147,7 +147,12 @@ const NoteItem = ({
           closeSwipeableCb={closeSwipeable}
           prog={progress}
           drag={dragX}
-          cbs={{ onStar, onDelete: handleDelete, onCategorize: handleCategorize, onPin: handlePin }}
+          cbs={{
+            onEdit,
+            onDelete: handleDelete,
+            onCategorize: handleCategorize,
+            onPin: handlePin,
+          }}
         />
       )}>
       <Reanimated.View

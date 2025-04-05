@@ -14,7 +14,7 @@ interface fileCoverProps {
 
 const FileCover = ({ fileSize, imgSrc, title }: fileCoverProps) => (
   <View className="gap-2">
-    <PortraitCard title={fileSize} img={imgSrc} />
+    <PortraitCard isFile title={fileSize} img={imgSrc} />
     <View style={{ width: 130 }}>
       <Text className="font-medium" numberOfLines={1}>
         {title}
@@ -32,6 +32,7 @@ const PPTGallery = () => (
       <ButtonAllinOne variant="outline" label="5月19日" />
     </View>
     <FlatList
+      showsHorizontalScrollIndicator={false}
       horizontal={true}
       data={pptGalleryData}
       contentContainerClassName="gap-4"

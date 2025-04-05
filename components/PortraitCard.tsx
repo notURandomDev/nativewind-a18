@@ -1,6 +1,7 @@
 import { View, Text, ImageBackground, ImageSourcePropType } from 'react-native';
 import React from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 
 interface PortraitCardProps {
   title?: string;
@@ -10,6 +11,7 @@ interface PortraitCardProps {
   variant?: 'default' | 'square';
   alignMode?: 'left' | 'center';
   size?: number;
+  isFile?: boolean;
 }
 
 const PortraitCard = ({
@@ -20,10 +22,11 @@ const PortraitCard = ({
   variant = 'default',
   alignMode = 'left',
   size,
+  isFile = false,
 }: PortraitCardProps) => {
   const imageDimensions = {
     default: { height: 180, width: 130 },
-    square: size ? { height: size, width: size } : { height: 90, width: 90 },
+    square: size ? { height: size, width: size } : { height: 64, width: 64 },
   };
 
   const alignStyles = {
@@ -59,13 +62,24 @@ const PortraitCard = ({
         }}
       />
       <View>
-        {title && <Text className="text-lg text-white">{title}</Text>}
+        {title && (
+          <Text className={`${variant === 'default' ? 'text-lg' : 'text-sm'} text-white`}>
+            {title}
+          </Text>
+        )}
         {subtitle && (
-          <Text style={{ fontSize: 10 }} className="text-white" numberOfLines={1}>
+          <Text
+            style={{ fontSize: variant === 'default' ? 10 : 7 }}
+            className="text-white"
+            numberOfLines={1}>
             {subtitle}
           </Text>
         )}
-        {label && <Text className="text-sm text-white">{label}</Text>}
+        {label && (
+          <Text numberOfLines={1} className="text-sm text-white">
+            {label}
+          </Text>
+        )}
       </View>
     </ImageBackground>
   );

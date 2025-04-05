@@ -13,7 +13,7 @@ interface VideoCardProps {
 const VideoCard = ({ leftSlot, rightSlot, onPress }: VideoCardProps) => {
   return (
     <TouchableWithoutFeedback onPress={onPress}>
-      <View className="flex-row items-center gap-4">
+      <View className="flex-row gap-4">
         {leftSlot}
         {rightSlot}
       </View>
@@ -70,15 +70,13 @@ const NewsFrontierInfoSlot = ({
   date,
 }: NewsFrontierInfoSlotProps) => {
   return (
-    <View className="flex-1 gap-2">
-      <Text className="text-xl font-medium" style={{ paddingRight: 24 }} numberOfLines={2}>
+    <View className="flex-1 gap-1">
+      <Text className="text-xl font-medium" style={{ paddingRight: 24 }} numberOfLines={1}>
         {title}
       </Text>
-      <View className="flex-row items-center gap-1">
-        <Text numberOfLines={2} className="flex-1 text-sm font-light">
-          {subtitle}
-        </Text>
-      </View>
+      <Text numberOfLines={1} className="flex-1 text-sm font-light">
+        {subtitle}
+      </Text>
       <View className="flex-row justify-between " style={{ paddingRight: 12 }}>
         <View className="flex-row items-center gap-1">
           <Ionicons name="time-outline" size={12} color="#8B8B8B" />
@@ -122,11 +120,8 @@ const NewsVideoHightlights = ({
     <View className="flex-1 gap-3">
       <Text className="text-xl font-medium">{title}</Text>
       <View className="flex-row items-center justify-between">
-        <View className="gap-1">
-          <View className="flex-row items-center gap-1">
-            <Ionicons name="pencil-outline" size={12} color="#8B8B8B" />
-            <Text className="text-gray-solid">{subtitle}</Text>
-          </View>
+        <View className="gap-1.5">
+          <Text className="text-gray-solid">{subtitle}</Text>
           <View className="flex-row justify-between " style={{ paddingRight: 12 }}>
             <View className="flex-row gap-3">
               <View className="flex-row items-center gap-1">
