@@ -28,12 +28,26 @@ export const createNote = async (content: string, category: NoteCategory, title:
 };
 
 export const updateNoteCategory = async (noteId: string, newCategory: NoteCategory) => {
-  const LOG_CONTENT = 'Updating Note for' + noteId;
+  const LOG_CONTENT = 'Updating Note Category for' + noteId;
   try {
     const oldNote: NoteProps = await AsyncStorage.getItem(noteId).then(
       (note) => note && JSON.parse(note)
     );
     const newNote = { ...oldNote, category: newCategory };
+    await AsyncStorage.setItem(noteId, JSON.stringify(newNote));
+    terminal.success(LOG_CONTENT);
+  } catch (e) {
+    terminal.error(LOG_CONTENT, e);
+  }
+};
+
+export const updateNoteTimestamp = async (noteId: string) => {
+  const LOG_CONTENT = 'Updating Note Timestamp for ' + noteId;
+  try {
+    const oldNote: NoteProps = await AsyncStorage.getItem(noteId).then(
+      (note) => note && JSON.parse(note)
+    );
+    const newNote = { ...oldNote, timestamp: Date.now() };
     await AsyncStorage.setItem(noteId, JSON.stringify(newNote));
     terminal.success(LOG_CONTENT);
   } catch (e) {

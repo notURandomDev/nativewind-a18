@@ -9,7 +9,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 import Avatar from './Avatar';
-import { deleteNote, NoteCategory } from 'storage/noteStorage';
+import { deleteNote, NoteCategory, updateNoteTimestamp } from 'storage/noteStorage';
 import { useModal } from 'hooks/useModal';
 import { CategoryConfigs } from 'providers/ModalProvider';
 
@@ -117,7 +117,8 @@ const NoteItem = ({
   };
 
   const handleDelete = async () => {
-    modalContext?.setOnDismissCb(closeSwipeable);
+    // modalContext?.setOnDismissCb(closeSwipeable);
+    await deleteNote(id);
     onDelete();
   };
 
@@ -127,6 +128,11 @@ const NoteItem = ({
       closeSwipeable();
       onCategorize();
     });
+  };
+
+  const handlePin = async () => {
+    await updateNoteTimestamp(id);
+    onPin();
   };
 
   return (
@@ -141,7 +147,7 @@ const NoteItem = ({
           closeSwipeableCb={closeSwipeable}
           prog={progress}
           drag={dragX}
-          cbs={{ onStar, onDelete: handleDelete, onCategorize: handleCategorize, onPin }}
+          cbs={{ onStar, onDelete: handleDelete, onCategorize: handleCategorize, onPin: handlePin }}
         />
       )}>
       <Reanimated.View

@@ -40,6 +40,7 @@ import { useModal } from 'hooks/useModal';
     category: 'UNCATEGORIZED',
   },
 ]; */
+const REFRESH_DELAY_MILLIS = 500;
 
 const MyNotes = () => {
   const [notes, setNotes] = useState<NoteProps[]>([]);
@@ -53,14 +54,15 @@ const MyNotes = () => {
   }, [notes]);
 
   const getNotesAsync = async () => {
-    const res = await getNotes();
-    setNotes(res);
+    getNotes().then((res) => setNotes(res));
   };
 
   const deleteNotesAsync = async () => {
     await deleteAllNotes();
     setNotes([]);
   };
+
+  const refreshNotes = () => setTimeout(getNotesAsync, REFRESH_DELAY_MILLIS);
 
   return (
     <View className="flex-1" style={{ paddingTop: 16 }}>
@@ -90,8 +92,9 @@ const MyNotes = () => {
               preview={content}
               title={title}
               category={category}
-              onDelete={getNotesAsync}
-              onCategorize={() => setTimeout(getNotesAsync, 100)}
+              onDelete={refreshNotes}
+              onCategorize={refreshNotes}
+              onPin={refreshNotes}
             />
           );
         })}
