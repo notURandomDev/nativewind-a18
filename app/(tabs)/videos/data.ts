@@ -1,5 +1,5 @@
 import { ImageSourcePropType } from 'react-native';
-import { ReplayCardProps } from './types';
+import { ReplayCardProps, TrailerProps } from './types';
 
 export const REPLAY_RECOMMENDATIONS: ReplayCardProps[] = [
   {
@@ -33,5 +33,26 @@ export const REPLAY_RECOMMENDATIONS: ReplayCardProps[] = [
     views: 8930,
     tag: '生态合作论坛',
     imgsrc: require('../../../assets/imgs/replay-4.jpg'),
+  },
+];
+
+export const TRAILERS: TrailerProps[] = [
+  {
+    title: '数据安全创新实践案例集发布',
+    datetime: '2025年5月19日9:30-12:20',
+    venue: '杭州国际博览中心·103',
+    imgsrc: require('../../../assets/imgs/trailer-1.png'),
+  },
+  {
+    title: '数据安全创新实践案例集发布',
+    datetime: '2025年5月19日14:30-17:20',
+    venue: '杭州国际博览中心·101',
+    imgsrc: require('../../../assets/imgs/trailer-2.png'),
+  },
+  {
+    title: '数据安全创新实践案例集发布',
+    datetime: '2025年5月19日14:30-17:20',
+    venue: '杭州国际博览中心·102',
+    imgsrc: require('../../../assets/imgs/trailer-3.png'),
   },
 ];

@@ -8,3 +8,10 @@ export interface ReplayCardProps {
   views: number;
   imgsrc: ImageSourcePropType;
 }
+
+export interface TrailerProps {
+  title: string;
+  datetime: string;
+  venue: string;
+  imgsrc: ImageSourcePropType;
+}

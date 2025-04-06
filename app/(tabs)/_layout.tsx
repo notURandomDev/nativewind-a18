@@ -171,7 +171,7 @@ const DrawerLayout = () => (
 
     <OptionContainer>
       <OptionItem
-        path="../namecard"
+        path="../../namecard"
         icon={<Ionicons size={20} name="person-add-outline" />}
         label="邀请好友参会"
       />

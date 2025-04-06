@@ -1,17 +1,21 @@
-import { View, Text, ImageBackground, ScrollView } from 'react-native';
+import { View, Text, ImageBackground, ScrollView, FlatList } from 'react-native';
 import React from 'react';
 import { REPLAY_RECOMMENDATIONS } from './data';
 import { ReplayCardProps } from './types';
 import CustomLink from 'components/CustomLink';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { replayRecommendations } from 'data/cards';
+import { InfoSlot, VideoCard } from 'components/VideoCard';
+import VideoThumbnail from 'components/VideoThumbnail';
+import BottomIndicator from 'components/BottomIndicator';
 
 const ReplayTabView = () => {
   return (
     <ScrollView
       contentContainerClassName="gap-8"
-      contentContainerStyle={{ paddingHorizontal: 16 }}
-      className="relative py-3">
+      contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
+      className="relative">
       {/* 当前直播 */}
       <View className="gap-4">
         <CustomLink title="热门回放推荐" />
@@ -23,7 +27,19 @@ const ReplayTabView = () => {
       </View>
       <View className="gap-4">
         <CustomLink title="回放观看历史" />
+        <FlatList
+          scrollEnabled={false}
+          contentContainerClassName="gap-5"
+          data={replayRecommendations}
+          renderItem={({ item: { title, time, venue, imgSrc, views, duration } }) => (
+            <VideoCard
+              leftSlot={<VideoThumbnail imgSrc={imgSrc} views={views} duration={duration} />}
+              rightSlot={<InfoSlot title={title} time={time} venue={venue} />}
+            />
+          )}
+        />
       </View>
+      <BottomIndicator />
     </ScrollView>
   );
 };

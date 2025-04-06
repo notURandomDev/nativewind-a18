@@ -7,9 +7,10 @@ interface VideoThumbnailProps {
   views?: number;
   duration?: string;
   imgSrc?: ImageSourcePropType;
+  live?: boolean;
 }
 
-const VideoThumbnail = ({ views, duration, imgSrc }: VideoThumbnailProps) => {
+const VideoThumbnail = ({ views, duration, imgSrc, live }: VideoThumbnailProps) => {
   return (
     <ImageBackground
       imageStyle={{ borderRadius: 8.7 }}
@@ -36,7 +37,7 @@ const VideoThumbnail = ({ views, duration, imgSrc }: VideoThumbnailProps) => {
           borderRadius: 8.7,
         }}
       />
-      <View>
+      <View className="flex-1 justify-between">
         {views && (
           <View className="flex-row items-center gap-1 pl-1">
             <Ionicons name="eye-outline" color="#ffffff" />
@@ -45,9 +46,17 @@ const VideoThumbnail = ({ views, duration, imgSrc }: VideoThumbnailProps) => {
         )}
       </View>
 
-      <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-        <Text className="text-sm font-light text-white">{duration}</Text>
-      </View>
+      {live && (
+        <View className="flex-row justify-center gap-1">
+          <Ionicons color="#ffffff" name="cellular" />
+          <Text className="text-white">直播中</Text>
+        </View>
+      )}
+      {duration && (
+        <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+          <Text className="text-sm font-light text-white">{duration}</Text>
+        </View>
+      )}
     </ImageBackground>
   );
 };
