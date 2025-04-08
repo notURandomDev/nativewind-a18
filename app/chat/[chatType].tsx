@@ -395,6 +395,7 @@ const Modal = () => {
                 sender={SenderType.AI}
               />
             ))}
+          <View className="border"></View>
         </ScrollView>
       </View>
 

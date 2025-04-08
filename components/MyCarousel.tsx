@@ -25,7 +25,7 @@ const MyCarousel = ({ data }: myCarouselProps) => {
         style={{ borderRadius: 17 }}
         ref={ref}
         width={360}
-        height={256}
+        height={215}
         data={data}
         autoPlay={false}
         autoPlayInterval={2000}

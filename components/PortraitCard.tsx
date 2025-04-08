@@ -1,7 +1,6 @@
 import { View, Text, ImageBackground, ImageSourcePropType } from 'react-native';
 import React from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
 
 interface PortraitCardProps {
   title?: string;
@@ -25,7 +24,8 @@ const PortraitCard = ({
   isFile = false,
 }: PortraitCardProps) => {
   const imageDimensions = {
-    default: { height: 180, width: 130 },
+    // default: { height: 180, width: 130 },
+    default: { height: 150, width: 110 },
     square: size ? { height: size, width: size } : { height: 64, width: 64 },
   };
 

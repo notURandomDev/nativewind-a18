@@ -12,10 +12,10 @@ interface fileCoverProps {
   title: string;
 }
 
-const FileCover = ({ fileSize, imgSrc, title }: fileCoverProps) => (
+export const FileCover = ({ fileSize, imgSrc, title }: fileCoverProps) => (
   <View className="gap-2">
     <PortraitCard isFile title={fileSize} img={imgSrc} />
-    <View style={{ width: 130 }}>
+    <View style={{ width: 110 }}>
       <Text className="font-medium" numberOfLines={1}>
         {title}
       </Text>

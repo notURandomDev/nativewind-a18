@@ -1,6 +1,6 @@
 const replayRecommendations = [
   {
-    title: '回放｜企业数字化与数据出海流通专项会议',
+    title: '企业数字化与数据出海流通专项会议',
     time: '2025年5月17日 14:30-17:20',
     venue: '杭州国际博览中心·102B/C',
     imgSrc: require('../assets/imgs/rr-1.png'),
@@ -8,7 +8,7 @@ const replayRecommendations = [
     duration: '02:15:39',
   },
   {
-    title: '回放 | 数据安全创新实践案例集发布活动',
+    title: '数据安全创新实践案例集发布活动',
     time: '2025年5月17日 14:00-17:20',
     venue: '杭州国际博览中心·多功能厅C',
     imgSrc: require('../assets/imgs/rr-2.png'),
@@ -16,7 +16,7 @@ const replayRecommendations = [
     duration: '03:15:20',
   },
   {
-    title: '回放 | 2024全国数字安全行业产教融合共同体大会暨西湖论剑·数...',
+    title: '2024全国数字安全行业产教融合共同体大会暨西湖论剑·数...',
     time: '2025年5月17日 14:30-17:20',
     venue: '杭州国际博览中心·103B/C',
     imgSrc: require('../assets/imgs/rr-3.png'),
@@ -34,7 +34,8 @@ const committeeCardsData = [
 const speechListData = [
   {
     title: '以数据为关键要素的数字经济，亟需数字生态系统底层驱动范...',
-    subtitle: '【25.5.17】企业数字化与数据出海流通座谈演讲会',
+    subtitle: '企业数字化与数据出海流通座谈演讲会',
+    datetime: '2025年5月17日',
     views: 190,
     stars: 55,
     likes: 60,
@@ -46,7 +47,8 @@ const speechListData = [
   },
   {
     title: '迎接人工智能的安全挑战',
-    subtitle: '【25.5.17】数据安全创新实践案例集发...',
+    subtitle: '数据安全创新实践案例集发...',
+    datetime: '2025年5月17日',
     views: 53,
     stars: 55,
     likes: 58,
@@ -58,7 +60,8 @@ const speechListData = [
   },
   {
     title: '大力发展AI，推动绿色化数字化协同转型',
-    subtitle: '【25.5.17】2024全国数字安全行业产教...',
+    subtitle: '2024全国数字安全行业产教...',
+    datetime: '2025年5月17日',
     views: 29,
     stars: 55,
     likes: 40,
@@ -70,7 +73,8 @@ const speechListData = [
   },
   {
     title: '新质生产力与数字经济',
-    subtitle: '【25.5.17】2024全国数字安全行业产教...',
+    subtitle: '2024全国数字安全行业产教...',
+    datetime: '2025年5月17日',
     views: 190,
     stars: 55,
     likes: 60,
@@ -196,7 +200,7 @@ const pptGalleryData = [
   {
     title: '企业数字化数据出海流通会议',
     fileSize: '8.75MB',
-    imgSrc: require('../assets/imgs/ppt-2.png'),
+    imgSrc: require('../assets/imgs/ppt-3.png'),
   },
 ];
 const policyGalleryData = [
@@ -243,6 +247,11 @@ const guestsPosterData = [
     title: '范渊/安恒信息董事长',
     fileSize: '3MB',
     imgSrc: require('../assets/imgs/gp-2.png'),
+  },
+  {
+    title: '范渊/安恒信息董事长',
+    fileSize: '3MB',
+    imgSrc: require('../assets/imgs/gp-3.png'),
   },
 ];
 

@@ -8,9 +8,10 @@ interface VideoThumbnailProps {
   duration?: string;
   imgSrc?: ImageSourcePropType;
   live?: boolean;
+  comingUp?: boolean;
 }
 
-const VideoThumbnail = ({ views, duration, imgSrc, live }: VideoThumbnailProps) => {
+const VideoThumbnail = ({ views, duration, imgSrc, live, comingUp }: VideoThumbnailProps) => {
   return (
     <ImageBackground
       imageStyle={{ borderRadius: 8.7 }}
@@ -37,15 +38,18 @@ const VideoThumbnail = ({ views, duration, imgSrc, live }: VideoThumbnailProps) 
           borderRadius: 8.7,
         }}
       />
-      <View className="flex-1 justify-between">
-        {views && (
-          <View className="flex-row items-center gap-1 pl-1">
-            <Ionicons name="eye-outline" color="#ffffff" />
-            <Text className="text-sm text-white">{views}人次</Text>
-          </View>
-        )}
-      </View>
+      {views && (
+        <View className="flex-row items-center gap-1 pl-1">
+          <Ionicons name="eye-outline" color="#ffffff" />
+          <Text className="text-sm text-white">{views}人次</Text>
+        </View>
+      )}
 
+      {comingUp && (
+        <View className="flex-1 items-center justify-center">
+          <Text className="text-lg text-white">敬请期待</Text>
+        </View>
+      )}
       {live && (
         <View className="flex-row justify-center gap-1">
           <Ionicons color="#ffffff" name="cellular" />
@@ -53,7 +57,7 @@ const VideoThumbnail = ({ views, duration, imgSrc, live }: VideoThumbnailProps) 
         </View>
       )}
       {duration && (
-        <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+        <View className="flex-1 items-end justify-end">
           <Text className="text-sm font-light text-white">{duration}</Text>
         </View>
       )}

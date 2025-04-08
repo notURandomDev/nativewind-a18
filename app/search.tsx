@@ -94,6 +94,7 @@ const Search = () => {
     <ScrollView>
       {searchResults.map((result, index) => (
         <TouchableOpacity
+          activeOpacity={1}
           onPress={() => router.push(`search_result/${result}`)}
           key={`{search-result-${index}}`}
           className="flex-row items-center gap-3 border-b border-gray py-3">

@@ -41,7 +41,7 @@ const SearchResult = () => {
   console.log('search_keyword', search_keyword);
 
   return (
-    <SafeAreaView className="relative flex-1 gap-4 bg-white py-4">
+    <SafeAreaView className="relative flex-1 gap-4 bg-white py-3">
       <LinearGradient4Page />
       <View className="flex-row gap-2 px-4">
         <TouchableIcon onPress={() => router.back()}>
@@ -65,7 +65,7 @@ const SearchResult = () => {
           <CustomLink title="会议直播" />
           <VideoCard
             leftSlot={
-              <VideoThumbnail imgSrc={LIVESTREAM_DATA.imgSrc} views={LIVESTREAM_DATA.views} />
+              <VideoThumbnail live imgSrc={LIVESTREAM_DATA.imgSrc} views={LIVESTREAM_DATA.views} />
             }
             rightSlot={<InfoSlot {...LIVESTREAM_DATA} />}
           />
@@ -92,6 +92,7 @@ const SearchResult = () => {
               <PortraitCard
                 alignMode="center"
                 variant="square"
+                size={80}
                 img={NEWS_DATA.img.src}
                 label={NEWS_DATA.img.label}
               />
@@ -107,7 +108,13 @@ const SearchResult = () => {
             contentContainerClassName="gap-4"
             data={PHOTOS_DATA}
             renderItem={({ item: { label, imgSrc } }) => (
-              <PortraitCard label={label} img={imgSrc} variant="square" alignMode="center" />
+              <PortraitCard
+                size={80}
+                label={label}
+                img={imgSrc}
+                variant="square"
+                alignMode="center"
+              />
             )}
           />
         </View>

@@ -23,7 +23,9 @@ const NewsFrontier = () => (
         },
       }) => (
         <VideoCard
-          leftSlot={<PortraitCard alignMode="center" variant="square" img={src} label={label} />}
+          leftSlot={
+            <PortraitCard size={80} alignMode="center" variant="square" img={src} label={label} />
+          }
           rightSlot={<NewsFrontierInfoSlot {...rightSlot} />}
         />
       )}

@@ -16,9 +16,7 @@ import BottomIndicator from 'components/BottomIndicator';
 const ActivitiesTabView = () => {
   return (
     <ScrollView
-      contentContainerClassName="gap-8"
-      contentContainerStyle={{ paddingHorizontal: 16 }}
-      className="py-3">
+      contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 12, gap: 24, paddingTop: 12 }}>
       <View className="gap-4">
         <CustomLink title="数字成果展" />
         <MyCarousel data={digitalProductsData} />
@@ -35,7 +33,7 @@ const ActivitiesTabView = () => {
           data={securityBootcampData}
           renderItem={({ item: { imgSrc, ...info } }) => (
             <VideoCard
-              leftSlot={<PortraitCard variant="square" img={imgSrc} />}
+              leftSlot={<PortraitCard size={80} variant="square" img={imgSrc} />}
               rightSlot={<InfoSlot {...info} />}
             />
           )}

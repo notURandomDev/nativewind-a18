@@ -7,15 +7,15 @@ const CarouselCard = ({ title, time, venue, poster, views }) => {
   return (
     <ImageBackground
       source={poster}
-      resizeMode="contain"
-      className="flex-1 bg-black"
+      resizeMode="cover"
+      className="flex-1 "
       style={{ borderRadius: 17 }}>
       <LinearGradient
         colors={['#000000', '#6D6D6D00']}
         start={{ x: 0, y: 1 }}
-        end={{ x: 0, y: 0.4 }}
+        end={{ x: 0, y: 0 }}
         style={{
-          height: 256,
+          height: '100%',
           padding: 16,
         }}>
         <View className="flex-1 flex-col justify-between p-1">

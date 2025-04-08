@@ -5,8 +5,8 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { createDrawerNavigator, DrawerContentScrollView } from '@react-navigation/drawer';
 import { LinearGradient } from 'expo-linear-gradient';
-import Avatar from 'components/Avatar';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import * as Haptics from 'expo-haptics';
 
 const Drawer = createDrawerNavigator();
 
@@ -140,7 +140,7 @@ const TabsLayout = () => (
 const DrawerLayout = () => (
   <DrawerContentScrollView
     scrollEnabled={false}
-    contentContainerStyle={{ flex: 1 }}
+    contentContainerStyle={{ flex: 1, paddingTop: 45 }}
     style={{ position: 'relative' }}>
     <LinearGradient
       style={{
@@ -151,8 +151,6 @@ const DrawerLayout = () => (
         bottom: 0,
       }}
       colors={['#1556f050', '#ffffff00']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0, y: 1 }}
     />
     <View style={{ marginBottom: 8 }} className="flex-row items-center justify-between py-2">
       <View className="flex-row items-center gap-3">
@@ -161,11 +159,18 @@ const DrawerLayout = () => (
           style={{ width: 40, aspectRatio: 1 }}
           source={require('../../assets/imgs/lipu.png')}
         />
-        <Text className="text-2xl text-white">厘小普</Text>
+        <Text className="text-2xl text-white">黄子烨</Text>
       </View>
       <View style={{ gap: 20 }} className="flex-row items-center">
-        <MaterialCommunityIcons name="line-scan" size={28} color="#ffffff" />
-        <Ionicons size={28} name="chevron-forward-outline" color="#ffffff" />
+        <MaterialCommunityIcons name="line-scan" size={24} color="#ffffff" />
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            router.back();
+          }}>
+          <Ionicons size={24} name="chevron-forward-outline" color="#ffffff" />
+        </TouchableOpacity>
       </View>
     </View>
 

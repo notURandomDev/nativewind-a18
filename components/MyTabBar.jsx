@@ -82,7 +82,7 @@ const MyTabBar = ({ state, descriptors, navigation, variant = 'default' }) => {
 
       {isDefault && (
         <ButtonAllinOne
-          onPress={() => router.push('../../search')}
+          onPress={() => router.push('../../../search')}
           variant="ghost"
           containerStyles="pb-3">
           <Ionicons size={24} name="search-outline" />

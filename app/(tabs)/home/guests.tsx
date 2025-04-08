@@ -7,7 +7,7 @@ import { committeeCardsData } from 'data/cards';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { speechListData } from '../../../data/cards';
-import { VideoCard } from 'components/VideoCard';
+import { DatetimeSlot, VideoCard } from 'components/VideoCard';
 import BottomIndicator from 'components/BottomIndicator';
 
 interface speechRightSlotProps {
@@ -16,33 +16,48 @@ interface speechRightSlotProps {
   views?: number;
   stars?: number;
   likes?: number;
+  datetime: string;
+  starred?: boolean;
 }
 
-const SpeechRightSlot = ({ title, subtitle, views, stars, likes }: speechRightSlotProps) => {
+export const SpeechRightSlot = ({
+  title,
+  subtitle,
+  views,
+  stars,
+  likes,
+  datetime,
+  starred = false,
+}: speechRightSlotProps) => {
   return (
     <View className="flex-1 flex-row justify-between gap-2">
       <View className="flex-1 justify-between gap-1 pb-1">
-        <View className="gap-1">
-          <Text numberOfLines={1} className="text-xl font-medium">
-            {title}
-          </Text>
-          <Text className="font-light text-gray-solid" numberOfLines={1}>
-            {subtitle}
-          </Text>
-        </View>
-        <View className="flex-row items-center justify-between" style={{ paddingRight: 12 }}>
-          <View className="flex-row gap-3">
-            <View className="flex-row items-center gap-1">
-              <Ionicons name="eye-outline" size={12} color="#8B8B8B" />
-              <Text className="text-sm text-gray-solid">{views}</Text>
-            </View>
-            <View className="flex-row items-center gap-1">
-              <Ionicons name="star-outline" size={12} color="#8B8B8B" />
-              <Text className="text-sm text-gray-solid">{stars}</Text>
-            </View>
-            <View className="flex-row items-center gap-1">
-              <Ionicons name="thumbs-up-outline" size={12} color="#8B8B8B" />
-              <Text className="text-sm text-gray-solid">{likes}</Text>
+        <Text numberOfLines={1} className="text-xl font-medium">
+          {title}
+        </Text>
+        <Text className="font-light" numberOfLines={1}>
+          {subtitle}
+        </Text>
+        <View className="flex-row justify-between">
+          <DatetimeSlot datetime={datetime} />
+          <View className="flex-row items-center justify-between" style={{ paddingRight: 12 }}>
+            <View className="flex-row gap-3">
+              <View className="flex-row items-center gap-1">
+                <Ionicons name="eye-outline" size={12} color="#8B8B8B" />
+                <Text className="text-sm text-gray-solid">{views}</Text>
+              </View>
+              <View className="flex-row items-center gap-1">
+                <Ionicons
+                  name={`star${starred ? '' : '-outline'}`}
+                  size={12}
+                  color={`${starred ? '#1556f0' : '#8B8B8B'}`}
+                />
+                <Text className="text-sm text-gray-solid">{stars}</Text>
+              </View>
+              <View className="flex-row items-center gap-1">
+                <Ionicons name="thumbs-up-outline" size={12} color="#8B8B8B" />
+                <Text className="text-sm text-gray-solid">{likes}</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -60,8 +75,7 @@ const GuestsTabView = () => {
 
   return (
     <ScrollView
-      contentContainerClassName="gap-8 py-3"
-      contentContainerStyle={{ paddingHorizontal: 16 }}>
+      contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 12, gap: 24, paddingTop: 12 }}>
       <View className="gap-4">
         <CustomLink title="专家委员会" subtitle="嘉宾排名不分先后" />
         <FlatList

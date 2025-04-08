@@ -90,7 +90,6 @@ const ProfileLayout = () => {
         }}>
         <MaterialTopTabs.Screen name="index" options={{ title: '订阅' }} />
         <MaterialTopTabs.Screen name="collection" options={{ title: '收藏' }} />
-        <MaterialTopTabs.Screen name="likes" options={{ title: '点赞' }} />
         <MaterialTopTabs.Screen name="downloads" options={{ title: '下载' }} />
         <MaterialTopTabs.Screen name="history" options={{ title: '浏览' }} />
       </MaterialTopTabs>

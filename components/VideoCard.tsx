@@ -25,32 +25,44 @@ interface InfoSlotProps {
   title?: string;
   time?: string;
   venue?: string;
+  live?: boolean;
 }
 
-const InfoSlot = ({ title, time, venue }: InfoSlotProps) => {
+const InfoSlot = ({ title, time, venue, live = false }: InfoSlotProps) => {
   return (
-    <View className="flex-1 gap-2">
-      <Text className="text-lg font-medium">{title}</Text>
-      <View className="flex-row items-center justify-between">
-        <View className="gap-1">
-          <View className="flex-row items-center gap-1">
-            <Ionicons name="time-outline" size={12} color="#8B8B8B" />
-            <Text style={{ fontSize: 12 }} className="text-gray-solid">
-              {time}
-            </Text>
-          </View>
-          <View className="flex-row items-center gap-1">
-            <Ionicons name="location-outline" size={12} color="#8B8B8B" />
-            <Text style={{ fontSize: 12 }} className="text-gray-solid">
-              {venue}
-            </Text>
-          </View>
+    <View className="flex-1 justify-between gap-2 pb-1">
+      <Text numberOfLines={2} className="text-xl font-medium">
+        {live && <Ionicons size={14} name="cellular" color="#1556F0" />}
+        {title}
+      </Text>
+      <View className="flex-1 flex-row items-center justify-between gap-4">
+        <View className="flex-1 gap-1">
+          <DatetimeSlot datetime={time} />
+          <VenueSlot venue={venue} />
         </View>
-        <Ionicons name="ellipsis-vertical" size={16} color="#8B8B8B" />
+        <Ionicons name="ellipsis-vertical" size={20} color="#8B8B8B" />
       </View>
     </View>
   );
 };
+
+export const DatetimeSlot = ({ datetime }: { datetime: string }) => (
+  <View className="flex-row items-center gap-1">
+    <Ionicons name="time-outline" size={12} color="#8B8B8B" />
+    <Text numberOfLines={1} style={{ fontSize: 12 }} className="font-medium text-gray-solid">
+      {datetime}
+    </Text>
+  </View>
+);
+
+export const VenueSlot = ({ venue }: { venue: string }) => (
+  <View className="flex-row items-center gap-1">
+    <Ionicons name="location-outline" size={12} color="#8B8B8B" />
+    <Text numberOfLines={1} style={{ fontSize: 12 }} className="font-medium text-gray-solid">
+      {venue}
+    </Text>
+  </View>
+);
 
 interface NewsFrontierInfoSlotProps {
   title?: string;
@@ -59,6 +71,7 @@ interface NewsFrontierInfoSlotProps {
   stars?: number;
   likes?: number;
   date?: string;
+  starred?: boolean;
 }
 
 const NewsFrontierInfoSlot = ({
@@ -68,13 +81,14 @@ const NewsFrontierInfoSlot = ({
   stars,
   likes,
   date,
+  starred = false,
 }: NewsFrontierInfoSlotProps) => {
   return (
-    <View className="flex-1 gap-1">
+    <View className="flex-1 justify-between py-1">
       <Text className="text-xl font-medium" style={{ paddingRight: 24 }} numberOfLines={1}>
         {title}
       </Text>
-      <Text numberOfLines={1} className="flex-1 text-sm font-light">
+      <Text numberOfLines={2} className="text-sm font-light">
         {subtitle}
       </Text>
       <View className="flex-row justify-between " style={{ paddingRight: 12 }}>
@@ -88,7 +102,11 @@ const NewsFrontierInfoSlot = ({
             <Text className="text-sm text-gray-solid">{views}</Text>
           </View>
           <View className="flex-row items-center gap-1">
-            <Ionicons name="star-outline" size={12} color="#8B8B8B" />
+            <Ionicons
+              name={`star${starred ? '' : '-outline'}`}
+              size={12}
+              color={`${starred ? '#1556f0' : '#8B8B8B'}`}
+            />
             <Text className="text-sm text-gray-solid">{stars}</Text>
           </View>
           <View className="flex-row items-center gap-1">
@@ -107,6 +125,7 @@ interface NewsVideoHightlightsProps {
   views?: number;
   stars?: number;
   likes?: number;
+  starred?: boolean;
 }
 
 const NewsVideoHightlights = ({
@@ -115,10 +134,13 @@ const NewsVideoHightlights = ({
   views,
   stars,
   likes,
+  starred = false,
 }: NewsVideoHightlightsProps) => {
   return (
     <View className="flex-1 gap-3">
-      <Text className="text-xl font-medium">{title}</Text>
+      <Text numberOfLines={2} className="text-xl font-medium">
+        {title}
+      </Text>
       <View className="flex-row items-center justify-between">
         <View className="gap-1.5">
           <Text className="text-gray-solid">{subtitle}</Text>
@@ -129,7 +151,11 @@ const NewsVideoHightlights = ({
                 <Text className="text-sm text-gray-solid">{views}</Text>
               </View>
               <View className="flex-row items-center gap-1">
-                <Ionicons name="star-outline" size={12} color="#8B8B8B" />
+                <Ionicons
+                  name={`star${starred ? '' : '-outline'}`}
+                  size={12}
+                  color={`${starred ? '#1556f0' : '#8B8B8B'}`}
+                />
                 <Text className="text-sm text-gray-solid">{stars}</Text>
               </View>
               <View className="flex-row items-center gap-1">
