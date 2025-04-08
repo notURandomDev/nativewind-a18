@@ -16,6 +16,7 @@ import EventSource, { EventSourceEvent, EventSourceListener } from 'react-native
 import { MeetingRefCard, TranscriptionRefCard } from 'components/ReferenceCards';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
+import LottieView from 'lottie-react-native';
 
 import {
   AgentResponseProps,
@@ -43,6 +44,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { MyCustomEvents, useSSE } from 'hooks/useSSE';
 import { useLocalSearchParams } from 'expo-router';
+import PhaseIndicator from 'components/PhaseIndicator';
 
 const appKey = process.env.EXPO_PUBLIC_APP_KEY;
 const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
@@ -133,6 +135,7 @@ const Modal = () => {
 
   const textInputRef = useRef<TextInput>(null);
   const scrollViewRef = useRef<ScrollView>(null);
+  const animationRef = useRef<LottieView>(null);
 
   const replyMessageRef = useRef('');
   const referenceRef = useRef<
@@ -239,6 +242,7 @@ const Modal = () => {
   }, [replyMessage]);
 
   const handleSubmit = async (textinput: string) => {
+    animationRef.current?.play();
     setReplyMessage('');
     setIsLoading(true);
 
@@ -395,7 +399,7 @@ const Modal = () => {
                 sender={SenderType.AI}
               />
             ))}
-          <View className="border"></View>
+          <PhaseIndicator loading={false} phaseCode={-1} />
         </ScrollView>
       </View>
 
