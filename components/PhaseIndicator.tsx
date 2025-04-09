@@ -8,9 +8,15 @@ import {
   CheckMarkYes,
   LoadingCircle,
 } from 'assets/animations';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 
-type PhaseCodeTypes = -1 | 4 | 8 | 9 | 10 | 15 | 16;
+export type PhaseCodeTypes = -1 | 4 | 8 | 9 | 10 | 15 | 16;
 type IndicatorNameTypes =
   | 'check-mark-yes'
   | 'check-mark-success'
@@ -45,25 +51,32 @@ const PhaseIndicator = ({ phaseCode, size = 20, loading = true }: PhaseIndicator
   const lottieRef = useRef<LottieView>(null);
 
   // 动画值
-  const translateX = useSharedValue(-100); // 初始位置在左侧
-  const opacity = useSharedValue(0); // 初始透明
+  // const translateX = useSharedValue(-100); // 初始位置在左侧
+  const onPendingOpacity = useSharedValue(1);
+
+  const onCompleteOpacity = useSharedValue(0);
+  const onCompleteTranslateX = useSharedValue(0);
 
   // 动画样式
-  const animatedStyle = useAnimatedStyle(() => {
+
+  const onPendingAnimatedStyle = useAnimatedStyle(() => {
+    return { opacity: onPendingOpacity.value };
+  });
+
+  const onCompleteAnimatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ translateX: translateX.value }],
-      opacity: opacity.value,
+      opacity: onCompleteOpacity.value,
+      transform: [{ translateX: onCompleteTranslateX.value }],
     };
   });
 
   // 当 loading 变化时触发动画
   useEffect(() => {
     if (!loading) {
-      translateX.value = withTiming(0, { duration: 500 }); // 滑动到 0
-      opacity.value = withTiming(1, { duration: 500 }); // 渐显
-    } else {
-      translateX.value = -100; // 重置到左侧
-      opacity.value = 0; // 重置为透明
+      setTimeout(() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success), 1000);
+      onCompleteTranslateX.value = withDelay(500, withTiming(-43, { duration: 500 })); // 滑动到 0
+      onCompleteOpacity.value = withDelay(500, withTiming(1, { duration: 500 })); // 渐显
+      onPendingOpacity.value = withTiming(0, { duration: 500 }); // 渐隐
     }
   }, [loading]);
 
@@ -77,9 +90,15 @@ const PhaseIndicator = ({ phaseCode, size = 20, loading = true }: PhaseIndicator
         ref={lottieRef}
       />
 
-      <Animated.Text style={animatedStyle} className="text-lg font-medium">
-        {PhaseMap.get(phaseCode)}完成
-      </Animated.Text>
+      <View className="flex-row items-center">
+        <Text className="text-xl font-medium">{PhaseMap.get(phaseCode)}</Text>
+        <Animated.Text className="text-xl font-medium" style={onPendingAnimatedStyle}>
+          进行中
+        </Animated.Text>
+        <Animated.Text className="text-xl font-medium" style={onCompleteAnimatedStyle}>
+          已完成
+        </Animated.Text>
+      </View>
     </View>
   );
 };

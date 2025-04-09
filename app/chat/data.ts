@@ -30,6 +30,12 @@ export const TEST_TRANSCRIPTION_RAW = {
   type: 'raw',
 };
 
+export const TEST_DATA_PHASE = {
+  type: 'stage',
+  data: { phaseCode: 4 },
+  timestamp: 1744093344048,
+  _final: true,
+};
 export const TEST_DATA_ANSWER = {
   type: 'answer',
   data: {

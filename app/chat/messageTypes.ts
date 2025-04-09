@@ -1,3 +1,5 @@
+import { PhaseCodeTypes } from 'components/PhaseIndicator';
+
 export interface Reference4MeetingProps {
   meetingId: string;
   title: string;
@@ -19,10 +21,11 @@ export interface AgentResponseDataProps {
   message_id: string;
   timestamp: number;
   references?: Reference4MeetingProps[];
+  phaseCode?: PhaseCodeTypes;
 }
 
 export interface AgentResponseProps {
-  type: 'answer' | 'reference';
+  type: 'answer' | 'reference' | 'stage';
   data: AgentResponseDataProps;
   timestamp: number;
   _final: boolean;

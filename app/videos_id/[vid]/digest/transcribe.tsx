@@ -48,8 +48,10 @@ const SSE_RES_4_TESTING_WITH_CARDS = {
   type: 'enhanced',
 };
 
-const URL_REAL_BACKEND = `http://10.249.12.195:8088/subscribe?audioFilePath=D:%5C%5Coutput_audio.pcm`;
-
+// const URL_REAL_BACKEND = `http://10.249.12.195:8088/subscribe?audioFilePath=D:%5C%5Coutput_audio.pcm`;
+const URL_REAL_BACKEND = `http://10.249.18.189:8088/subscribe`;
+// const DEFAULT_TASKKEY = 'temporary-task-key';
+const DEFAULT_TASKKEY = 'meeting1';
 interface KnowledgeDataProps {
   term: string;
   explanation: string;
@@ -69,7 +71,7 @@ export interface TranscriptionProps {
   _final: boolean;
   data: SentenceProps;
   timestamp: bigint;
-  type: 'raw' | 'enhanced';
+  type: 'raw' | 'enhanced' | 'missedEnhanced';
   noteTag: NoteTags;
 }
 
@@ -79,7 +81,8 @@ const RealtimeTranscribe = () => {
   const [currentTranscription, setCurrentTranscription] = useState<TranscriptionProps | null>();
   const [loading, setLoading] = useState(false);
 
-  const taskKeyRef = useRef<string>('temporary-task-key');
+  const taskKeyRef = useRef<string>(DEFAULT_TASKKEY);
+  const lastEventIdRef = useRef<number>(0);
   const scrollviewRef = useRef<ScrollView>(null);
 
   const onMeetingCreated = (event: EventSourceEvent<MyCustomEvents>) => {
@@ -89,37 +92,48 @@ const RealtimeTranscribe = () => {
       taskKeyRef.current = res.taskKey;
     }
   };
+
   const onTranscription = (event: EventSourceEvent<MyCustomEvents>) => {
     if (event.data) {
       const newTranscription: TranscriptionProps = JSON.parse(event.data);
       console.log('newTranscription received', newTranscription);
 
-      // const prevItems = transcription.slice(transcription.length);
-      if (newTranscription._final) {
-        if (transcription.length) {
-          setTranscription((prev) => [...prev, newTranscription]);
+      if (newTranscription.type === 'enhanced') {
+        const eventId = newTranscription.data.index;
+        setTranscription((prev) =>
+          prev.map((item, index) => (index === eventId ? newTranscription : item))
+        );
+        lastEventIdRef.current = eventId;
+      } else if (newTranscription.type === 'missedEnhanced') {
+        setTranscription((prev) => [...prev, newTranscription]);
+      } else if (newTranscription.type === 'raw') {
+        if (newTranscription._final) {
+          if (transcription.length) {
+            setTranscription((prev) => [...prev, newTranscription]);
+          } else {
+            setTranscription([newTranscription]);
+          }
+          setCurrentTranscription(null);
         } else {
-          setTranscription([newTranscription]);
-        }
-        setCurrentTranscription(null);
-      } else {
-        if (currentTranscription) {
-          setCurrentTranscription((prev) => {
-            if (prev) {
-              const {
-                data: { text, ...dataRest },
-                ...rest
-              } = prev;
-              return { ...rest, data: { text: newTranscription.data.text, ...dataRest } };
-            }
-            return prev; // Ensure a valid return value
-          });
-        } else {
-          setCurrentTranscription(newTranscription);
+          if (currentTranscription) {
+            setCurrentTranscription((prev) => {
+              if (prev) {
+                const {
+                  data: { text, ...dataRest },
+                  ...rest
+                } = prev;
+                return { ...rest, data: { text: newTranscription.data.text, ...dataRest } };
+              }
+              return prev; // Ensure a valid return value
+            });
+          } else {
+            setCurrentTranscription(newTranscription);
+          }
         }
       }
     }
   };
+
   const onClose = () => {
     updateTranscriptionDataAsync();
     console.log('on es close');
@@ -146,7 +160,7 @@ const RealtimeTranscribe = () => {
         }
         return item;
       });
-      updateTranscriptionData(taskKeyRef.current, newData);
+      updateTranscriptionDataAsync();
       return newData;
     });
   };
@@ -167,8 +181,10 @@ const RealtimeTranscribe = () => {
 
   const startES = () => {
     setLoading(true);
-    sendEventSourceDevRequest(SSE_RES_4_TESTING_NO_CARDS);
-    // sendEventSourceGetRequest(URL_REAL_BACKEND);
+    // sendEventSourceDevRequest(SSE_RES_4_TESTING_NO_CARDS);
+    sendEventSourceGetRequest(
+      `${URL_REAL_BACKEND}?lastEventId=${lastEventIdRef.current}&taskKey=${taskKeyRef.current}`
+    );
   };
 
   const endES = () => {
@@ -191,12 +207,15 @@ const RealtimeTranscribe = () => {
   }, [taskKeyRef.current]);
 
   const getTranscriptionDataAsync = async () => {
-    const res = await getTranscriptionData(taskKeyRef.current);
-    setTranscription(res);
+    const { transcriptionData = [], lastEventIndex = 0 } = await getTranscriptionData(
+      taskKeyRef.current
+    );
+    setTranscription(transcriptionData);
+    lastEventIdRef.current = lastEventIndex;
   };
 
   const updateTranscriptionDataAsync = () => {
-    updateTranscriptionData(taskKeyRef.current, transcription);
+    updateTranscriptionData(taskKeyRef.current, transcription, lastEventIdRef.current);
   };
 
   const deleteTranscriptionDataAsync = async () => {
@@ -267,7 +286,7 @@ interface ModifyNoteTagCbProps {
 
 interface HighlightableParagraphProps {
   sentence: SentenceProps;
-  type: 'enhanced' | 'raw';
+  type: 'enhanced' | 'raw' | 'missedEnhanced';
   noteTag: NoteTags;
   modifyNoteTagCb: ModifyNoteTagCbProps;
 }
@@ -333,7 +352,7 @@ const HighlightableParagraph = ({
         onLongPress={handleLongPress}
         onPress={handlePress}>
         <Text style={[{ lineHeight: 26 }, textDecorationStyles[noteTag]]}>
-          <Text>{sentence.text}</Text>;
+          <Text>{sentence.text}</Text>
         </Text>
         {isActive && <CustomContextMenu cbs={cbs} currentTag={noteTag} />}
       </TouchableOpacity>

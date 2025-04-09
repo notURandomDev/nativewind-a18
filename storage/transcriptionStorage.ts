@@ -1,34 +1,45 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TranscriptionProps } from 'app/videos_id/[vid]/digest/transcribe';
 
+type TranscriptionStorageScheme = {
+  transcriptionData: TranscriptionProps[] | [];
+  lastEventIndex: number;
+};
+
 type UpdateTranscriptionDataProps = (
   taskKey: string,
-  newTranscriptionData: TranscriptionProps[] | []
+  newTranscriptionData: TranscriptionProps[] | [],
+  lastEventId: number
 ) => void;
 
 const LOG_PREFIX = 'ASYNC-STORAGE:';
 
 export const updateTranscriptionData: UpdateTranscriptionDataProps = async (
   taskKey,
-  newTranscriptionData
+  newTranscriptionData,
+  lastEventId
 ) => {
   const LOG_CONTENT = ' Updating Transcription Data for ' + taskKey;
   try {
-    await AsyncStorage.setItem(`meeting-${taskKey}`, JSON.stringify(newTranscriptionData));
+    const data: TranscriptionStorageScheme = {
+      transcriptionData: newTranscriptionData,
+      lastEventIndex: lastEventId,
+    };
+    await AsyncStorage.setItem(`meeting-${taskKey}`, JSON.stringify(data));
     console.log(LOG_PREFIX + 'Success' + LOG_CONTENT, newTranscriptionData);
   } catch (e) {
     console.error(LOG_PREFIX + 'Error' + LOG_CONTENT, e);
   }
 };
 
-type GetTranscriptionDataProps = (taskKey: string) => Promise<TranscriptionProps[] | []>;
+type GetTranscriptionDataProps = (taskKey: string) => Promise<TranscriptionStorageScheme>;
 
 export const getTranscriptionData: GetTranscriptionDataProps = async (taskKey: string) => {
   const LOG_CONTENT = ' Getting Transcription Data for ' + taskKey;
   try {
     const res = await AsyncStorage.getItem(`meeting-${taskKey}`).then((data) => {
       if (data === null) {
-        updateTranscriptionData(taskKey, []);
+        updateTranscriptionData(taskKey, [], 0);
         return [];
       }
 

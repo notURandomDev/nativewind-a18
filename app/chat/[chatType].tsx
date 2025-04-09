@@ -32,10 +32,10 @@ import {
   TEST_DATA_REF_MEETING,
   TEST_DATA_ANSWER,
   TEST_DATA_REF_TRANSCRIPTION,
+  TEST_DATA_PHASE,
   TRANSCRIPTION_THUMBNAILS,
 } from './data';
 import { LinearGradient } from 'expo-linear-gradient';
-import ButtonAllinOne from 'components/ButtonAllinOne';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -44,7 +44,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { MyCustomEvents, useSSE } from 'hooks/useSSE';
 import { useLocalSearchParams } from 'expo-router';
-import PhaseIndicator from 'components/PhaseIndicator';
+import PhaseIndicator, { PhaseCodeTypes } from 'components/PhaseIndicator';
+import PhaseSection from 'components/PhaseSection';
 
 const appKey = process.env.EXPO_PUBLIC_APP_KEY;
 const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
@@ -70,6 +71,11 @@ const Modal = () => {
     Array<LocalChatMessageProps | LocalMeetingRefMessageProps | LocalTranscriptionRefMessageProps>
   >([]);
   const [replyMessage, setReplyMessage] = useState('');
+  const [completedPhases, setCompletedPhases] = useState<PhaseCodeTypes[]>([]);
+  const [currentPhase, setCurrentPhase] = useState<{
+    completed: boolean;
+    phaseCode: PhaseCodeTypes;
+  } | null>(null);
 
   useEffect(() => {
     console.log('useEffect-replyMessage-changed', replyMessage);
@@ -80,12 +86,19 @@ const Modal = () => {
     if (event.data !== null) {
       const res = JSON.parse(event.data) as AgentResponseProps;
       console.log('message received from sse', res);
-
-      if (res.type === 'answer') {
+      if (res.type === 'stage') {
+        if (currentPhase) {
+          const prevPhase = currentPhase;
+          setCompletedPhases((prev) => [...prev, prevPhase.phaseCode]);
+          setTimeout(() => {
+            setCurrentPhase({ completed: false, phaseCode: res.data.phaseCode || -1 });
+          }, 1000);
+        } else {
+          setCurrentPhase({ completed: false, phaseCode: res.data.phaseCode || -1 });
+        }
+      } else if (res.type === 'answer') {
         setReplyMessage((prev) => prev + res.data.text);
-      }
-
-      if (res.type === 'reference' && res.data.references) {
+      } else if (res.type === 'reference' && res.data.references) {
         const referenceResponse: Array<
           LocalMeetingRefMessageProps | LocalTranscriptionRefMessageProps
         > = res.data.references.map(
@@ -120,6 +133,7 @@ const Modal = () => {
     terminateEventSourceConnection();
     saveSSEResponse();
     setLinked(false);
+    setCompletedPhases([]);
   };
   const { sendEventSourceDevRequest, sendEventSourcePostRequest, terminateEventSourceConnection } =
     useSSE({
@@ -258,14 +272,14 @@ const Modal = () => {
       ...prevMessages,
       { ...newMessage, text: newMessage.text || '' },
     ]);
-    // sendEventSourceDevRequest(TEST_DATA_ANSWER);
-    sendEventSourcePostRequest(
+    sendEventSourceDevRequest(TEST_DATA_PHASE);
+    /* sendEventSourcePostRequest(
       JSON.stringify({
         input: textinput,
         isInMeeting: chatType === 'insideMeeting' ? true : false,
       }),
       URL_4_REAL
-    );
+    ); */
     // sendSSERequest();
   };
 
@@ -381,27 +395,35 @@ const Modal = () => {
           contentContainerClassName="p-4"
           style={{ backgroundColor: '#ffffff' }}>
           {MemorizedMessages}
-          {isLoading &&
-            (replyMessage === '' ? (
-              <View className="" style={{ paddingHorizontal: 18 }}>
+          {isLoading && (
+            <View>
+              <PhaseSection completedPhases={completedPhases} />
+              {currentPhase && (
+                <PhaseIndicator
+                  loading={!currentPhase.completed}
+                  phaseCode={currentPhase.phaseCode}
+                />
+              )}
+              {replyMessage !== '' && (
+                <MessageBubble
+                  type="chat"
+                  id={Date.now()}
+                  text={replyMessage}
+                  sender={SenderType.AI}
+                />
+              )}
+            </View>
+          )}
+        </ScrollView>
+      </View>
+      {/* <View className="" style={{ paddingHorizontal: 18 }}>
                 <Progress.CircleSnail
                   size={36}
                   duration={1000}
                   spinDuration={1000}
                   style={{ alignSelf: 'flex-start' }}
                 />
-              </View>
-            ) : (
-              <MessageBubble
-                type="chat"
-                id={Date.now()}
-                text={replyMessage}
-                sender={SenderType.AI}
-              />
-            ))}
-          <PhaseIndicator loading={false} phaseCode={-1} />
-        </ScrollView>
-      </View>
+              </View> */}
 
       {/* Bottom Toolbar */}
       <BottomToolBox
