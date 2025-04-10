@@ -14,7 +14,7 @@ export const CategoryConfigs: CategoryConfigsProps[] = [
   { label: '个人', category: 'personal', color: '#00BBFF25' },
   { label: '工作', category: 'work', color: '#FF4E7425' },
   { label: '圆桌会议', category: 'meeting', color: '#FFBB0025' },
-  { label: '未分类', category: 'default', color: '#8b8b8b' },
+  { label: '未分类', category: 'default', color: '#ffffff' },
 ];
 
 interface CategoryConfigsProps {
@@ -169,7 +169,7 @@ const Category = ({ label, category, isActive = false, pressCb = () => {} }: Cat
       className="flex-row items-center justify-between">
       <View className="flex-row items-center gap-4">
         <View
-          className="bg-blue p-4"
+          className={`bg-blue p-4 ${category === 'default' ? 'border border-gray' : ''}`}
           style={{
             borderRadius: 7.5,
             backgroundColor: CategoryConfigs.find((config) => config.category === category)?.color,

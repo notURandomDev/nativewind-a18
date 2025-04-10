@@ -9,95 +9,83 @@ import Feather from '@expo/vector-icons/Feather';
 
 const KEY_NOTES = [
   {
-    id: 1,
-    title: '云计算与AI融合：共创数字智能新时代',
-    date: '2025年5月18日',
-    subtitle: '随着大语言模型与云的结合，技...',
-    category: 'UNCATEGORIZED',
+    title: '2024西湖论剑：云原生AI基础设施新趋势',
+    date: '2025年5月17日',
+    preview: '大会首日重点讨论了云原生架构如何优化AI训练效率，包括弹性算力调度和分布式训练加速技术',
   },
   {
-    id: 2,
-    title: '云计算与AI融合：共创数字智能新时代',
+    title: '西湖论剑主题演讲：大模型时代的云智融合实践',
     date: '2025年5月18日',
-    subtitle: '随着大语言模型与云的结合，技...',
-    category: 'PRIVATE',
+    preview:
+      '阿里巴巴集团CTO现场展示了通义千问在云端的规模化部署方案，并发布AIaaS（AI as a Service）新标准',
   },
 ];
 
 const MARKED_NOTES = [
   {
-    id: 1,
-    title: '云计算与AI融合：共创数字智能新时代',
-    date: '2025年5月18日',
-    subtitle: '随着大语言模型与云的结合，技...',
-    category: 'UNCATEGORIZED',
+    title: '西湖论剑圆桌：云厂商如何构建AI开发生态',
+    date: '2025年5月16日',
+    preview: '腾讯云、百度智能云等技术负责人探讨了MLOps工具链、模型市场与开发者社区的建设经验',
   },
   {
-    id: 2,
-    title: '云计算与AI融合：共创数字智能新时代',
-    date: '2025年5月18日',
-    subtitle: '随着大语言模型与云的结合，技...',
-    category: 'PRIVATE',
+    title: '从西湖论剑看AI算力的云端变革',
+    date: '2025年5月19日',
+    preview: '华为云专家分享基于昇腾AI芯片的云上推理优化方案，实测推理成本降低40%',
   },
   {
-    id: 3,
-    title: '云计算与AI融合：共创数字智能新时代',
-    date: '2025年5月18日',
-    subtitle: '随着大语言模型与云的结合，技...',
-    category: 'PRIVATE',
+    title: '边缘AI与中心云的协同架构设计',
+    date: '2025年5月20日',
+    preview: '基于西湖论剑公布的电信行业案例，解析云端模型训练与边缘设备推理的实时协同技术',
   },
 ];
 
 const PENDING_NOTES = [
   {
-    id: 1,
-    title: '云计算与AI融合：共创数字智能新时代',
-    date: '2025年5月18日',
-    subtitle: '随着大语言模型与云的结合，技...',
-    category: 'UNCATEGORIZED',
+    title: '开源大模型与商业云的共赢之路——西湖论剑观察',
+    date: '2025年5月16日',
+    preview:
+      'Hugging Face CEO现场宣布与阿里云、AWS的模型托管计划，支持Llama3等开源模型一键云端部署',
   },
   {
-    id: 2,
-    title: '云计算与AI融合：共创数字智能新时代',
-    date: '2025年5月18日',
-    subtitle: '随着大语言模型与云的结合，技...',
-    category: 'PRIVATE',
+    title: '西湖论剑技术揭秘：千卡GPU集群的云上调度优化',
+    date: '2025年5月17日',
+    preview: '微软Azure团队公开LLM训练中的显存碎片整理算法，可将千亿参数模型训练成本降低18%',
   },
   {
-    id: 3,
-    title: '云计算与AI融合：共创数字智能新时代',
+    title: '西湖论剑2024：AI原生安全防御体系白皮书发布',
     date: '2025年5月18日',
-    subtitle: '随着大语言模型与云的结合，技...',
-    category: 'PRIVATE',
+    preview:
+      '蚂蚁集团联合CSA发布全球首个AI驱动的云安全防护框架，覆盖模型反欺诈、数据隐私计算等6大场景',
   },
   {
-    id: 4,
-    title: '云计算与AI融合：共创数字智能新时代',
-    date: '2025年5月18日',
-    subtitle: '随着大语言模型与云的结合，技...',
-    category: 'UNCATEGORIZED',
+    title: '从西湖论剑看银行核心系统的AI化改造',
+    date: '2025年5月19日',
+    preview:
+      '工商银行分享基于阿里云PAI的信贷风控模型，实现审批效率提升300%与不良率下降25%的双重突破',
   },
+
   {
-    id: 5,
-    title: '云计算与AI融合：共创数字智能新时代',
-    date: '2025年5月18日',
-    subtitle: '随着大语言模型与云的结合，技...',
-    category: 'PRIVATE',
+    title: '西湖论剑医疗专场：云+AI驱动的新药研发范式',
+    date: '2025年5月20日',
+    preview:
+      '药明康德展示云端AlphaFold2与分子动力学模拟的结合方案，缩短药物发现周期至传统方法的1/3',
   },
+
   {
-    id: 6,
-    title: '云计算与AI融合：共创数字智能新时代',
-    date: '2025年5月18日',
-    subtitle: '随着大语言模型与云的结合，技...',
-    category: 'PRIVATE',
+    title: '西湖论剑政企论坛：城市治理中的云智一体方案',
+    date: '2025年5月21日',
+    preview: '杭州城市大脑团队详解交通调度AI模型在政务云上的运行效果，高峰期拥堵指数下降40%',
   },
 ];
 
 interface LocalNoteItemProps {
   bgColor?: ColorValue;
+  title: string;
+  date: string;
+  preview: string;
 }
 
-const LocalNoteItem = ({ bgColor = '#FF3F3F10' }: LocalNoteItemProps) => (
+const LocalNoteItem = ({ bgColor = '#FF3F3F10', title, date, preview }: LocalNoteItemProps) => (
   <View
     style={[
       {
@@ -107,11 +95,13 @@ const LocalNoteItem = ({ bgColor = '#FF3F3F10' }: LocalNoteItemProps) => (
       },
     ]}
     className="gap-0.5 p-4">
-    <Text className="text-xl font-medium">云计算与AI融合：共创数字智能新时代</Text>
+    <Text className="text-xl font-medium">{title}</Text>
     <View className="flex-row">
-      <Text className="font-light text-gray-solid">2025年5月18日</Text>
+      <Text className="font-light text-gray-solid">{date}</Text>
       <Text>｜</Text>
-      <Text className="font-light text-gray-solid">随着大语言模型与云的结合，技...</Text>
+      <Text numberOfLines={1} className="flex-1 font-light text-gray-solid">
+        {preview}
+      </Text>
     </View>
   </View>
 );
@@ -146,12 +136,18 @@ const CategorizingLabel = ({
 );
 
 const CategorizedNotes = () => {
+  const scrollviewRef = useRef<ScrollView>(null);
+
   return (
     <View className="flex-1 py-4">
       <View className="px-4 text-blue">
         <MyTextInput placeholder="搜索标签内容" size="sm" />
       </View>
-      <ScrollView contentContainerClassName="gap-0" className="py-3">
+      <ScrollView
+        onContentSizeChange={() => scrollviewRef.current?.scrollToEnd({ animated: true })}
+        ref={scrollviewRef}
+        contentContainerClassName="gap-0"
+        className="py-3">
         <CollapsibleShell
           customToggle={{
             show: <Ionicons size={24} name="chevron-down" />,
@@ -166,8 +162,8 @@ const CategorizedNotes = () => {
           labelClassName="text-black"
           dotColor="#00BBFF"
           toggle="top">
-          {KEY_NOTES.map((note) => (
-            <LocalNoteItem />
+          {KEY_NOTES.map((note, index) => (
+            <LocalNoteItem {...note} key={`note-marked-${index}`} />
           ))}
         </CollapsibleShell>
         <CollapsibleShell
@@ -182,8 +178,8 @@ const CategorizedNotes = () => {
           transparent
           withPadding={false}
           toggle="top">
-          {MARKED_NOTES.map((note) => (
-            <LocalNoteItem bgColor="#00BBFF10" />
+          {MARKED_NOTES.map((note, index) => (
+            <LocalNoteItem {...note} key={`note-question-${index}`} bgColor="#00BBFF10" />
           ))}
         </CollapsibleShell>
         <CollapsibleShell
@@ -198,8 +194,8 @@ const CategorizedNotes = () => {
           transparent
           withPadding={false}
           toggle="top">
-          {PENDING_NOTES.map((note) => (
-            <LocalNoteItem bgColor="#FFD84E10" />
+          {PENDING_NOTES.map((note, index) => (
+            <LocalNoteItem {...note} key={`note-todo-${index}`} bgColor="#FFD84E10" />
           ))}
         </CollapsibleShell>
       </ScrollView>

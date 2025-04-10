@@ -1,9 +1,14 @@
 import { View, Text, ScrollView, FlatList } from 'react-native';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import CustomLink from 'components/CustomLink';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { NewsFrontierInfoSlot, NewsVideoHightlights, VideoCard } from 'components/VideoCard';
-import { newsFrontierData, photoHighlightsData, videoHighlightsData } from 'data/cards';
+import {
+  newsFrontierData,
+  photoHighlightsData,
+  photoHighlightsData2,
+  videoHighlightsData,
+} from 'data/cards';
 import PortraitCard from 'components/PortraitCard';
 import VideoThumbnail from 'components/VideoThumbnail';
 import BottomIndicator from 'components/BottomIndicator';
@@ -51,25 +56,40 @@ const VideoHighlights = () => (
   </View>
 );
 
-const PhotoHighlights = () => (
-  <View className="gap-4">
-    <CustomLink title="精彩图片" />
-    <View className="flex-row gap-3">
-      <ButtonAllinOne label="5月17日" />
-      <ButtonAllinOne variant="outline" label="5月18日" />
-      <ButtonAllinOne variant="outline" label="5月19日" />
+const ButtonConfigs = ['5月17日', '5月18日'];
+
+const PhotoHighlights = () => {
+  const [buttonIndex, setButtonIndex] = useState(0);
+  const flatlistRef = useRef<FlatList>(null);
+  return (
+    <View className="gap-4">
+      <CustomLink title="精彩图片" />
+      <View className="flex-row gap-3">
+        {ButtonConfigs.map((config, index) => (
+          <ButtonAllinOne
+            onPress={() => {
+              setButtonIndex(index);
+              flatlistRef.current?.scrollToOffset({ animated: true, offset: 0 });
+            }}
+            key={`button-${index}`}
+            label={config}
+            variant={index === buttonIndex ? 'solid' : 'outline'}
+          />
+        ))}
+      </View>
+      <FlatList
+        ref={flatlistRef}
+        showsHorizontalScrollIndicator={false}
+        horizontal
+        contentContainerClassName="gap-4"
+        data={buttonIndex === 0 ? photoHighlightsData : photoHighlightsData2}
+        renderItem={({ item: { label, imgSrc } }) => (
+          <PortraitCard size={128} label={label} img={imgSrc} variant="square" alignMode="center" />
+        )}
+      />
     </View>
-    <FlatList
-      showsHorizontalScrollIndicator={false}
-      horizontal
-      contentContainerClassName="gap-4"
-      data={photoHighlightsData}
-      renderItem={({ item: { label, imgSrc } }) => (
-        <PortraitCard size={128} label={label} img={imgSrc} variant="square" alignMode="center" />
-      )}
-    />
-  </View>
-);
+  );
+};
 
 const NewsTabView = () => {
   return (

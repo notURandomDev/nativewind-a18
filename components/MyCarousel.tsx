@@ -27,7 +27,7 @@ const MyCarousel = ({ data }: myCarouselProps) => {
         width={360}
         height={215}
         data={data}
-        autoPlay={false}
+        autoPlay={true}
         autoPlayInterval={2000}
         onProgressChange={progress}
         renderItem={({ item }) => <CarouselCard {...item} />}

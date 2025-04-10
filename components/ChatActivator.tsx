@@ -21,7 +21,7 @@ const ChatActivator = ({ href }: { href: string }) => {
         <Image
           style={{ height: 40, width: 40 }}
           resizeMode="contain"
-          source={require('../assets/imgs/favicon-1.png')}
+          source={require('../assets/imgs/favicon-notext.png')}
         />
       </TouchableOpacity>
     </Link>

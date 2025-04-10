@@ -29,6 +29,80 @@ const committeeCardsData = [
   { title: '邬贺铨', subtitle: '中国工程院院士', img: require('../assets/imgs/guest-p-1.png') },
   { title: '邬江兴', subtitle: '中国工程院院士', img: require('../assets/imgs/guest-p-2.png') },
   { title: '杨小牛', subtitle: '中国工程院院士', img: require('../assets/imgs/guest-p-3.png') },
+  { title: '冯登国', subtitle: '中国科学院院士', img: require('../assets/imgs/guest-p-4.jpeg') },
+  {
+    title: '李京春',
+    subtitle: '国家信息技术安全研究中心原副主任',
+    img: require('../assets/imgs/guest-p-5.png'),
+  },
+];
+
+const speechListPrev = [
+  {
+    title: '以数据为关键要素的数字经济，亟需数字生态系统底层驱动范...',
+    subtitle: '企业数字化与数据出海流通座谈演讲会',
+    datetime: '2025年5月17日',
+    views: 190,
+    stars: 55,
+    likes: 60,
+    img: {
+      title: '刘世锦',
+      subtitle: '第十三届全国政协经济委员会副主席',
+      src: require('../assets/imgs/guest-prev-1.png'),
+    },
+  },
+  {
+    title: '迎接人工智能的安全挑战',
+    subtitle: '数据安全创新实践案例集发...',
+    datetime: '2025年5月17日',
+    views: 53,
+    stars: 55,
+    likes: 58,
+    img: {
+      title: '高敏',
+      subtitle: '汉帛集团总裁',
+      src: require('../assets/imgs/guest-prev-2.png'),
+    },
+  },
+  {
+    title: '大力发展AI，推动绿色化数字化协同转型',
+    subtitle: '2024全国数字安全行业产教...',
+    datetime: '2025年5月17日',
+    views: 29,
+    stars: 55,
+    likes: 40,
+    img: {
+      title: '唐辉',
+      subtitle: '北京国家金融科技认证中心有限公司...',
+      src: require('../assets/imgs/guest-prev-3.jpg'),
+    },
+  },
+  {
+    title: '新质生产力与数字经济',
+    subtitle: '2024全国数字安全行业产教...',
+    datetime: '2025年5月17日',
+    views: 190,
+    stars: 55,
+    likes: 60,
+    img: {
+      title: '杨建军',
+      subtitle: '工业和信息化部商用密码应用产业促',
+      src: require('../assets/imgs/guest-prev-4.jpg'),
+    },
+  },
+  {
+    title: '新质生产力与数字经济',
+    subtitle: '2024全国数字安全行业产教...',
+    datetime: '2025年5月17日',
+    views: 234,
+    stars: 53,
+    likes: 33,
+    img: {
+      title: '曹岳',
+      subtitle: '国家信息技术安全研究中心处长',
+      src: require('../assets/imgs/guest-prev-5.jpg'),
+    },
+  },
 ];
 
 const speechListData = [
@@ -47,7 +121,7 @@ const speechListData = [
   },
   {
     title: '迎接人工智能的安全挑战',
-    subtitle: '数据安全创新实践案例集发...',
+    subtitle: '数据安全创新实践案例集发布活动',
     datetime: '2025年5月17日',
     views: 53,
     stars: 55,
@@ -82,6 +156,45 @@ const speechListData = [
       title: '汪玉凯',
       subtitle: '中国工程院院士',
       src: require('../assets/imgs/guest-s-4.png'),
+    },
+  },
+  {
+    title: '开幕式及主题大会',
+    subtitle: '2024全国数字安全行业产教...',
+    datetime: '2025年5月17日',
+    views: 190,
+    stars: 55,
+    likes: 60,
+    img: {
+      title: '李正茂',
+      subtitle: '中国电信集团公司原总经理、全球...',
+      src: require('../assets/imgs/guest-s-5.jpg'),
+    },
+  },
+  {
+    title: '开幕式及主题大会',
+    subtitle: '2024全国数字安全行业产教...',
+    datetime: '2025年5月17日',
+    views: 190,
+    stars: 55,
+    likes: 60,
+    img: {
+      title: '胡瑞敏',
+      subtitle: '教育部新工科联盟网络空间安全工委',
+      src: require('../assets/imgs/guest-s-6.png'),
+    },
+  },
+  {
+    title: '新质生产力与数字经济',
+    subtitle: '数据安全创新实践案例集发布活动',
+    datetime: '2025年5月17日',
+    views: 190,
+    stars: 55,
+    likes: 60,
+    img: {
+      title: '严明',
+      subtitle: '中国计算机学会计算机安全专业委员',
+      src: require('../assets/imgs/guest-s-7.jpg'),
     },
   },
 ];
@@ -173,16 +286,38 @@ const photoHighlightsData = [
     imgSrc: require('../assets/imgs/ph-2.png'),
   },
   {
-    label: '企业资源入表',
-    imgSrc: require('../assets/imgs/ph-2.png'),
+    label: '16周年展',
+    imgSrc: require('../assets/imgs/ph-3.jpg'),
   },
   {
-    label: '企业资源入表',
-    imgSrc: require('../assets/imgs/ph-2.png'),
+    label: '时间自有力量',
+    imgSrc: require('../assets/imgs/ph-4.jpg'),
   },
   {
-    label: '企业资源入表',
-    imgSrc: require('../assets/imgs/ph-2.png'),
+    label: '袁明坤',
+    imgSrc: require('../assets/imgs/ph-5.jpg'),
+  },
+];
+const photoHighlightsData2 = [
+  {
+    label: '占据数据要素新赛道',
+    imgSrc: require('../assets/imgs/ph-2-1.jpg'),
+  },
+  {
+    label: '企业数据资源入表',
+    imgSrc: require('../assets/imgs/ph-2-2.jpg'),
+  },
+  {
+    label: 'AI+安全，共绘跨时代的数字“富春山居图”',
+    imgSrc: require('../assets/imgs/ph-2-3.jpg'),
+  },
+  {
+    label: '仪式',
+    imgSrc: require('../assets/imgs/ph-2-4.jpg'),
+  },
+  {
+    label: '公益展',
+    imgSrc: require('../assets/imgs/ph-2-5.jpg'),
   },
 ];
 
@@ -281,5 +416,7 @@ export {
   agendaPosterData,
   guestsPosterData,
   photoHighlightsData,
+  photoHighlightsData2,
   securityBootcampData,
+  speechListPrev,
 };

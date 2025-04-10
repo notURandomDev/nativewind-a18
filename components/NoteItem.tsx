@@ -160,11 +160,19 @@ const NoteItem = ({
           {
             position: 'relative',
             borderRadius: 17,
-            backgroundColor: CategoryConfigs.find((config) => config.category === category)?.color,
+            backgroundColor:
+              category === 'default'
+                ? '#ffffff'
+                : CategoryConfigs.find((config) => config.category === category)?.color,
+            borderWidth: 1,
+            borderColor:
+              category === 'default'
+                ? '#E8E8E8'
+                : CategoryConfigs.find((config) => config.category === category)?.color,
           },
         ]}
-        className="gap-0.5 p-4">
-        {category === 'default' && (
+        className={`gap-0.5 p-4`}>
+        {/* {category === 'default' && (
           <LinearGradient
             colors={['#E9E8FF', '#F5F8FF']}
             locations={[0, 1]}
@@ -181,12 +189,12 @@ const NoteItem = ({
               flexGrow: 1,
             }}
           />
-        )}
+        )} */}
         <Text className="text-xl font-medium">{title}</Text>
         <View className="flex-row items-center">
           <Text className="font-light text-gray-solid">{date}</Text>
           <Text>｜</Text>
-          <Text numberOfLines={1} className="font-light text-gray-solid">
+          <Text numberOfLines={1} className="flex-1 font-light text-gray-solid">
             {preview}
           </Text>
         </View>

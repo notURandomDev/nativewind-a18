@@ -49,7 +49,7 @@ const InfoSlot = ({ title, time, venue, live = false }: InfoSlotProps) => {
 export const DatetimeSlot = ({ datetime }: { datetime: string }) => (
   <View className="flex-row items-center gap-1">
     <Ionicons name="time-outline" size={12} color="#8B8B8B" />
-    <Text numberOfLines={1} style={{ fontSize: 12 }} className="font-medium text-gray-solid">
+    <Text numberOfLines={1} style={{ fontSize: 13 }} className="text-gray-solid">
       {datetime}
     </Text>
   </View>
@@ -58,7 +58,7 @@ export const DatetimeSlot = ({ datetime }: { datetime: string }) => (
 export const VenueSlot = ({ venue }: { venue: string }) => (
   <View className="flex-row items-center gap-1">
     <Ionicons name="location-outline" size={12} color="#8B8B8B" />
-    <Text numberOfLines={1} style={{ fontSize: 12 }} className="font-medium text-gray-solid">
+    <Text numberOfLines={1} style={{ fontSize: 13 }} className="text-gray-solid">
       {venue}
     </Text>
   </View>

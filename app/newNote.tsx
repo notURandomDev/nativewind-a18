@@ -72,7 +72,7 @@ const NewNote = () => {
           <ButtonAllinOne variant="ghost" onPress={handleBack}>
             <Ionicons size={24} name="chevron-back-outline" />
           </ButtonAllinOne>
-          <View className="flex-row items-center gap-2">
+          <View className="flex-1 flex-row items-center justify-center gap-2 px-1">
             <Feather name="edit-3" size={24} color="black" />
             <TextInput onChangeText={setTitle} value={title} className="text-2xl font-medium" />
           </View>

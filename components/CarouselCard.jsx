@@ -34,7 +34,11 @@ const CarouselCard = ({ title, time, venue, poster, views }) => {
             )}
           </View>
           <View className="gap-3">
-            <Text className="text-2xl  text-primary" numberOfLines={2} ellipsizeMode="tail">
+            <Text
+              style={{ fontSize: 24 }}
+              className="font-medium text-primary"
+              numberOfLines={2}
+              ellipsizeMode="tail">
               {title}
             </Text>
             <View className="gap-1.5">

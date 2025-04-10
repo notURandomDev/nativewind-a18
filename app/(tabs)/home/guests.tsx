@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import CustomLink from 'components/CustomLink';
 import { LinearGradient } from 'expo-linear-gradient';
 import PortraitCard from 'components/PortraitCard';
-import { committeeCardsData } from 'data/cards';
+import { committeeCardsData, speechListPrev } from 'data/cards';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { speechListData } from '../../../data/cards';
@@ -71,7 +71,7 @@ export const SpeechRightSlot = ({
 };
 
 const GuestsTabView = () => {
-  const [guestToggle, setGuestToggle] = useState(true);
+  const [buttonIndex, setButtonIndex] = useState(0);
 
   return (
     <ScrollView
@@ -94,22 +94,22 @@ const GuestsTabView = () => {
           <ButtonAllinOne
             label="本届嘉宾"
             onPress={() => {
-              setGuestToggle(true);
+              setButtonIndex(0);
             }}
-            variant={guestToggle ? 'solid' : 'outline'}
+            variant={buttonIndex === 0 ? 'solid' : 'outline'}
           />
           <ButtonAllinOne
             label="往届嘉宾"
             onPress={() => {
-              setGuestToggle(false);
+              setButtonIndex(1);
             }}
-            variant={guestToggle ? 'outline' : 'solid'}
+            variant={buttonIndex === 1 ? 'solid' : 'outline'}
           />
         </View>
         <FlatList
           scrollEnabled={false}
           contentContainerClassName="gap-5"
-          data={speechListData}
+          data={buttonIndex === 0 ? speechListData : speechListPrev}
           renderItem={({
             item: {
               img: { title, subtitle, src },
