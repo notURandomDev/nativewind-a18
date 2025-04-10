@@ -1,8 +1,7 @@
-import { View, Text, ImageBackground, Image } from 'react-native';
+import { View, Text, ImageBackground, Image, TouchableOpacity } from 'react-native';
 import React, { ReactNode } from 'react';
-import { TouchableWithoutFeedback } from 'react-native';
-import { router } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import * as Haptics from 'expo-haptics';
 
 interface VideoCardProps {
   leftSlot?: ReactNode;
@@ -10,14 +9,18 @@ interface VideoCardProps {
   onPress?: () => void;
 }
 
-const VideoCard = ({ leftSlot, rightSlot, onPress }: VideoCardProps) => {
+const VideoCard = ({ leftSlot, rightSlot, onPress = () => {} }: VideoCardProps) => {
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+    onPress();
+  };
   return (
-    <TouchableWithoutFeedback onPress={onPress}>
+    <TouchableOpacity onPress={handlePress}>
       <View className="flex-row gap-4">
         {leftSlot}
         {rightSlot}
       </View>
-    </TouchableWithoutFeedback>
+    </TouchableOpacity>
   );
 };
 
@@ -33,7 +36,7 @@ const InfoSlot = ({ title, time, venue, live = false }: InfoSlotProps) => {
     <View className="flex-1 justify-between gap-2 pb-1">
       <Text numberOfLines={2} className="text-xl font-medium">
         {live && <Ionicons size={14} name="cellular" color="#1556F0" />}
-        {title}
+        {`${live ? ' ' : ''}${title}`}
       </Text>
       <View className="flex-1 flex-row items-center justify-between gap-4">
         <View className="flex-1 gap-1">

@@ -11,7 +11,7 @@ const Heading = ({ children: title = '默认标题', icon }: HeadingProps) => {
   return (
     <View className="flex-row items-center gap-2">
       {icon}
-      <Text className="text-wrap text-xl">{title}</Text>
+      <Text className="text-wrap text-xl font-medium text-blue">{title}</Text>
     </View>
   );
 };

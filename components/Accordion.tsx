@@ -102,28 +102,13 @@ interface DigestSectionProps {
   startTimestamp?: number;
 }
 const DigestSection = ({ title, content, startTimestamp = 0 }: DigestSectionProps) => {
-  const { hour, minute, second } = getHMS(startTimestamp / 1000);
-  const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
   return (
-    <View className="gap-2">
-      <View className="flex-row gap-2">
-        <Text className="text-lg font-light text-gray-text">{timeStr}</Text>
-        <Text className="text-lg font-medium">{title}</Text>
-      </View>
-      <View style={{ borderRadius: 8.7 }} className="bg-white px-3 py-4">
-        <Text className="font-light text-gray-text" style={{ lineHeight: 18 }}>
-          {content}
-        </Text>
-      </View>
+    <View style={{ borderRadius: 8.7 }} className="bg-white px-3 py-3">
+      <Text className="font-light text-gray-text" style={{ lineHeight: 18 }}>
+        {content}
+      </Text>
     </View>
   );
-};
-
-const getHMS = (seconds: number) => {
-  const hour = Math.round(seconds / 60 / 60);
-  const minute = Math.round(seconds / 60);
-  const second = Math.round(seconds % 60);
-  return { hour, minute, second };
 };
 
 export default Accordion;

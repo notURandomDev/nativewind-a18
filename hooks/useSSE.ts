@@ -50,7 +50,7 @@ export const useSSE = (lf: ListenerFunctionProps) => {
     if (queryObj) {
       const queryString = new URLSearchParams({
         jsonobj: JSON.stringify(queryObj),
-        // interval: '5',
+        interval: '5',
       }).toString();
       url += `?${queryString}`;
     }

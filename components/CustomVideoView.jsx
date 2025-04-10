@@ -7,6 +7,7 @@ import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
+  withRepeat,
   withTiming,
 } from 'react-native-reanimated';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -31,12 +32,11 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
 
   const videoViewRef = useRef(null);
 
-  const opacity = useSharedValue(0);
-
   const player = useVideoPlayer({ assetId: videoSource }, (player) => {
     player.loop = true;
     player.timeUpdateEventInterval = 1;
-    player.pause();
+    player.muted = true;
+    player.play();
   });
 
   const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
@@ -62,6 +62,7 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
   });
 
   useEffect(() => {
+    // 监听转录卡片的点击事件
     const subscription = DeviceEventEmitter.addListener('seekVideo', async (positionMillis) => {
       console.log('event emitted:', positionMillis);
       player.currentTime = Math.round(positionMillis / 1000);
@@ -77,7 +78,10 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
   useEffect(() => {
     if (status === 'readyToPlay') {
       setVideoDuration(player.duration);
+      posterOpactity.value = withTiming(0, { duration: 500 });
       // player.play();
+    } else if (status === 'loading') {
+      posterOpactity.value = withTiming(0.7, { duration: 500 });
     }
   }, [status]);
 
@@ -108,9 +112,19 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
     // videoViewRef.current.enterFullscreen();
   };
 
+  // 视频控件的动态透明度
+  const opacity = useSharedValue(0);
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
   }));
+
+  // 视频加载动画（海报）
+  const posterOpactity = useSharedValue(0);
+  const animatedPosterStyle = useAnimatedStyle(() => {
+    return {
+      opacity: posterOpactity.value,
+    };
+  });
 
   return (
     <TouchableWithoutFeedback
@@ -123,13 +137,22 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
             width: '100%',
             height: videoHeight,
           }}
+          className="relative"
           player={player}
           allowsFullscreen
           allowsPictureInPicture
           nativeControls={false}
           contentFit="cover"
-          allowsVideoFrameAnalysis={false}
-        />
+          allowsVideoFrameAnalysis={false}>
+          <Animated.Image
+            onLoadStart={() =>
+              (posterOpactity.value = withRepeat(withTiming(0.7, { duration: 2000 }), 0, true))
+            }
+            style={[{ height: '100%', width: '100%' }, animatedPosterStyle]}
+            source={require('../assets/imgs/ai.jpg')}
+          />
+        </VideoView>
+
         {videoControlsVisible && (
           <Animated.View
             className="absolute left-0 top-0"

@@ -46,8 +46,12 @@ const MeetingRefCard = (props: MeetingRefCardProps) => {
         <View className="flex-1 justify-center gap-0">
           <Text className="text-sm font-medium text-gray-solid">{location}</Text>
           <View className="">
-            <Text className="text-2xl font-medium">{title}</Text>
-            <Text className="text-base font-medium text-gray-text">{description}</Text>
+            <Text numberOfLines={1} className="text-2xl font-medium">
+              {title}
+            </Text>
+            <Text numberOfLines={1} className="text-base font-medium text-gray-text">
+              {description}
+            </Text>
           </View>
         </View>
         <View

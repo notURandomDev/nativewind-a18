@@ -272,7 +272,8 @@ const Modal = () => {
       ...prevMessages,
       { ...newMessage, text: newMessage.text || '' },
     ]);
-    sendEventSourceDevRequest(TEST_DATA_PHASE);
+    sendEventSourceDevRequest(TEST_DATA_REF_MEETING);
+    //sendEventSourceDevRequest(TEST_DATA_ANSWER);
     /* sendEventSourcePostRequest(
       JSON.stringify({
         input: textinput,

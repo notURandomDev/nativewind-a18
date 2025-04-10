@@ -1,9 +1,9 @@
 const replayRecommendations = [
   {
-    title: '企业数字化与数据出海流通专项会议',
+    title: '2025西湖论剑暨安恒信息年度新品发布日',
     time: '2025年5月17日 14:30-17:20',
     venue: '杭州国际博览中心·102B/C',
-    imgSrc: require('../assets/imgs/rr-1.png'),
+    imgSrc: require('../assets/imgs/ai.jpg'),
     views: 2323,
     duration: '02:15:39',
   },

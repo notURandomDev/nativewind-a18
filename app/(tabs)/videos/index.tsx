@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FlatList, ScrollView, Text, View } from 'react-native';
 import CustomLink from 'components/CustomLink';
-import { VideoCard } from 'components/VideoCard';
+import { InfoSlot, VideoCard } from 'components/VideoCard';
 import { replayRecommendations } from 'data/cards';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MyCarousel from 'components/MyCarousel';
@@ -20,7 +20,7 @@ interface InfoSlotProps {
   live?: string;
 }
 
-export const InfoSlot = ({ title, time, venue }: InfoSlotProps) => {
+/* export const InfoSlot = ({ title, time, venue }: InfoSlotProps) => {
   return (
     <View className="flex-1 gap-2">
       <View className="flex-row">
@@ -48,7 +48,7 @@ export const InfoSlot = ({ title, time, venue }: InfoSlotProps) => {
       </View>
     </View>
   );
-};
+}; */
 
 function StreamTabView() {
   return (
@@ -56,12 +56,10 @@ function StreamTabView() {
       contentContainerClassName="gap-8"
       contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
       className="relative py-3">
-      {/* 当前直播 */}
       <View className="gap-4">
         <CustomLink title="当前直播" />
         <MyCarousel data={rrData} />
       </View>
-      {/* 我的直播订阅 */}
       <View className="gap-4">
         <CustomLink title="我的直播订阅" />
         <FlatList
@@ -74,7 +72,7 @@ function StreamTabView() {
                 router.push('../../videos_id/1');
               }}
               leftSlot={<VideoThumbnail live imgSrc={imgSrc} views={views} />}
-              rightSlot={<InfoSlot title={title} time={time} venue={venue} />}
+              rightSlot={<InfoSlot live title={title} time={time} venue={venue} />}
             />
           )}
         />
