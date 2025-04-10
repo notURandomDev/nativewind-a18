@@ -28,6 +28,9 @@ import {
   updateTranscriptionData,
 } from 'storage/transcriptionStorage';
 import { TRANSCRIPTION_WITH_CARD_FULL_DATA } from 'data/enhance_output_cards';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { formatTime } from 'utils/formatTime';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 TRANSCRIPTION_DATA.sort((a, b) => a.sentenceId - b.sentenceId);
 
 const SSE_RES_4_TESTING_NO_CARDS = {
@@ -201,8 +204,9 @@ const RealtimeTranscribe = () => {
 
   useEffect(() => {
     setTimeout(() => {
+      // setTranscription([SSE_RES_4_TESTING_WITH_CARDS]);
       setTranscription(TRANSCRIPTION_WITH_CARD_FULL_DATA);
-    }, 1000);
+    }, 100);
     return () => {
       endES();
     };
@@ -265,10 +269,8 @@ const RealtimeTranscribe = () => {
             </ButtonAllinOne>
             <ButtonAllinOne onPress={endES} variant="outline" label="结束测试" />
           </View>
-          <View
-            className="flex-1 gap-3 bg-white px-4"
-            style={{ paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10 }}>
-            <Text className="text-lg font-medium">{`taskKey: ${taskKeyRef.current}`}</Text>
+          <Text className="text-lg font-medium">{`taskKey: ${taskKeyRef.current}`}</Text>
+          <View className="flex-1 gap-3">
             {MemoizedParagraphs}
             {currentTranscription && (
               <View className="bg-blue-faint">
@@ -309,10 +311,18 @@ const HighlightableParagraph = ({
 }: HighlightableParagraphProps) => {
   const [isActive, setIsActive] = useState(false);
 
+  const borderColor = useSharedValue('#ffffff');
+  const scaleSize = useSharedValue(1);
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      borderWidth: 1,
+      borderColor: borderColor.value,
+      transform: [{ scale: scaleSize.value }],
+    };
+  });
+
   const textDecorationStyles: { [key in NoteTags]: TextStyle } = {
-    none: {
-      backgroundColor: isActive ? '#F5F8FF' : '',
-    },
+    none: {},
     mark: {
       textDecorationStyle: 'double',
       textDecorationLine: 'underline',
@@ -330,6 +340,14 @@ const HighlightableParagraph = ({
     },
   };
 
+  useEffect(() => {
+    if (isActive) {
+      borderColor.value = withTiming('#000000', { duration: 100 });
+    } else {
+      borderColor.value = withTiming('#ffffff', { duration: 200 });
+    }
+  }, [isActive]);
+
   const withActiveCb = (fn: () => void) => {
     fn();
     setIsActive(false);
@@ -345,6 +363,9 @@ const HighlightableParagraph = ({
   const handlePress = () => {
     if (isActive) setIsActive(false);
     DeviceEventEmitter.emit('seekVideo', sentence.beginTime);
+    scaleSize.value = withTiming(0.95, { duration: 100 }, () => {
+      scaleSize.value = withTiming(1, { duration: 100 });
+    });
   };
 
   const handleLongPress = () => {
@@ -353,53 +374,79 @@ const HighlightableParagraph = ({
     console.log('on-long-press');
   };
 
+  const handlePressOut = () => {
+    if (!isActive) {
+    }
+  };
+
+  const SentenceWrapper = ({ children }: { children: ReactNode }) => (
+    <TouchableOpacity
+      className="relative gap-1"
+      activeOpacity={1}
+      onPressOut={handlePressOut}
+      onLongPress={handleLongPress}
+      onPress={handlePress}>
+      <View className="flex-row items-center gap-1 px-2">
+        <Ionicons name="caret-forward-circle-outline" />
+        <Text className="text-lg font-light">
+          {formatTime(Math.round(sentence.beginTime ? sentence.beginTime / 1000 : 0))}
+        </Text>
+      </View>
+      <Animated.View
+        style={[
+          {
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+            borderRadius: 10,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          },
+          animatedStyle,
+        ]}
+        className="bg-white">
+        {children}
+        {isActive && <CustomContextMenu cbs={cbs} currentTag={noteTag} />}
+      </Animated.View>
+    </TouchableOpacity>
+  );
+
   const hasTerms = sentence?.card && JSON.parse(sentence.card)['terms'].length;
   // 如果是未增强过的转录数据，或增强过的转录数据中知识卡片数组为空，就直接将原句返回
   if (type === 'raw' || !hasTerms) {
     return (
-      <TouchableOpacity
-        className="relative"
-        activeOpacity={1}
-        onLongPress={handleLongPress}
-        onPress={handlePress}>
-        <Text style={[{ lineHeight: 26 }, textDecorationStyles[noteTag]]}>
+      <SentenceWrapper>
+        <Text style={[{ lineHeight: 26, fontSize: 15 }, textDecorationStyles[noteTag]]}>
           <Text>{JSON.parse(sentence.text)}</Text>
         </Text>
-        {isActive && <CustomContextMenu cbs={cbs} currentTag={noteTag} />}
-      </TouchableOpacity>
+      </SentenceWrapper>
     );
   }
 
   // 如果调用了该函数，则代表句子中一定有知识卡片，需要进行分割
   const segmentedSentence = segmentSentence(sentence);
+  // 对切片数组进行遍历
+  // 通过判断是不是知识卡片，返回相应的样式
+  const ReassembledSentence = () => (
+    <Text style={[{ lineHeight: 26, fontSize: 15 }, isActive && textDecorationStyles[noteTag]]}>
+      {segmentedSentence.map((segment) =>
+        segment.isTerm ? (
+          <Text
+            key={segment.segmentId}
+            suppressHighlighting={true}
+            onPress={() => Alert.alert(segment.text, segment.explanation)}
+            className="text-blue">
+            {segment.text}
+          </Text>
+        ) : (
+          <Text key={segment.segmentId}>{segment.text}</Text>
+        )
+      )}
+    </Text>
+  );
 
   return (
-    <TouchableOpacity
-      className="relative"
-      activeOpacity={1}
-      onLongPress={handleLongPress}
-      onPress={handlePress}>
-      <Text style={[{ lineHeight: 26 }, isActive && textDecorationStyles[noteTag]]}>
-        {
-          // 对切片数组进行遍历
-          // 通过判断是不是知识卡片，返回相应的样式
-          segmentedSentence.map((segment) =>
-            segment.isTerm ? (
-              <Text
-                key={segment.segmentId}
-                suppressHighlighting={true}
-                onPress={() => Alert.alert(segment.text, segment.explanation)}
-                className="text-blue">
-                {segment.text}
-              </Text>
-            ) : (
-              <Text key={segment.segmentId}>{segment.text}</Text>
-            )
-          )
-        }
-      </Text>
-      {isActive && <CustomContextMenu cbs={cbs} currentTag={noteTag} />}
-    </TouchableOpacity>
+    <SentenceWrapper>
+      <ReassembledSentence />
+    </SentenceWrapper>
   );
 };
 

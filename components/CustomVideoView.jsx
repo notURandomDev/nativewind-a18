@@ -14,6 +14,7 @@ import TouchableIcon from './TouchableIcon';
 import { Slider } from '@miblanchard/react-native-slider';
 import ClosedCaptionData from '../test/raw_output.json';
 import * as Haptics from 'expo-haptics';
+import { formatTime } from 'utils/formatTime';
 
 // const defaultVideoSource = 'https://prod-streaming-video-msn-com.akamaized.net/a8c412fa-f696-4ff2-9c76-e8ed9cdffe0f/604a87fc-e7bc-463e-8d56-cde7e661d690.mp4';
 const defaultVideoSource = require('../assets/videos/final_test_video.mp4');
@@ -92,14 +93,6 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
   };
 
   // Function to format time from seconds to HH:MM:SS
-  const formatTime = (seconds) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${hours.toString().padStart(2, '0')}:${minutes
-      .toString()
-      .padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
 
   const handleSeek = (value) => {
     const seekPosition = Math.round(value);
