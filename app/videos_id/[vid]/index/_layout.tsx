@@ -15,7 +15,7 @@ const DetailsTabLayout = () => {
   const [activeViewIndex, setActiveViewIndex] = useState(0);
 
   return (
-    <View style={{ paddingBottom: 285 }} className="flex-1 gap-4">
+    <View style={{ paddingBottom: 220 }} className="flex-1 gap-4">
       <View accessibilityLabel="block-buttons" className="flex-row gap-3 rounded-none px-8">
         {buttonConfig.map(({ label }, index) => {
           return (

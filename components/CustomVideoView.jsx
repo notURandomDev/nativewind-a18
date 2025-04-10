@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  Dimensions,
-} from 'react-native';
+import { View, Text, DeviceEventEmitter, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useVideoPlayer, VideoView } from 'expo-video';
@@ -19,15 +12,15 @@ import Animated, {
 import Ionicons from '@expo/vector-icons/Ionicons';
 import TouchableIcon from './TouchableIcon';
 import { Slider } from '@miblanchard/react-native-slider';
-import * as ScreenOrientation from 'expo-screen-orientation';
 import ClosedCaptionData from '../test/raw_output.json';
+import * as Haptics from 'expo-haptics';
 
-const defaultVideoSource =
-  'https://prod-streaming-video-msn-com.akamaized.net/a8c412fa-f696-4ff2-9c76-e8ed9cdffe0f/604a87fc-e7bc-463e-8d56-cde7e661d690.mp4';
+// const defaultVideoSource = 'https://prod-streaming-video-msn-com.akamaized.net/a8c412fa-f696-4ff2-9c76-e8ed9cdffe0f/604a87fc-e7bc-463e-8d56-cde7e661d690.mp4';
+const defaultVideoSource = require('../assets/videos/final_test_video.mp4');
 
 const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => {
   const { width: screenWidth } = Dimensions.get('window');
-  const videoHeight = screenWidth * (3 / 5);
+  const videoHeight = 220;
 
   const [videoControlsVisible, setVideoControlsVisible] = useState(true);
   const [seekbarPosition, setSeekbarPosition] = useState(0);
@@ -39,9 +32,10 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
 
   const opacity = useSharedValue(0);
 
-  const player = useVideoPlayer(videoSource, (player) => {
+  const player = useVideoPlayer({ assetId: videoSource }, (player) => {
     player.loop = true;
     player.timeUpdateEventInterval = 1;
+    player.pause();
   });
 
   const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
@@ -67,9 +61,22 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
   });
 
   useEffect(() => {
+    const subscription = DeviceEventEmitter.addListener('seekVideo', async (positionMillis) => {
+      console.log('event emitted:', positionMillis);
+      player.currentTime = Math.round(positionMillis / 1000);
+      if (player.status === 'readyToPlay') {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+        player.play();
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+
+  useEffect(() => {
     if (status === 'readyToPlay') {
       setVideoDuration(player.duration);
-      player.play();
+      // player.play();
     }
   }, [status]);
 
@@ -128,27 +135,26 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
           allowsPictureInPicture
           nativeControls={false}
           contentFit="cover"
+          allowsVideoFrameAnalysis={false}
         />
         {videoControlsVisible && (
           <Animated.View
             className="absolute left-0 top-0"
             style={[animatedStyle, { width: screenWidth, height: videoHeight }]}>
             <LinearGradient
-              colors={['rgba(31, 29, 43, 0.6)', 'rgba(31, 29, 43, 0)']}
-              start={{ x: 0.5, y: 0 }}
-              end={{ x: 0.5, y: 1 }}
+              colors={['rgba(0, 0, 0, 0.6)', 'rgba(31, 29, 43, 0)']}
               locations={[0.1317, 0.5086]}
               style={{ height: videoHeight / 2 }}>
               <View
                 accessibilityLabel="top-controls"
-                className="mt-12 flex-row justify-between p-5">
+                className="flex-row justify-between px-4 py-3">
                 <View
                   accessibilityLabel="top-left-controls"
                   className="flex-row items-center gap-4">
                   <TouchableIcon>
                     <Ionicons name="chevron-back-outline" size={24} color="#ffffff" />
                   </TouchableIcon>
-                  <View className="flex-row items-center gap-1.5">
+                  <View className="flex-row items-center gap-1.5 ">
                     <Ionicons name="eye-outline" size={16} color="#ffffff" />
                     <Text className="text-white">{views}人次</Text>
                   </View>
@@ -173,14 +179,12 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
               </View>
             </LinearGradient>
             <LinearGradient
-              colors={['rgba(31, 29, 43, 0)', 'rgba(31, 29, 43, 0.6)']}
-              start={{ x: 0.5, y: 0 }}
-              end={{ x: 0.5, y: 1 }}
+              colors={['rgba(31, 29, 43, 0)', 'rgba(0, 0, 0, 0.6)']}
               locations={[0.4617, 0.8924]}
               style={{ height: videoHeight / 2, justifyContent: 'flex-end' }}>
               <View
                 accessibilityLabel="bottom-controls"
-                className="flex-row items-center justify-center gap-3 p-5">
+                className="flex-row items-center justify-center gap-3 px-4 py-3">
                 <TouchableIcon
                   onPress={() => {
                     isPlaying ? player.pause() : player.play();

@@ -11,9 +11,11 @@ const PersonInfo = ({ label = '', sublabel = '' }: PersonInfoProps) => {
   return (
     <View className="flex-row items-center gap-1">
       <Avatar />
-      <View className="flex-row items-baseline">
+      <View className="flex-1 flex-row items-baseline">
         <Text className="text-lg">{label}</Text>
-        <Text className="text-sm">{sublabel ? '/' + sublabel : ''}</Text>
+        <Text numberOfLines={1} className="flex-1 text-sm">
+          {sublabel ? '/' + sublabel : ''}
+        </Text>
       </View>
     </View>
   );

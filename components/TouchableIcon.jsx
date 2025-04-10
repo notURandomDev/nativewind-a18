@@ -7,7 +7,11 @@ const TouchableIcon = ({ children, onPress = () => {} }) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onPress();
   };
-  return <TouchableOpacity onPress={handlePress}>{children}</TouchableOpacity>;
+  return (
+    <TouchableOpacity activeOpacity={1} onPress={handlePress}>
+      {children}
+    </TouchableOpacity>
+  );
 };
 
 export default TouchableIcon;

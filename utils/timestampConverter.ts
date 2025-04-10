@@ -6,6 +6,7 @@ export const timestampConverter = (timestamp: number) => {
   const day = date.getDate();
   const hour = date.getHours();
   const minute = date.getMinutes();
+  const second = date.getSeconds();
 
-  return { year, month, day, hour, minute };
+  return { year, month, day, hour, minute, second };
 };

@@ -30,7 +30,7 @@ export const MaterialTopTabs = withLayoutContext<
 const Explore = () => {
   return (
     <SafeAreaProvider>
-      <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-black">
+      <SafeAreaView edges={['bottom', 'left', 'right', 'top']} className="flex-1 bg-black">
         <View className="flex items-center bg-black">
           <CustomVideoView />
         </View>

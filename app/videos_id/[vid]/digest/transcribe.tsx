@@ -1,4 +1,13 @@
-import { View, Text, ScrollView, Alert, TextStyle, Image, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  Alert,
+  TextStyle,
+  Image,
+  TouchableOpacity,
+  DeviceEventEmitter,
+} from 'react-native';
 import React, { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import TintedBackground from 'components/TintedBackground';
 import ButtonAllinOne from 'components/ButtonAllinOne';
@@ -12,15 +21,13 @@ const appSecret = process.env.EXPO_PUBLIC_APP_SECRET;
 import TRANSCRIPTION_DATA from '../../../../test/enhance_output_cards.json';
 import { MyCustomEvents } from 'hooks/useSSE';
 import { useSSE } from 'hooks/useSSE';
-import CustomContextMenu, {
-  CustomContextMenuCbProps,
-  CustomContextMenuProps,
-} from 'components/ContextMenu';
+import CustomContextMenu, { CustomContextMenuCbProps } from 'components/ContextMenu';
 import {
   deleteTranscriptionData,
   getTranscriptionData,
   updateTranscriptionData,
 } from 'storage/transcriptionStorage';
+import { TRANSCRIPTION_WITH_CARD_FULL_DATA } from 'data/enhance_output_cards';
 TRANSCRIPTION_DATA.sort((a, b) => a.sentenceId - b.sentenceId);
 
 const SSE_RES_4_TESTING_NO_CARDS = {
@@ -41,11 +48,11 @@ const SSE_RES_4_TESTING_WITH_CARDS = {
     beginTime: 16600,
     index: 0,
     taskKey: '1743003043014',
-    text: '尊敬的各位领导，各位来宾，现场的媒体朋友们，大家上午好。欢迎来到AI引领智取新城西湖论剑及安肯西西年度新品发布会的现场。我是今天发布会的主持人陈',
+    text: '"尊敬的各位领导，各位来宾，现场的媒体朋友们，大家上午好。欢迎来到AI引领智取新城西湖论剑及安肯西西年度新品发布会的现场。我是今天发布会的主持人陈"',
     card: '{"terms": [{"term": "西湖论剑", "positions": [[40, 43]], "explanation": "西湖论剑是中国信息安全领域的重要会议之一，通常涉及网络安全、数据保护、隐私安全等议题，是业内专业人士交流和分享最新研究成果和技术趋势的平台。"}, {"term": "安肯西西", "positions": [[45, 48]], "explanation": "安肯西西（Anken Xixi）可能是指某家专注于网络安全或信息安全的公司，其名称在行业内具有一定的知名度，通常参与或举办与网络安全相关的技术交流和产品发布活动。"}]}',
   },
   timestamp: 1743003061496,
-  type: 'enhanced',
+  type: 'missedEnhanced',
 };
 
 // const URL_REAL_BACKEND = `http://10.249.12.195:8088/subscribe?audioFilePath=D:%5C%5Coutput_audio.pcm`;
@@ -181,10 +188,10 @@ const RealtimeTranscribe = () => {
 
   const startES = () => {
     setLoading(true);
-    // sendEventSourceDevRequest(SSE_RES_4_TESTING_NO_CARDS);
-    sendEventSourceGetRequest(
+    sendEventSourceDevRequest(SSE_RES_4_TESTING_WITH_CARDS);
+    /* sendEventSourceGetRequest(
       `${URL_REAL_BACKEND}?lastEventId=${lastEventIdRef.current}&taskKey=${taskKeyRef.current}`
-    );
+    ); */
   };
 
   const endES = () => {
@@ -193,6 +200,9 @@ const RealtimeTranscribe = () => {
   };
 
   useEffect(() => {
+    setTimeout(() => {
+      setTranscription(TRANSCRIPTION_WITH_CARD_FULL_DATA);
+    }, 1000);
     return () => {
       endES();
     };
@@ -334,6 +344,7 @@ const HighlightableParagraph = ({
 
   const handlePress = () => {
     if (isActive) setIsActive(false);
+    DeviceEventEmitter.emit('seekVideo', sentence.beginTime);
   };
 
   const handleLongPress = () => {
@@ -352,7 +363,7 @@ const HighlightableParagraph = ({
         onLongPress={handleLongPress}
         onPress={handlePress}>
         <Text style={[{ lineHeight: 26 }, textDecorationStyles[noteTag]]}>
-          <Text>{sentence.text}</Text>
+          <Text>{JSON.parse(sentence.text)}</Text>
         </Text>
         {isActive && <CustomContextMenu cbs={cbs} currentTag={noteTag} />}
       </TouchableOpacity>
@@ -411,15 +422,27 @@ const segmentSentence = (sentence: SentenceProps) => {
     return [{ text: sentence.text, isTerm: false, segmentId: `sentence-${sentence.id}-no-card` }];
   } */
 
+  const parsedText = JSON.parse(sentence.text);
+
   let plainTextStartIndex = 0;
   // 对知识卡片数组进行遍历
   terms.forEach((term: KnowledgeDataProps, index) => {
+    if (!term.positions.length) {
+      const segmentId = `sentence-${sentence.index}-invalid-term-segment-${index}`;
+      segments.push({
+        text: term.term,
+        isTerm: false,
+        segmentId,
+      });
+      return;
+    }
+
     const [termTextStartIndex, termTextEndIndex] = term.positions[0];
 
     // 1. 先把当前知识卡片之前的普通文本push到切片数组中
     // 如果两个term不是连在一起的，才用对plainText进行切割
     if (plainTextStartIndex !== termTextStartIndex) {
-      const plainText = sentence.text.slice(plainTextStartIndex, termTextStartIndex);
+      const plainText = parsedText.slice(plainTextStartIndex, termTextStartIndex);
       const segmentId = `sentence-${sentence.index}-segment-${index}-plain-${plainTextStartIndex}`;
       segments.push({
         text: plainText,
@@ -442,8 +465,8 @@ const segmentSentence = (sentence: SentenceProps) => {
   });
 
   // 如果最后一张知识卡片不是位于一句话的末尾，要将最后一张知识卡片之后的普通文本进行切片，并push到切片数组中
-  if (plainTextStartIndex < sentence.text.length) {
-    const remainingText = sentence.text.slice(plainTextStartIndex);
+  if (plainTextStartIndex < parsedText.length) {
+    const remainingText = parsedText.slice(plainTextStartIndex);
     const segmentId = `sentence-${sentence.index}-segment-last-text`;
     segments.push({
       text: remainingText,
