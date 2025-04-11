@@ -7,7 +7,7 @@ interface PhaseSectionProps {
 }
 const PhaseSection = ({ completedPhases }: PhaseSectionProps) => {
   return (
-    <View>
+    <View className="gap-2">
       {completedPhases.map((phase) => (
         <PhaseIndicator phaseCode={phase} loading={false} />
       ))}

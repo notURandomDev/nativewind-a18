@@ -1,7 +1,6 @@
 import { Image, ImageSourcePropType, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import ContextMenu from 'react-native-context-menu-view';
 
 interface MeetingRefCardProps {
   imgSource: ImageSourcePropType;
@@ -22,7 +21,7 @@ const MeetingRefCard = (props: MeetingRefCardProps) => {
 
   return (
     <View
-      style={{ borderRadius: 17, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+      style={{ borderRadius: 4, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
       className="relative gap-1.5 px-4 py-4 pb-4">
       <LinearGradient
         colors={['#158AF030', '#ffffff']}
@@ -34,7 +33,7 @@ const MeetingRefCard = (props: MeetingRefCardProps) => {
           left: 0,
           right: 0,
           bottom: 0,
-          borderRadius: 16,
+          borderRadius: 4,
           opacity: 0.4,
         }}
       />
@@ -42,7 +41,7 @@ const MeetingRefCard = (props: MeetingRefCardProps) => {
         <Text className="text-base font-medium">推荐会议</Text>
       </View> */}
       <View className="flex-row gap-3">
-        <Image style={{ width: '17%', aspectRatio: 1, borderRadius: 17 }} source={imgSource} />
+        <Image style={{ width: '17%', aspectRatio: 1, borderRadius: 12 }} source={imgSource} />
         <View className="flex-1 justify-center gap-0">
           <Text className="text-sm font-medium text-gray-solid">{location}</Text>
           <View className="">
@@ -54,9 +53,7 @@ const MeetingRefCard = (props: MeetingRefCardProps) => {
             </Text>
           </View>
         </View>
-        <View
-          className="ml-auto items-center justify-center gap-1 px-2 py-0"
-          style={{ borderRadius: 17 }}>
+        <View className="ml-auto items-center justify-center gap-1 px-2 py-0">
           <Text className="text-lg font-semibold">{month === '04' ? 'Apr' : 'May'}</Text>
           <Text className="text-5xl font-semibold">{day}</Text>
           {/* <Text
@@ -92,7 +89,7 @@ const TranscriptionRefCard = ({
   return (
     <View
       style={{
-        borderRadius: 17,
+        borderRadius: 4,
 
         boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
       }}
@@ -108,7 +105,7 @@ const TranscriptionRefCard = ({
           left: 0,
           right: 0,
           bottom: 0,
-          borderRadius: 16,
+          borderRadius: 4,
           opacity: 0.5,
         }}
       />
@@ -117,13 +114,13 @@ const TranscriptionRefCard = ({
           width: '26%',
           aspectRatio: 4 / 3,
           height: '100%',
-          borderTopLeftRadius: 17,
-          borderBottomLeftRadius: 17,
+          borderTopLeftRadius: 4,
+          borderBottomLeftRadius: 4,
         }}
         source={imgSource}
       />
       <View className="flex-1 px-4 py-2">
-        <Text className="text-4xl font-semibold text-blue">{`${startTimeStr}-${endTimeStr}`}</Text>
+        <Text className="text-3xl font-semibold text-blue">{`${startTimeStr}-${endTimeStr}`}</Text>
         <Text numberOfLines={2} className="text-sm font-light text-gray-solid">
           {text}
         </Text>

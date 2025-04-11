@@ -10,6 +10,7 @@ import { Text, View } from 'react-native';
 // import { HoldMenuProvider } from 'react-native-hold-menu';
 import { MenuProvider } from 'react-native-popup-menu';
 import ModalProvider from 'providers/ModalProvider';
+import { Asset } from 'expo-asset';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -20,14 +21,32 @@ const CustomHeaderTitle = () => (
   </View>
 );
 
+export const ContextMenuIcons = [
+  require('../assets/imgs/pencil-red.png'),
+  require('../assets/imgs/pencil-yellow.png'),
+  require('../assets/imgs/pencil-blue.png'),
+];
+
+const preloadContextMenuIcons = async () => {
+  try {
+    await Asset.loadAsync(ContextMenuIcons);
+    console.log('Context Menu 图标预加载完成');
+  } catch (error) {
+    console.error('图标预加载失败:', error);
+  }
+};
+
 export default function RootLayout() {
   const [fontsLoaded, error] = useFonts({
     PingFang: require('../assets/fonts/pingfang-sc-regular.ttf'),
   });
 
   useEffect(() => {
-    if (error) throw error;
+    preloadContextMenuIcons();
+  }, []);
 
+  useEffect(() => {
+    if (error) throw error;
     if (fontsLoaded) SplashScreen.hideAsync();
   }, [fontsLoaded, error]);
 

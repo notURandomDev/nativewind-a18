@@ -19,7 +19,8 @@
           "supportsBackgroundPlayback": true,
           "supportsPictureInPicture": true
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "orientation": "portrait",
     "icon": "./assets/icon.png",

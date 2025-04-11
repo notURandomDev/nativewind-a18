@@ -26,12 +26,12 @@ type IndicatorNameTypes =
 
 const PhaseMap = new Map<PhaseCodeTypes, string>([
   [-1, '未知阶段'],
-  [4, '问题安全检测阶段'],
-  [8, '回答安全检测阶段'],
-  [9, '会议外资料筛选与思考'],
-  [10, '会议内资料筛选与思考'],
-  [15, '意图识别阶段'],
-  [16, '普通回答思考'],
+  [4, '安全预检阶段'],
+  [8, '输出安全验证'],
+  [9, '扩展知识检索'],
+  [10, '会议内知识整合'],
+  [15, '意图解析阶段'],
+  [16, '基础响应构建'],
 ]);
 
 const IndicatorMap = new Map<IndicatorNameTypes, any>([
@@ -91,11 +91,13 @@ const PhaseIndicator = ({ phaseCode, size = 20, loading = true }: PhaseIndicator
       />
 
       <View className="flex-row items-center">
-        <Text className="text-xl font-medium">{PhaseMap.get(phaseCode)}</Text>
-        <Animated.Text className="text-xl font-medium" style={onPendingAnimatedStyle}>
+        <Text className="text-xl font-light text-gray-text">{PhaseMap.get(phaseCode)}</Text>
+        <Animated.Text className="text-xl font-light text-gray-text" style={onPendingAnimatedStyle}>
           进行中
         </Animated.Text>
-        <Animated.Text className="text-xl font-medium" style={onCompleteAnimatedStyle}>
+        <Animated.Text
+          className="text-xl font-light text-gray-text"
+          style={onCompleteAnimatedStyle}>
           已完成
         </Animated.Text>
       </View>

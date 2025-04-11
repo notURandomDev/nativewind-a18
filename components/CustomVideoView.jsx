@@ -79,6 +79,8 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
     if (status === 'readyToPlay') {
       setVideoDuration(player.duration);
       posterOpactity.value = withTiming(0, { duration: 500 });
+      // player.currentTime = Math.round(700000 / 1000);
+
       // player.play();
     } else if (status === 'loading') {
       posterOpactity.value = withTiming(0.7, { duration: 500 });

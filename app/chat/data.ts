@@ -73,11 +73,11 @@ export const TEST_DATA_ANSWER = {
 };
 
 export const TRANSCRIPTION_THUMBNAILS = new Map([
-  [10, require('../../assets/imgs/thumbnails/02-51.png')],
-  [32, require('../../assets/imgs/thumbnails/08-53.png')],
-  [36, require('../../assets/imgs/thumbnails/10-03.png')],
-  [38, require('../../assets/imgs/thumbnails/10-31.png')],
-  [39, require('../../assets/imgs/thumbnails/10-52.png')],
+  [14, require('../../assets/imgs/thumbnails/02-51.png')],
+  [16, require('../../assets/imgs/thumbnails/08-53.png')],
+  [33, require('../../assets/imgs/thumbnails/10-03.png')],
+  [20, require('../../assets/imgs/thumbnails/10-31.png')],
+  [38, require('../../assets/imgs/thumbnails/10-52.png')],
 ]);
 
 export const TEST_DATA_REF_TRANSCRIPTION = {
@@ -87,7 +87,7 @@ export const TEST_DATA_REF_TRANSCRIPTION = {
   data: {
     message_id: '7634640000004581',
     timestamp: 0,
-    reference: [
+    references: [
       {
         sentenceId: 10,
         startTime: 171050,

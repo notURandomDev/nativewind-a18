@@ -13,10 +13,10 @@ export const MessageBubble = (props: LocalChatMessageProps) => {
         className={`${sender === AI ? 'bg-white' : 'bg-blue'}`}
         style={{
           width: sender === AI ? '100%' : 'auto',
-          borderTopRightRadius: 24,
-          borderTopLeftRadius: 24,
-          borderBottomLeftRadius: sender === USER ? 24 : 8,
-          borderBottomRightRadius: sender === USER ? 8 : 24,
+          borderTopRightRadius: 12,
+          borderTopLeftRadius: 12,
+          borderBottomLeftRadius: sender === USER ? 12 : 4,
+          borderBottomRightRadius: sender === USER ? 4 : 12,
           paddingHorizontal: 16,
           paddingVertical: sender === AI ? 2 : 0,
           boxShadow: '0 4px 12px rgba(0,0,0,0.1)',

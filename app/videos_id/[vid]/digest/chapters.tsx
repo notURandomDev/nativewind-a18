@@ -3,23 +3,14 @@ import React, { useEffect, useRef } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Accordion from 'components/Accordion';
 import Chapters from 'data/chapters';
-import { TabPageLayout } from '../_layout';
 import { formatTime } from 'utils/formatTime';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import BottomIndicator from 'components/BottomIndicator';
+import FadeInMaskView from 'components/FadeInMaskView';
 
 const ChaptersSnapshot = () => {
   const scrollviewRef = useRef<ScrollView>(null);
 
-  const opacity = useSharedValue(1);
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      opacity: opacity.value,
-    };
-  });
-
   useEffect(() => {
-    opacity.value = withTiming(0, { duration: 1000 });
     setTimeout(() => scrollviewRef.current?.scrollToEnd(), 750);
   }, []);
   return (
@@ -34,13 +25,8 @@ const ChaptersSnapshot = () => {
         // paddingBottom: 285,
       }}>
       <View className="relative gap-5">
-        <Animated.View
-          style={[
-            { bottom: 0, top: 0, left: 0, right: 0, zIndex: 1, borderRadius: 17 },
-            animatedStyle,
-          ]}
-          className="absolute bg-white"></Animated.View>
-        {Chapters.map((chapter, index) => (
+        <FadeInMaskView />
+        {Chapters.slice(0, 1).map((chapter, index) => (
           <ChapterItem {...chapter} key={`agenda-${index}`} />
         ))}
       </View>

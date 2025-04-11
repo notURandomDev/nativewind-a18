@@ -57,7 +57,8 @@ enum SenderType {
 
 type ChatTypes = 'insideMeeting' | 'outsideMeeting';
 
-const URL_4_REAL = `http://10.249.12.195:8088/Chat`;
+const URL_4_REAL = 'http://192.168.184.53:8088/Chat';
+const URL_4_SIMULATE = 'http://192.168.184.53:8088/chatSimulate';
 
 const Modal = () => {
   const { chatType }: { chatType: ChatTypes } = useLocalSearchParams();
@@ -77,12 +78,14 @@ const Modal = () => {
     phaseCode: PhaseCodeTypes;
   } | null>(null);
 
-  useEffect(() => {
+  const replyMessageRef = useRef('');
+
+  /* useEffect(() => {
     console.log('useEffect-replyMessage-changed', replyMessage);
-  }, [replyMessage]);
+  }, [replyMessage]); */
 
   const onChatnMessage = (event: EventSourceEvent<MyCustomEvents>) => {
-    console.log('raw event', event);
+    // console.log('raw event', event);
     if (event.data !== null) {
       const res = JSON.parse(event.data) as AgentResponseProps;
       console.log('message received from sse', res);
@@ -92,13 +95,20 @@ const Modal = () => {
           setCompletedPhases((prev) => [...prev, prevPhase.phaseCode]);
           setTimeout(() => {
             setCurrentPhase({ completed: false, phaseCode: res.data.phaseCode || -1 });
-          }, 1000);
+          }, 0);
         } else {
           setCurrentPhase({ completed: false, phaseCode: res.data.phaseCode || -1 });
         }
       } else if (res.type === 'answer') {
+        replyMessageRef.current += res.data.text;
         setReplyMessage((prev) => prev + res.data.text);
-      } else if (res.type === 'reference' && res.data.references) {
+      } else if (res.type === 'reference') {
+        // 没有reference数据，也会发一个reference类型的SSE消息
+        if (!res.data.references) {
+          saveSSEResponse();
+          return;
+        }
+
         const referenceResponse: Array<
           LocalMeetingRefMessageProps | LocalTranscriptionRefMessageProps
         > = res.data.references.map(
@@ -125,33 +135,36 @@ const Modal = () => {
         );
 
         referenceRef.current = [...referenceRef.current, ...referenceResponse];
+        saveSSEResponse();
       }
     }
   };
   const onCompletenClose = () => {
     console.log('Event Source Closed');
     terminateEventSourceConnection();
-    saveSSEResponse();
     setLinked(false);
     setCompletedPhases([]);
   };
-  const { sendEventSourceDevRequest, sendEventSourcePostRequest, terminateEventSourceConnection } =
-    useSSE({
-      onChat: onChatnMessage,
-      onMessage: onChatnMessage,
-      onComplete: onCompletenClose,
-      onClose: onCompletenClose,
-      onOpen: () => {
-        console.log('Event Source Opened');
-        setLinked(true);
-      },
-    });
+  const {
+    sendEventSourceDevRequest,
+    sendEventSourcePostRequest,
+    sendEventSourceGetRequest,
+    terminateEventSourceConnection,
+  } = useSSE({
+    onChat: onChatnMessage,
+    onMessage: onChatnMessage,
+    onComplete: onCompletenClose,
+    onClose: onCompletenClose,
+    onOpen: () => {
+      console.log('Event Source Opened');
+      setLinked(true);
+    },
+  });
 
   const textInputRef = useRef<TextInput>(null);
   const scrollViewRef = useRef<ScrollView>(null);
   const animationRef = useRef<LottieView>(null);
 
-  const replyMessageRef = useRef('');
   const referenceRef = useRef<
     Array<LocalMeetingRefMessageProps | LocalTranscriptionRefMessageProps>
   >([]);
@@ -234,6 +247,11 @@ const Modal = () => {
     messagesRef.current = [];
   };
 
+  const phaseSectionOpacity = useSharedValue(0);
+  const animatedPhaseStyles = useAnimatedStyle(() => {
+    return { opacity: phaseSectionOpacity.value };
+  });
+
   useEffect(() => {
     console.log('---modal mounted---');
     initChat();
@@ -257,6 +275,7 @@ const Modal = () => {
 
   const handleSubmit = async (textinput: string) => {
     animationRef.current?.play();
+    replyMessageRef.current = '';
     setReplyMessage('');
     setIsLoading(true);
 
@@ -272,15 +291,18 @@ const Modal = () => {
       ...prevMessages,
       { ...newMessage, text: newMessage.text || '' },
     ]);
-    sendEventSourceDevRequest(TEST_DATA_REF_MEETING);
+    // sendEventSourceGetRequest(URL_4_SIMULATE);
+    // sendEventSourceDevRequest(TEST_DATA_REF_TRANSCRIPTION);
+    // sendEventSourceDevRequest(TEST_DATA_REF_MEETING);
     //sendEventSourceDevRequest(TEST_DATA_ANSWER);
-    /* sendEventSourcePostRequest(
+    sendEventSourcePostRequest(
       JSON.stringify({
         input: textinput,
         isInMeeting: chatType === 'insideMeeting' ? true : false,
       }),
       URL_4_REAL
-    ); */
+    );
+
     // sendSSERequest();
   };
 
@@ -397,7 +419,7 @@ const Modal = () => {
           style={{ backgroundColor: '#ffffff' }}>
           {MemorizedMessages}
           {isLoading && (
-            <View>
+            <Animated.View className="gap-2">
               <PhaseSection completedPhases={completedPhases} />
               {currentPhase && (
                 <PhaseIndicator
@@ -413,7 +435,7 @@ const Modal = () => {
                   sender={SenderType.AI}
                 />
               )}
-            </View>
+            </Animated.View>
           )}
         </ScrollView>
       </View>

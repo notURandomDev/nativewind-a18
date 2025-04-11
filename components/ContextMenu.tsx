@@ -5,6 +5,11 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { NoteTags } from 'app/videos_id/[vid]/digest/transcribe';
 
+import PencilRed from '../assets/svgs/pencil-red.svg';
+import PencilBlue from '../assets/svgs/pencil-blue.svg';
+import PencilYellow from '../assets/svgs/pencil-yellow.svg';
+import { ContextMenuIcons } from 'app/_layout';
+
 const CustomContextMenuOption = ({
   icon,
   label,
@@ -42,42 +47,52 @@ const CustomContextMenu = ({
   currentTag,
 }: CustomContextMenuProps) => {
   const OptionsConfig = [
-    { tag: 'mark', iconSrc: require('../assets/imgs/pencil-red.png'), label: '重点', cb: onMark },
+    {
+      tag: 'mark',
+      iconSrc: require('../assets/imgs/pencil-red.png'),
+      label: '重点',
+      cb: onMark,
+      iconsvg: PencilRed,
+    },
     {
       tag: 'todo',
       iconSrc: require('../assets/imgs/pencil-yellow.png'),
       label: '代办',
       cb: onTodo,
+      iconsvg: PencilYellow,
     },
     {
       tag: 'question',
       iconSrc: require('../assets/imgs/pencil-blue.png'),
       label: '疑惑',
       cb: onQuestion,
+      iconsvg: PencilBlue,
     },
   ];
 
-  const CustomContextMenuOptionsFactory = OptionsConfig.map(({ tag, iconSrc, label, cb }) => {
-    if (currentTag !== tag) {
-      return (
-        <CustomContextMenuOption
-          key={`option-${tag}`}
-          icon={<Image style={{ aspectRatio: 1, width: 20 }} source={iconSrc} />}
-          label={`${currentTag === 'none' ? '添加' : '修改'}为「${label}」`}
-          onPress={cb || (() => console.log(`no on-${tag} cb was declared`))}
-        />
-      );
+  const CustomContextMenuOptionsFactory = OptionsConfig.map(
+    ({ tag, iconSrc, label, cb }, index) => {
+      if (currentTag !== tag) {
+        return (
+          <CustomContextMenuOption
+            key={`option-${tag}`}
+            icon={<Image style={{ aspectRatio: 1, width: 20 }} source={iconSrc} />}
+            label={`${currentTag === 'none' ? '添加' : '修改'}为「${label}」`}
+            onPress={cb || (() => console.log(`no on-${tag} cb was declared`))}
+          />
+        );
+      }
     }
-  });
+  );
 
   return (
     <View
-      className="absolute border border-blue bg-white"
+      className="absolute border border-gray bg-white"
       style={{
-        right: 0,
-        bottom: 0,
-        boxShadow: '5px 2.5px 20px rgba(139,139,139,0.1)',
-        borderRadius: 17,
+        right: 10,
+        bottom: 10,
+        boxShadow: '5px 2.5px 20px rgba(0,0,0,0.2)',
+        borderRadius: 8,
         padding: 8,
       }}>
       {currentTag !== 'none' && (

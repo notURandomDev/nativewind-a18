@@ -7,6 +7,8 @@ import {
   Image,
   TouchableOpacity,
   DeviceEventEmitter,
+  ViewStyle,
+  BoxShadowValue,
 } from 'react-native';
 import React, { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import TintedBackground from 'components/TintedBackground';
@@ -31,6 +33,7 @@ import { TRANSCRIPTION_WITH_CARD_FULL_DATA } from 'data/enhance_output_cards';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { formatTime } from 'utils/formatTime';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { ColorValue } from 'react-native';
 TRANSCRIPTION_DATA.sort((a, b) => a.sentenceId - b.sentenceId);
 
 const SSE_RES_4_TESTING_NO_CARDS = {
@@ -59,7 +62,7 @@ const SSE_RES_4_TESTING_WITH_CARDS = {
 };
 
 // const URL_REAL_BACKEND = `http://10.249.12.195:8088/subscribe?audioFilePath=D:%5C%5Coutput_audio.pcm`;
-const URL_REAL_BACKEND = `http://10.249.18.189:8088/subscribe`;
+const URL_REAL_BACKEND = `http://192.168.184.53:8088/subscribe`;
 // const DEFAULT_TASKKEY = 'temporary-task-key';
 const DEFAULT_TASKKEY = 'meeting1';
 interface KnowledgeDataProps {
@@ -191,10 +194,12 @@ const RealtimeTranscribe = () => {
 
   const startES = () => {
     setLoading(true);
-    sendEventSourceDevRequest(SSE_RES_4_TESTING_WITH_CARDS);
-    /* sendEventSourceGetRequest(
+    // sendEventSourceDevRequest(SSE_RES_4_TESTING_WITH_CARDS);
+    console.log(`lastEventIdRef:`, lastEventIdRef.current);
+    console.log(`taskKeyRef:`, taskKeyRef.current);
+    sendEventSourceGetRequest(
       `${URL_REAL_BACKEND}?lastEventId=${lastEventIdRef.current}&taskKey=${taskKeyRef.current}`
-    ); */
+    );
   };
 
   const endES = () => {
@@ -203,9 +208,10 @@ const RealtimeTranscribe = () => {
   };
 
   useEffect(() => {
+    startES();
     setTimeout(() => {
       // setTranscription([SSE_RES_4_TESTING_WITH_CARDS]);
-      setTranscription(TRANSCRIPTION_WITH_CARD_FULL_DATA);
+      setTranscription(TRANSCRIPTION_WITH_CARD_FULL_DATA.slice(0, 43));
     }, 100);
     return () => {
       endES();
@@ -216,9 +222,9 @@ const RealtimeTranscribe = () => {
     console.log('currentTranscription:', currentTranscription);
   }, [currentTranscription]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     getTranscriptionDataAsync();
-  }, [taskKeyRef.current]);
+  }, [taskKeyRef.current]); */
 
   const getTranscriptionDataAsync = async () => {
     const { transcriptionData = [], lastEventIndex = 0 } = await getTranscriptionData(
@@ -248,7 +254,9 @@ const RealtimeTranscribe = () => {
 
   return (
     <ScrollView
-      onContentSizeChange={() => scrollviewRef.current?.scrollToEnd({ animated: true })}
+      onContentSizeChange={() => {
+        scrollviewRef.current?.scrollToEnd({ animated: true });
+      }}
       ref={scrollviewRef}
       contentContainerStyle={{
         display: 'flex',
@@ -258,7 +266,7 @@ const RealtimeTranscribe = () => {
         paddingHorizontal: 28,
         // paddingBottom: 285,
       }}>
-      <View className="gap-4">
+      <View className="relative gap-4">
         <TintedBackground label="实时转写">
           <View className="flex-row justify-between">
             <ButtonAllinOne disabled={loading} onPress={startES}>
@@ -269,7 +277,7 @@ const RealtimeTranscribe = () => {
             </ButtonAllinOne>
             <ButtonAllinOne onPress={endES} variant="outline" label="结束测试" />
           </View>
-          <Text className="text-lg font-medium">{`taskKey: ${taskKeyRef.current}`}</Text>
+          {/* <Text className="text-lg font-medium">{`taskKey: ${taskKeyRef.current}`}</Text> */}
           <View className="flex-1 gap-3">
             {MemoizedParagraphs}
             {currentTranscription && (
@@ -278,7 +286,7 @@ const RealtimeTranscribe = () => {
                   modifyNoteTagCb={handleNoteTagModify}
                   noteTag="none"
                   type={currentTranscription.type}
-                  key={`paragraph-${currentTranscription.timestamp}`}
+                  key={`temp-paragraph-${currentTranscription.timestamp}`}
                   sentence={currentTranscription.data}
                 />
               </View>
@@ -303,6 +311,55 @@ interface HighlightableParagraphProps {
   modifyNoteTagCb: ModifyNoteTagCbProps;
 }
 
+const SHADOW_OPACITY = 0.01;
+const NoteHighlightConfig: {
+  [key in NoteTags]: {
+    borderColor: ColorValue;
+    backgroundColor: ColorValue;
+    boxShadow: string;
+    textStyles: TextStyle;
+  };
+} = {
+  none: {
+    borderColor: '#000000',
+    backgroundColor: '#FFFFFF',
+    boxShadow: `0 4px 12px rgba(0,0,0,${SHADOW_OPACITY})`,
+    textStyles: {
+      textDecorationLine: 'none',
+    },
+  },
+  mark: {
+    borderColor: '#F66348',
+    backgroundColor: 'rgba(246,99,72,0.1)',
+    boxShadow: `0 4px 12px rgba(246,99,72,${SHADOW_OPACITY})`,
+    textStyles: {
+      textDecorationStyle: 'double',
+      textDecorationLine: 'underline',
+      textDecorationColor: '#F66348',
+    },
+  },
+  todo: {
+    borderColor: '#FFD84E',
+    backgroundColor: 'rgba(255,216,78,0.1)',
+    boxShadow: `0 4px 12px rgba(255,216,78,${SHADOW_OPACITY})`,
+    textStyles: {
+      textDecorationStyle: 'solid',
+      textDecorationLine: 'underline',
+      textDecorationColor: '#FFD84E',
+    },
+  },
+  question: {
+    borderColor: '#00BBFF',
+    backgroundColor: 'rgba(0,187,255,0.1)',
+    boxShadow: `0 4px 12px rgba(0,187,255,${SHADOW_OPACITY})`,
+    textStyles: {
+      textDecorationStyle: 'dotted',
+      textDecorationLine: 'underline',
+      textDecorationColor: '#00BBFF',
+    },
+  },
+};
+
 const HighlightableParagraph = ({
   sentence,
   type,
@@ -321,30 +378,16 @@ const HighlightableParagraph = ({
     };
   });
 
-  const textDecorationStyles: { [key in NoteTags]: TextStyle } = {
-    none: {},
-    mark: {
-      textDecorationStyle: 'double',
-      textDecorationLine: 'underline',
-      textDecorationColor: '#F66348',
-    },
-    todo: {
-      textDecorationStyle: 'solid',
-      textDecorationLine: 'underline',
-      textDecorationColor: '#FFD84E',
-    },
-    question: {
-      textDecorationStyle: 'dotted',
-      textDecorationLine: 'underline',
-      textDecorationColor: '#00BBFF',
-    },
-  };
-
   useEffect(() => {
     if (isActive) {
-      borderColor.value = withTiming('#000000', { duration: 100 });
+      borderColor.value = withTiming(NoteHighlightConfig[noteTag].borderColor.toString(), {
+        duration: 100,
+      });
     } else {
-      borderColor.value = withTiming('#ffffff', { duration: 200 });
+      borderColor.value = withTiming(
+        noteTag === 'none' ? '#ffffff' : NoteHighlightConfig[noteTag].borderColor.toString(),
+        { duration: 200 }
+      );
     }
   }, [isActive]);
 
@@ -374,21 +417,15 @@ const HighlightableParagraph = ({
     console.log('on-long-press');
   };
 
-  const handlePressOut = () => {
-    if (!isActive) {
-    }
-  };
-
   const SentenceWrapper = ({ children }: { children: ReactNode }) => (
     <TouchableOpacity
       className="relative gap-1"
       activeOpacity={1}
-      onPressOut={handlePressOut}
       onLongPress={handleLongPress}
       onPress={handlePress}>
       <View className="flex-row items-center gap-1 px-2">
         <Ionicons name="caret-forward-circle-outline" />
-        <Text className="text-lg font-light">
+        <Text className="text-lg">
           {formatTime(Math.round(sentence.beginTime ? sentence.beginTime / 1000 : 0))}
         </Text>
       </View>
@@ -398,9 +435,10 @@ const HighlightableParagraph = ({
             paddingHorizontal: 16,
             paddingVertical: 12,
             borderRadius: 10,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+            boxShadow: NoteHighlightConfig[noteTag].boxShadow,
           },
           animatedStyle,
+          { backgroundColor: NoteHighlightConfig[noteTag].backgroundColor },
         ]}
         className="bg-white">
         {children}
@@ -414,9 +452,9 @@ const HighlightableParagraph = ({
   if (type === 'raw' || !hasTerms) {
     return (
       <SentenceWrapper>
-        <Text style={[{ lineHeight: 26, fontSize: 15 }, textDecorationStyles[noteTag]]}>
-          <Text>{JSON.parse(sentence.text)}</Text>
-        </Text>
+        <Animated.Text className="font-light" style={[{ lineHeight: 26, fontSize: 15 }]}>
+          <Text>{sentence.text}</Text>
+        </Animated.Text>
       </SentenceWrapper>
     );
   }
@@ -426,13 +464,16 @@ const HighlightableParagraph = ({
   // 对切片数组进行遍历
   // 通过判断是不是知识卡片，返回相应的样式
   const ReassembledSentence = () => (
-    <Text style={[{ lineHeight: 26, fontSize: 15 }, isActive && textDecorationStyles[noteTag]]}>
+    <Animated.Text className="font-light" style={[{ lineHeight: 26, fontSize: 15 }]}>
       {segmentedSentence.map((segment) =>
         segment.isTerm ? (
           <Text
             key={segment.segmentId}
             suppressHighlighting={true}
-            onPress={() => Alert.alert(segment.text, segment.explanation)}
+            onPress={() => {
+              Alert.alert(segment.text, segment.explanation);
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
             className="text-blue">
             {segment.text}
           </Text>
@@ -440,7 +481,7 @@ const HighlightableParagraph = ({
           <Text key={segment.segmentId}>{segment.text}</Text>
         )
       )}
-    </Text>
+    </Animated.Text>
   );
 
   return (
@@ -469,7 +510,8 @@ const segmentSentence = (sentence: SentenceProps) => {
     return [{ text: sentence.text, isTerm: false, segmentId: `sentence-${sentence.id}-no-card` }];
   } */
 
-  const parsedText = JSON.parse(sentence.text);
+  // const parsedText = JSON.parse(sentence.text);
+  const parsedText = sentence.text;
 
   let plainTextStartIndex = 0;
   // 对知识卡片数组进行遍历

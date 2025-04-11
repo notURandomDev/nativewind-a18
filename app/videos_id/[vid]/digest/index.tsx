@@ -22,9 +22,8 @@ const VideoDigest = () => {
         </CollapsibleShell>
         <CollapsibleShell label="会议脑图" collaspeEnabled={false} withPadding={false}>
           <Image
-            style={{ flex: 1, width: null, height: 280 }}
-            resizeMode="contain"
-            source={require('../../../../assets/imgs/mindmap_placeholder.png')}
+            style={{ width: '100%', height: 100 }}
+            source={require('../../../../assets/imgs/mindmap.png')}
           />
         </CollapsibleShell>
       </View>
