@@ -28,7 +28,7 @@ const ProfileLayout = () => {
           <View>
             <Ionicons size={24} name="menu-outline" />
           </View>
-          <View className="flex-row gap-4">
+          <View style={{ gap: 20 }} className="flex-row">
             <Ionicons size={24} name="scan-outline" />
             <Ionicons size={24} name="settings-outline" />
             <Ionicons size={24} name="share-social-outline" />
@@ -39,13 +39,13 @@ const ProfileLayout = () => {
             className="rounded-full"
             resizeMode="contain"
             style={{ width: '25%', aspectRatio: 1 }}
-            source={require('../../../assets/imgs/lipu.png')}
+            source={require('../../../assets/imgs/boss.jpg')}
           />
           <View className="flex-1 justify-center gap-3">
-            <Text className="text-3xl">厘普</Text>
-            <View>
-              <Text className="text-gray-solid">UID：canninglu0604</Text>
-              <Text className="text-gray-solid">IP属地：浙江</Text>
+            <Text className="text-3xl font-medium">范渊</Text>
+            <View className="gap-1">
+              <Text className="font-light text-gray-solid">UID：FanYuanisOurBoss</Text>
+              <Text className="font-light text-gray-solid">IP属地：浙江</Text>
             </View>
           </View>
         </View>
@@ -56,7 +56,7 @@ const ProfileLayout = () => {
             disabled
             rounded="full"
             variant="outline"
-            label="杭州电子科技大学"
+            label="南京邮电大学"
           />
           <ButtonAllinOne
             textColor="text-gray-solid"
@@ -64,7 +64,7 @@ const ProfileLayout = () => {
             disabled
             rounded="full"
             variant="outline"
-            label="交互设计师"
+            label="安恒董事长"
           />
         </View>
       </View>

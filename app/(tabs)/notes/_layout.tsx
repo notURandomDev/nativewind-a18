@@ -5,7 +5,6 @@ import { StatusBar } from 'expo-status-bar';
 import { MaterialTopTabs } from 'components/MaterialTopTabs';
 import { LinearGradient } from 'expo-linear-gradient';
 import MyTabBar from '../../../components/MyTabBar';
-import { View } from 'react-native';
 
 const NotesLayout = () => {
   return (
@@ -43,7 +42,7 @@ const NotesLayout = () => {
             backgroundColor: 'transparent',
           },
         }}>
-        <MaterialTopTabs.Screen name="index" options={{ title: '标签分类' }} />
+        <MaterialTopTabs.Screen name="index/index" options={{ title: '标签分类' }} />
         <MaterialTopTabs.Screen name="myNotes" options={{ title: '我的笔记' }} />
       </MaterialTopTabs>
 

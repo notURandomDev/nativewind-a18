@@ -6,7 +6,6 @@ import ButtonAllinOne from 'components/ButtonAllinOne';
 
 import * as Haptics from 'expo-haptics';
 import { NoteCategory, updateNoteCategory } from 'storage/noteStorage';
-import { NoteTags } from 'app/videos_id/[vid]/digest/transcribe/transcribe';
 
 export const ModalContext = createContext<ModalContextType | null>(null);
 

@@ -7,7 +7,6 @@ import * as Haptics from 'expo-haptics';
 import { ScrollView } from 'react-native-gesture-handler';
 import { NoteItem } from 'components/NoteItem';
 import { NoteCategory } from 'storage/noteStorage';
-import CategorySelectionModal from 'components/CategoryModal';
 
 const NOTE_ITEMS = [
   {

@@ -16,7 +16,7 @@ const replayRecommendations = [
     duration: '03:15:20',
   },
   {
-    title: '2024全国数字安全行业产教融合共同体大会暨西湖论剑·数...',
+    title: '2025全国数字安全行业产教融合共同体大会暨西湖论剑·数...',
     time: '2025年5月17日 14:30-17:20',
     venue: '杭州国际博览中心·103B/C',
     imgSrc: require('../assets/imgs/rr-3.png'),

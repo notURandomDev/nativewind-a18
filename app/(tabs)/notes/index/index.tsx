@@ -4,8 +4,8 @@ import MyTextInput from 'components/MyTextInput';
 import { Ionicons } from '@expo/vector-icons';
 import CollapsibleShell from 'components/CollapsibleShell';
 import { KEY_NOTES, MARKED_NOTES, PENDING_NOTES } from './constants';
-import CategorizingLabel from './components/CategorizingLabel/CategorizingLabel';
-import LocalNoteItem from './components/LocalNoteItem/LocalNoteItem';
+import CategorizingLabel from '../../../../components/CategorizingLabel/CategorizingLabel';
+import LocalNoteItem from '../../../../components/LocalNoteItem/LocalNoteItem';
 
 const CategorizedNotes = () => {
   const scrollviewRef = useRef<ScrollView>(null);
