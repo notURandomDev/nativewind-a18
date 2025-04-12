@@ -23,6 +23,7 @@
     "crypto-js": "^4.2.0",
     "dotenv": "^16.4.7",
     "expo": "^52.0.35",
+    "expo-asset": "~11.0.5",
     "expo-font": "~13.0.3",
     "expo-haptics": "~14.0.1",
     "expo-linear-gradient": "~14.0.2",
@@ -35,6 +36,7 @@
     "lodash.debounce": "^4.0.8",
     "lottie-react-native": "^7.1.0",
     "mock-socket": "^9.3.1",
+    "moti": "^0.30.0",
     "nativewind": "latest",
     "react": "18.3.1",
     "react-native": "0.76.7",
@@ -60,8 +62,7 @@
     "react-native-swipeable": "^0.6.0",
     "react-native-ui-lib": "^7.38.0",
     "react-native-video": "^6.10.2",
-    "tailwind-merge": "^3.0.2",
-    "expo-asset": "~11.0.5"
+    "tailwind-merge": "^3.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

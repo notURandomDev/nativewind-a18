@@ -26,9 +26,10 @@ const ChaptersSnapshot = () => {
       }}>
       <View className="relative gap-5">
         <FadeInMaskView />
-        {Chapters.slice(0, 1).map((chapter, index) => (
-          <ChapterItem {...chapter} key={`agenda-${index}`} />
-        ))}
+        {Chapters.slice(0, 1).map((chapter, index) => {
+          console.log(`agenda-${index}`);
+          return <ChapterItem {...chapter} key={`agenda-${index}`} />;
+        })}
       </View>
       <BottomIndicator />
     </ScrollView>
@@ -51,15 +52,18 @@ const ChapterItem = ({ title, subagendas, host }: ChapterItemProps) => {
           </Text>
         </View>
       </View>
-      {subagendas.map((subagenda, subIndex) => (
-        <SubAgendaItem
-          time={subagenda.time}
-          accordionData={subagenda.list.data}
-          title={subagenda.title}
-          type={subagenda.list.type}
-          key={`subagenda-${subagenda.time}-${subIndex}`}
-        />
-      ))}
+      {subagendas.map((subagenda, subIndex) => {
+        console.log(`subagenda-${subagenda.time}-${subIndex}`);
+        return (
+          <SubAgendaItem
+            time={subagenda.time}
+            accordionData={subagenda.list.data}
+            title={subagenda.title}
+            type={subagenda.list.type}
+            key={`subagenda-${subagenda.time}-${subIndex}`}
+          />
+        );
+      })}
     </View>
   );
 };

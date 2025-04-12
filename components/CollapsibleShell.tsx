@@ -38,18 +38,18 @@ const CollapsibleShell = ({
   customLabel,
   customToggle,
 }: CollapsibleShellProps) => {
-  const [isCollapsed, setIsCollapsed] = useState(collaspeEnabled);
+  const [collapsed, setCollapsed] = useState(!collaspeEnabled);
 
   const TopToggleIndicator = () => {
     if (customToggle) {
-      return isCollapsed ? customToggle.show : customToggle.collapse;
+      return collapsed ? customToggle.show : customToggle.collapse;
     } else {
       return (
         <View className="flex-row items-center gap-1">
           <Text className="" style={{ color: '#c7c7c7' }}>
-            {isCollapsed ? '展开' : '收起'}
+            {collapsed ? '展开' : '收起'}
           </Text>
-          {isCollapsed ? (
+          {collapsed ? (
             <Ionicons size={16} name="chevron-down" color="#c7c7c7" />
           ) : (
             <Ionicons size={16} name="chevron-up" color="#c7c7c7" />
@@ -68,12 +68,14 @@ const CollapsibleShell = ({
         className="flex-row items-center justify-between"
         onPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-          setIsCollapsed(!isCollapsed);
+          setCollapsed(!collapsed);
         }}>
         {customLabel ?? (
           <View className="flex-row items-center gap-2">
             <Ionicons name="ellipse" size={14} color={dotColor} />
-            <Text className={twMerge('text-xl font-medium text-blue', labelClassName)}>
+            <Text
+              style={{ fontSize: 22 }}
+              className={twMerge('font-semibold text-blue', labelClassName)}>
               {label}
             </Text>
           </View>
@@ -92,14 +94,14 @@ const CollapsibleShell = ({
           withPadding && { paddingHorizontal: 16, paddingVertical: 12 },
           ...(contentContainerStyle ? [contentContainerStyle] : []),
         ]}
-        collapsed={isCollapsed}>
+        collapsed={collapsed}>
         {children}
       </Collapsible>
 
       {collaspeEnabled && toggle === 'bottom' && (
-        <TouchableOpacity className="items-center" onPress={() => setIsCollapsed(!isCollapsed)}>
+        <TouchableOpacity className="items-center" onPress={() => setCollapsed(!collapsed)}>
           <Text className="" style={{ color: '#c7c7c7' }}>
-            {isCollapsed ? '—— 查看全部 ——' : '—— 收起 ——'}
+            {collapsed ? '—— 查看全部 ——' : '—— 收起 ——'}
           </Text>
         </TouchableOpacity>
       )}

@@ -1,13 +1,10 @@
-import { View, Text, ScrollView } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { View } from 'react-native';
+import React, { useState } from 'react';
 import ButtonAllinOne from 'components/ButtonAllinOne';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import BottomIndicator from 'components/BottomIndicator';
 import ChaptersSnapshot from './chapters';
-import EssentialsReview from './review';
-import RealtimeTranscribe from './transcribe';
+import EssentialsReview from './review/review';
+import RealtimeTranscribe from './transcribe/transcribe';
 import VideoDigest from '.';
-import { TabPageLayout } from '../_layout';
 
 const viewWithinTab = [
   <VideoDigest />,

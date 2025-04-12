@@ -3,7 +3,7 @@ import React, { ReactNode, useMemo } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { NoteTags } from 'app/videos_id/[vid]/digest/transcribe';
+import { NoteTags } from 'app/videos_id/[vid]/digest/transcribe/transcribe';
 
 import PencilRed from '../assets/svgs/pencil-red.svg';
 import PencilBlue from '../assets/svgs/pencil-blue.svg';

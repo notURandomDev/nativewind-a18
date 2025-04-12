@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TranscriptionProps } from 'app/videos_id/[vid]/digest/transcribe';
+import { TranscriptionProps } from 'app/videos_id/[vid]/digest/transcribe/transcribe';
 
 type TranscriptionStorageScheme = {
   transcriptionData: TranscriptionProps[] | [];
