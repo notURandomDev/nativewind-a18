@@ -26,15 +26,20 @@ const DetailsView = () => {
     { label: '茅莹', sublabel: '浙江经视主持人' },
     { label: '范渊', sublabel: '安恒信息董事长' },
     { label: '刘博', sublabel: '安恒信息CTO' },
-    { label: '主持人姓名4', sublabel: '主持人4' },
-    { label: '主持人姓名5', sublabel: '主持人5' },
   ];
   const guestsData = [
-    { label: '嘉宾姓名1', sublabel: '嘉宾1' },
-    { label: '嘉宾姓名2', sublabel: '嘉宾2' },
-    { label: '嘉宾姓名3', sublabel: '嘉宾3' },
-    { label: '嘉宾姓名4', sublabel: '嘉宾4' },
-    { label: '嘉宾姓名5', sublabel: '嘉宾5' },
+    { label: '范渊', sublabel: '安恒信息董事长' },
+    { label: '唐刚', sublabel: '中国软件评测中心副主任、数据安全关键技术与产业应用评价工...' },
+    { label: '周宇', sublabel: '杭州数据交易所董事长兼总经理' },
+    { label: '刘博', sublabel: '安恒信息CTO' },
+    { label: '詹巍', sublabel: '浙江天策律师事务所合伙人' },
+    { label: '魏琴', sublabel: '立信会计事务所(特殊普通合伙)浙江分所合伙人' },
+    { label: '程永海', sublabel: '银信资产评估有限公司浙江分公司总经理' },
+    { label: '俞能海', sublabel: '中国科学技术大学网络空间安全学院执行院长' },
+    { label: '朱浩齐', sublabel: '网易智企副总经理、网易易盾总经理' },
+    { label: '侯黎明', sublabel: '人民中科总裁' },
+    { label: '张娜', sublabel: '中科闻歌副总经理' },
+    { label: '王欣', sublabel: '杭州人工智能学会副秘书长、安恒研究院院长' },
   ];
 
   return (

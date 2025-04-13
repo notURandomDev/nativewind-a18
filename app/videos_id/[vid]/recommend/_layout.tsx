@@ -1,17 +1,18 @@
-import { View } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import React, { useState } from 'react';
 import ButtonAllinOne from 'components/ButtonAllinOne';
-import CategorizedView from './index/_layout';
-import MyNotesView from './myNotes';
+import LiveRecommend from './LiveRecommend';
+import ReplayRecommend from './ReplayRecommend';
 
-const viewWithinTab = [<CategorizedView />, <MyNotesView />];
-const buttonConfig = [{ label: '标签分类' }, { label: '我的笔记' }];
+const buttonConfig = [{ label: '直播推荐' }, { label: '回放推荐' }];
 
-const NotesTabLayout = () => {
+const viewWithinTab = [<LiveRecommend />, <ReplayRecommend />];
+
+const RecommendLayout = () => {
   const [activeViewIndex, setActiveViewIndex] = useState(0);
 
   return (
-    <View style={{ paddingBottom: 215 }} className="flex-1 gap-4">
+    <View style={{ paddingBottom: 220 }} className="flex-1 gap-4">
       <View accessibilityLabel="block-buttons" className="flex-row gap-3 rounded-none px-8">
         {buttonConfig.map(({ label }, index) => {
           return (
@@ -32,4 +33,4 @@ const NotesTabLayout = () => {
   );
 };
 
-export default NotesTabLayout;
+export default RecommendLayout;

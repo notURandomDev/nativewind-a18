@@ -1,69 +1,14 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { View, ScrollView } from 'react-native';
+import React from 'react';
 import MyTextInput from 'components/MyTextInput';
-import { NoteItem, NoteItemProps } from 'components/NoteItem';
+import { NoteItem } from 'components/NoteItem';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { router } from 'expo-router';
-import * as Haptics from 'expo-haptics';
-import { deleteAllNotes, getNotes, NoteProps } from 'storage/noteStorage';
 import TouchableIcon from 'components/TouchableIcon';
-import { timestampConverter } from 'utils/timestampConverter';
-import { useModal } from 'hooks/useModal';
-
-/* const NOTES_DATA: Array<NoteItemProps> = [
-  {
-    id: 1,
-    title: '云计算与AI融合：共创数字智能新时代',
-    date: '2025年5月18日',
-    preview: '随着大语言模型与云的结合，技...',
-    category: 'UNCATEGORIZED',
-  },
-  {
-    id: 2,
-    title: '云计算与AI融合：共创数字智能新时代',
-    date: '2025年5月18日',
-    preview: '随着大语言模型与云的结合，技...',
-    category: 'WORK',
-  },
-  {
-    id: 3,
-    title: '云计算与AI融合：共创数字智能新时代',
-    date: '2025年5月18日',
-    preview: '随着大语言模型与云的结合，技...',
-    category: 'UNCATEGORIZED',
-  },
-  {
-    id: 4,
-    title: '云计算与AI融合：共创数字智能新时代',
-    date: '2025年5月18日',
-    preview: '随着大语言模型与云的结合，技...',
-    category: 'UNCATEGORIZED',
-  },
-]; */
-const REFRESH_DELAY_MILLIS = 500;
-const NEW_NOTE_BASEURL = '../../../newNote';
+import useNote from 'hooks/useNote';
+import NewNoteBtn from 'components/NewNoteBtn';
 
 const MyNotes = () => {
-  const [notes, setNotes] = useState<NoteProps[]>([]);
-
-  useEffect(() => {
-    getNotesAsync();
-  }, []);
-
-  useEffect(() => {
-    console.log('Notes:', notes);
-  }, [notes]);
-
-  const getNotesAsync = async () => {
-    getNotes().then((res) => setNotes(res));
-  };
-
-  const deleteNotesAsync = async () => {
-    await deleteAllNotes();
-    setNotes([]);
-  };
-
-  const refreshNotes = () => setTimeout(getNotesAsync, REFRESH_DELAY_MILLIS);
+  const { notes, getNotesAsync, deleteNotesAsync, refreshNotes } = useNote();
 
   return (
     <View className="flex-1" style={{ paddingTop: 16 }}>
@@ -79,12 +24,7 @@ const MyNotes = () => {
         </TouchableIcon>
       </View>
       <ScrollView contentContainerClassName="gap-4 px-4" className="relative py-5">
-        {/*  {NOTES_DATA.map((note) => (
-          <NoteItem category={note.category} />
-        ))} */}
-        {notes.map(({ title, content, timestamp, category, id }) => {
-          const { year, month, day, hour, minute } = timestampConverter(timestamp);
-          const date = `${year}年${month}月${day}日 ${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+        {notes.map(({ title, content, date, category, id }) => {
           return (
             <NoteItem
               id={id}
@@ -96,31 +36,11 @@ const MyNotes = () => {
               onDelete={refreshNotes}
               onCategorize={refreshNotes}
               onPin={refreshNotes}
-              onEdit={() =>
-                setTimeout(
-                  () => router.push(NEW_NOTE_BASEURL + `?noteId=${id}`),
-                  REFRESH_DELAY_MILLIS
-                )
-              }
             />
           );
         })}
       </ScrollView>
-      <TouchableOpacity
-        onPress={() => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          router.push(NEW_NOTE_BASEURL);
-        }}
-        activeOpacity={1}
-        style={{
-          paddingVertical: 16,
-          borderColor: '#1556F010',
-          borderTopWidth: 1,
-        }}
-        className="flex-row items-center justify-center gap-1 border">
-        <Ionicons name="add" size={24} />
-        <Text className="text-2xl font-medium">新建笔记</Text>
-      </TouchableOpacity>
+      <NewNoteBtn />
     </View>
   );
 };

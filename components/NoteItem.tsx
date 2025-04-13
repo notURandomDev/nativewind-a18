@@ -1,17 +1,18 @@
-import { View, Text, ColorValue, TouchableOpacity } from 'react-native';
+import { View, Text, ColorValue, TouchableOpacity, Alert } from 'react-native';
 import { useRef, useState } from 'react';
 import React from 'react';
 import ReanimatedSwipeable, {
   SwipeableMethods,
 } from 'react-native-gesture-handler/ReanimatedSwipeable';
-import Reanimated, { SharedValue, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
-import { LinearGradient } from 'expo-linear-gradient';
+import Reanimated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import ButtonAllinOne from 'components/ButtonAllinOne';
 import Avatar from './Avatar';
 import { deleteNote, NoteCategory, updateNoteTimestamp } from 'storage/noteStorage';
 import { useModal } from 'hooks/useModal';
 import { CategoryConfigs } from 'providers/ModalProvider';
+import { router } from 'expo-router';
+import Pravatar from './Pravatar';
 
 interface RightActionProps {
   progress: SharedValue<number>;
@@ -92,6 +93,9 @@ interface NoteItemProps {
   onPin?: () => void;
 }
 
+const NEW_NOTE_BASEURL = '/newNote';
+const REFRESH_DELAY_MILLIS = 500;
+
 const NoteItem = ({
   id,
   updateSelectedNote,
@@ -114,6 +118,11 @@ const NoteItem = ({
       return () => {};
     }
     return () => {};
+  };
+
+  const handleEdit = () => {
+    setTimeout(() => router.push(NEW_NOTE_BASEURL + `?noteId=${id}`), REFRESH_DELAY_MILLIS);
+    onEdit();
   };
 
   const handleDelete = async () => {
@@ -148,7 +157,7 @@ const NoteItem = ({
           prog={progress}
           drag={dragX}
           cbs={{
-            onEdit,
+            onEdit: handleEdit,
             onDelete: handleDelete,
             onCategorize: handleCategorize,
             onPin: handlePin,
@@ -172,24 +181,6 @@ const NoteItem = ({
           },
         ]}
         className={`gap-0.5 p-4`}>
-        {/* {category === 'default' && (
-          <LinearGradient
-            colors={['#E9E8FF', '#F5F8FF']}
-            locations={[0, 1]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 0.55 }}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              borderRadius: 17,
-              padding: 12,
-              flexGrow: 1,
-            }}
-          />
-        )} */}
         <Text className="text-xl font-medium">{title}</Text>
         <View className="flex-row items-center">
           <Text className="font-light text-gray-solid">{date}</Text>
@@ -219,18 +210,30 @@ const NoteNode = ({
   color,
 }: NoteNodeProps) => {
   const [checked, setChecked] = useState(false);
+  const handlePress = () => {
+    setChecked(!checked);
+    if (checked) {
+      Alert.alert('内容已取消归档！');
+    } else {
+      Alert.alert('内容已归档笔记！', '可在「智能笔记-标签分类」中查看');
+    }
+  };
   return (
-    <View className="flex-1 flex-row gap-2 py-2">
-      <TouchableOpacity onPress={() => setChecked(!checked)}>
+    <View className="flex-1 flex-row gap-2">
+      <TouchableOpacity style={{ marginTop: 6 }} onPress={handlePress}>
         <Ionicons size={20} name={`checkmark-circle${checked ? '' : '-outline'}`} color={color} />
       </TouchableOpacity>
-      <Text className="text-lg font-medium">{timestamp}</Text>
       <View className="flex-1 gap-2">
-        <Text className="text-lg text-gray-text">{content}</Text>
         <View className="flex-row items-center gap-2">
-          <Avatar />
-          <Text className="text-base">{speaker}</Text>
+          <Pravatar />
+          <View>
+            <Text className="text-lg font-medium">{speaker}</Text>
+            <Text className="text-gray-text">{timestamp}</Text>
+          </View>
         </View>
+        <Text numberOfLines={4} className="flex-1 text-lg">
+          {content}
+        </Text>
       </View>
     </View>
   );

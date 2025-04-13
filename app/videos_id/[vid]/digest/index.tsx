@@ -34,7 +34,7 @@ const VideoDigest = () => {
     <TabPageLayout>
       <View className="gap-4">
         <CollapsibleShell label="全文概要" contentContainerStyle={{ backgroundColor: '#ffffff' }}>
-          <Text style={{ fontSize: 16, lineHeight: 26 }} className="font-light">
+          <Text style={{ lineHeight: 28, fontSize: 17 }} className="font-light">
             {DIGEST_PLACEHOLDER}
           </Text>
         </CollapsibleShell>

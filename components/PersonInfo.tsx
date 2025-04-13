@@ -1,6 +1,7 @@
-import { View, Text } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import React from 'react';
 import Avatar from './Avatar';
+import Pravatar from './Pravatar';
 
 interface PersonInfoProps {
   label?: string;
@@ -10,11 +11,19 @@ interface PersonInfoProps {
 const PersonInfo = ({ label = '', sublabel = '' }: PersonInfoProps) => {
   return (
     <View className="flex-row items-center gap-1">
-      <Avatar />
-      <View className="flex-1 flex-row items-baseline">
-        <Text className="text-lg">{label}</Text>
-        <Text numberOfLines={1} className="flex-1 text-sm">
-          {sublabel ? '/' + sublabel : ''}
+      {label === '范渊' ? (
+        <Image
+          className="rounded-full"
+          style={{ height: 30, width: 30 }}
+          source={require('../assets/imgs/boss.jpg')}
+        />
+      ) : (
+        <Pravatar />
+      )}
+      <View className="flex-1 items-baseline">
+        <Text className="text-lg font-medium">{label}</Text>
+        <Text numberOfLines={1} className="flex-1 text-sm text-gray-text">
+          {sublabel}
         </Text>
       </View>
     </View>

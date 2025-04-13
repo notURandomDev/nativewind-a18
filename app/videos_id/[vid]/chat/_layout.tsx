@@ -1,5 +1,5 @@
 import { View, KeyboardAvoidingView, ScrollView, TouchableOpacity, Keyboard } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { livechatMockData } from 'data/chat';
 import MyTextInput from 'components/MyTextInput';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -7,7 +7,7 @@ import * as Haptics from 'expo-haptics';
 import MessageItem from './components/MessageItem';
 import { INIT_MSG, MOCK_LIVE_CHAT, SELF_MSG } from './constants';
 import BackToEndBtn from './components/BackToEndBtn';
-import { debounce } from 'lodash';
+import { debounce, throttle } from 'lodash';
 
 const ChatTab = () => {
   const [msgs, setMsgs] = useState([INIT_MSG]);
@@ -17,14 +17,18 @@ const ChatTab = () => {
 
   const count = useRef(0);
   const scrollviewRef = useRef<ScrollView>(null);
+  const inputRef = useRef('');
 
   const scrollToEnd = () => scrollviewRef.current?.scrollToEnd();
-  const handleSubmit = debounce(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setMsgs((prev) => [...prev, { msg: input, id: Date.now(), ...SELF_MSG }]);
-    Keyboard.dismiss();
-  }, 3000);
-
+  const handleSubmit = useCallback(
+    throttle(() => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setMsgs((prev) => [...prev, { msg: inputRef.current, id: Date.now(), ...SELF_MSG }]);
+      Keyboard.dismiss();
+      setInput('');
+    }, 3000),
+    []
+  );
   const handleBackToEnd = () => {
     scrollToEnd();
     setAutoScrollEnabled(true);
@@ -35,7 +39,7 @@ const ChatTab = () => {
       scrollToEnd();
     });
 
-    const intervalId = setInterval(() => {
+    /*  const intervalId = setInterval(() => {
       setTimeout(
         () =>
           setMsgs((prev) => [
@@ -47,10 +51,10 @@ const ChatTab = () => {
           ]),
         Math.floor((3000 * Math.random()) % 1000)
       );
-    }, 4000);
+    }, 2000); */
 
     return () => {
-      clearInterval(intervalId);
+      // clearInterval(intervalId);
     };
   }, []);
 
@@ -100,7 +104,10 @@ const ChatTab = () => {
         <View className="flex-1">
           <MyTextInput
             value={input}
-            onChangeText={setInput}
+            onChangeText={(text) => {
+              setInput(text);
+              inputRef.current = text;
+            }}
             size="sm"
             searchInput={false}
             placeholder="发送友好的评论吧！"

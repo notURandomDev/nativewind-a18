@@ -18,7 +18,7 @@ const TintedBackground = ({
 }: TintedBackgroundProps) => {
   return (
     <View
-      className=" gap-4 bg-blue-faint"
+      className="gap-4 bg-blue-faint"
       style={{ flexGrow: 1, borderRadius: 17, paddingHorizontal: 16, paddingVertical: 20 }}>
       <View className="flex-row items-center gap-2">
         <Ionicons name="ellipse" size={14} color={dotColor} />

@@ -1,3 +1,38 @@
+export const LIVE_RECOMMENDATIONS = [
+  {
+    title: 'AI引领数字安全新浪潮专题会议',
+    time: '2025年5月18日 13:30-17:30',
+    venue: '杭州国际博览中心·多功能B厅',
+    imgSrc: require('../assets/imgs/lr-1.png'),
+    views: 1950,
+    duration: '04:00:00',
+  },
+  {
+    title: '生态合作伙伴大会',
+    time: '2025年5月18日 09:00-11:50',
+    venue: '杭州白金汉爵大酒店·368星空厅',
+    imgSrc: require('../assets/imgs/eco.jpg'),
+    views: 12790,
+    duration: '02:50:00',
+  },
+  {
+    title: '教育系统数据安全专题会议',
+    time: '2025年4月25日 08:00-12:00',
+    venue: '浙江省嘉兴市乌镇镇虹桥路165号·安恒书院',
+    imgSrc: require('../assets/imgs/education.jpg'),
+    views: 34245,
+    duration: '04:00:00',
+  },
+  {
+    title: '开幕式及主题大会',
+    time: '2025年5月18日 09:00-12:00',
+    venue: '杭州国际博览中心·新闻发布厅',
+    imgSrc: require('../assets/imgs/safety.jpg'),
+    views: 104680,
+    duration: '03:00:00',
+  },
+];
+
 const replayRecommendations = [
   {
     title: '2025西湖论剑暨安恒信息年度新品发布日',

@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Terminal } from 'utils/terminalLog';
+import { timestampConverter } from 'utils/timestampConverter';
 
 const LOG_PREFIX = 'ASYNC-STORAGE:';
 
@@ -11,6 +12,7 @@ export type NoteProps = {
   id: string;
   category: NoteCategory;
   timestamp: number;
+  date: string;
 };
 
 const terminal = Terminal(LOG_PREFIX);
@@ -18,7 +20,10 @@ const terminal = Terminal(LOG_PREFIX);
 export const createNote = async (content: string, category: NoteCategory, title: string) => {
   const LOG_CONTENT = 'Creating Note';
   const timestamp = Date.now();
-  const note: NoteProps = { content, id: `note-${timestamp}`, timestamp, category, title };
+  const { year, month, day, hour, minute } = timestampConverter(timestamp);
+  const date = `${year}年${month}月${day}日 ${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+
+  const note: NoteProps = { content, id: `note-${timestamp}`, timestamp, category, title, date };
   try {
     await AsyncStorage.setItem(note.id, JSON.stringify(note));
     console.log(LOG_PREFIX + 'Success' + LOG_CONTENT, note);

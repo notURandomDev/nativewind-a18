@@ -112,21 +112,6 @@ const RealtimeTranscribe = () => {
       return newData;
     });
   }, []);
-  /*  const handleNoteTagModify: ModifyNoteTagCbProps = (index, newNoteTag) => {
-    setTranscription((prev) => {
-      const newData = prev.map((item) => {
-        if (item.data.index === index) {
-          return {
-            ...item,
-            noteTag: newNoteTag,
-          };
-        }
-        return item;
-      });
-      updateTranscriptionDataAsync();
-      return newData;
-    });
-  }; */
 
   const MemoizedParagraphs = useMemo(
     () =>
@@ -222,7 +207,7 @@ const RealtimeTranscribe = () => {
       }}>
       <View className="relative gap-4">
         <TintedBackground label="实时转写">
-          <View className="flex-row justify-between">
+          {/*    <View className="flex-row justify-between">
             <ButtonAllinOne disabled={loading} onPress={startES}>
               <Text className="text-white">开始测试</Text>
             </ButtonAllinOne>
@@ -230,7 +215,7 @@ const RealtimeTranscribe = () => {
               <Text style={{ color: '#F66348' }}>删除转录数据</Text>
             </ButtonAllinOne>
             <ButtonAllinOne onPress={endES} variant="outline" label="结束测试" />
-          </View>
+          </View> */}
           {/* <Text className="text-lg font-medium">{`taskKey: ${taskKeyRef.current}`}</Text> */}
           <View className="flex-1 gap-3">
             {MemoizedParagraphs}

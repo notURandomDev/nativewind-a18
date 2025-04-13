@@ -13,18 +13,18 @@ const EssentialsReview = () => {
     <TabPageLayout>
       <View className="gap-4">
         <CollapsibleShell contentContainerStyle={{ gap: 16 }} withPadding={false} label="实时转写">
-          {ESSENTIALS_REVIEW1.map((item) => (
-            <TransItem {...item} />
+          {ESSENTIALS_REVIEW1.map((item, index) => (
+            <TransItem key={`trans-${index}`} {...item} />
           ))}
         </CollapsibleShell>
         <CollapsibleShell contentContainerStyle={{ gap: 16 }} withPadding={false} label="问答总结">
-          {ESSENTIALS_REVIEW1.map(({ title: q, content: a }) => (
-            <QAItem q={q} a={a} />
+          {ESSENTIALS_REVIEW1.map(({ title: q, content: a }, index) => (
+            <QAItem key={`ess-${index}`} q={q} a={a} />
           ))}
         </CollapsibleShell>
         <CollapsibleShell contentContainerStyle={{ gap: 16 }} withPadding={false} label="发言总结">
-          {SPEECHES_REVIEW.map((item) => (
-            <SpeechItem {...item} />
+          {SPEECHES_REVIEW.map((item, index) => (
+            <SpeechItem key={`speech-${index}`} {...item} />
           ))}
         </CollapsibleShell>
       </View>
