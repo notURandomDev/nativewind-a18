@@ -18,9 +18,11 @@ import * as Haptics from 'expo-haptics';
 import { formatTime } from 'utils/formatTime';
 
 // const defaultVideoSource = 'https://prod-streaming-video-msn-com.akamaized.net/a8c412fa-f696-4ff2-9c76-e8ed9cdffe0f/604a87fc-e7bc-463e-8d56-cde7e661d690.mp4';
-const defaultVideoSource = require('../assets/videos/final_test_video.mp4');
+// const defaultVideoSource = require('../assets/videos/final_test_video.mp4');
+const DEFAULT_VIDEO_SOURCE_URI =
+  'https://1340028816.vod-qcloud.com/34ce9883vodcq1340028816/578da4761397757909575807800/WgQRr3s7Ni4A.mp4';
 
-const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => {
+const CustomVideoView = ({ videoSource = DEFAULT_VIDEO_SOURCE_URI, views = 1950 }) => {
   const { width: screenWidth } = Dimensions.get('window');
   const videoHeight = 220;
 
@@ -32,7 +34,7 @@ const CustomVideoView = ({ videoSource = defaultVideoSource, views = 1950 }) => 
 
   const videoViewRef = useRef(null);
 
-  const player = useVideoPlayer({ assetId: videoSource }, (player) => {
+  const player = useVideoPlayer({ uri: videoSource }, (player) => {
     player.loop = true;
     player.timeUpdateEventInterval = 1;
     player.muted = true;
