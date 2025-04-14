@@ -12,7 +12,7 @@ const EssentialsReview = () => {
   return (
     <TabPageLayout>
       <View className="gap-4">
-        <CollapsibleShell contentContainerStyle={{ gap: 16 }} withPadding={false} label="实时转写">
+        <CollapsibleShell contentContainerStyle={{ gap: 16 }} withPadding={false} label="要点回顾">
           {ESSENTIALS_REVIEW1.map((item, index) => (
             <TransItem key={`trans-${index}`} {...item} />
           ))}

@@ -6,10 +6,10 @@ import { ServiceCard } from 'components/ServiceCard';
 import { Ionicons } from '@expo/vector-icons';
 
 const TRANSPORTATION_SERVICE_CARDS = [
-  { label: '行李寄存', source: require('../../../assets/imgs/service-route.png') },
-  { label: '签到流程', source: require('../../../assets/imgs/service-time.png') },
-  { label: '胸卡领取', source: require('../../../assets/imgs/service-elevator.png') },
-  { label: '差旅报销', source: require('../../../assets/imgs/service-car.png') },
+  { label: '路线查看', source: require('../../../assets/imgs/service-route.png') },
+  { label: '班车时刻表', source: require('../../../assets/imgs/service-time.png') },
+  { label: '线上预约', source: require('../../../assets/imgs/service-elevator.png') },
+  { label: '专车服务', source: require('../../../assets/imgs/service-car.png') },
 ];
 
 const TransportationTabView = () => {
