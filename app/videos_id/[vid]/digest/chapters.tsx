@@ -11,7 +11,7 @@ const ChaptersSnapshot = () => {
   const scrollviewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
-    setTimeout(() => scrollviewRef.current?.scrollToEnd(), 750);
+    // setTimeout(() => scrollviewRef.current?.scrollToEnd(), 750);
   }, []);
   return (
     <ScrollView
@@ -25,7 +25,7 @@ const ChaptersSnapshot = () => {
         // paddingBottom: 285,
       }}>
       <View className="relative gap-5">
-        <FadeInMaskView />
+        {/* <FadeInMaskView /> */}
         {Chapters.slice(0, 1).map((chapter, index) => {
           console.log(`agenda-${index}`);
           return <ChapterItem {...chapter} key={`agenda-${index}`} />;

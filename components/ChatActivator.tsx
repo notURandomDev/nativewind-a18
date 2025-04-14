@@ -1,6 +1,6 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { TouchableOpacity, Image } from 'react-native';
 import React from 'react';
-import { HrefInputParams, Link } from 'expo-router';
+import { Link } from 'expo-router';
 
 const ChatActivator = ({ href }: { href: string }) => {
   return (

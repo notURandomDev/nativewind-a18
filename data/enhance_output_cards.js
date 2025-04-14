@@ -456,6 +456,7 @@ export const TRANSCRIPTION_WITH_CARD_FULL_DATA = [
     },
   },
   {
+    noteTag: 'mark',
     timestamp: 39,
     type: 'missedEnhanced',
     _final: true,
@@ -468,6 +469,7 @@ export const TRANSCRIPTION_WITH_CARD_FULL_DATA = [
     },
   },
   {
+    noteTag: 'todo',
     timestamp: 40,
     type: 'missedEnhanced',
     _final: true,

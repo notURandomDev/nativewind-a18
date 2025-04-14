@@ -50,3 +50,10 @@ export const ParagraphHighlightConfig: {
     },
   },
 };
+
+export const NoteTagConfigs = {
+  none: { label: '', color: '#ffffff' },
+  mark: { label: '重点', color: '#F66348' },
+  todo: { label: '代办', color: '#FFD84E' },
+  question: { label: '疑惑', color: '#00BBFF' },
+};

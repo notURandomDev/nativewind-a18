@@ -1,7 +1,6 @@
-import { View, Text, ScrollView, Alert, FlatList } from 'react-native';
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { View, ScrollView, Alert } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import TintedBackground from 'components/TintedBackground';
-import ButtonAllinOne from 'components/ButtonAllinOne';
 import BottomIndicator from 'components/BottomIndicator';
 import EventSource, { EventSourceEvent } from 'react-native-sse';
 
@@ -18,6 +17,7 @@ import { DEFAULT_TASKKEY, URL_REAL_BACKEND } from './constants';
 import { TranscriptionProps } from './types';
 import { ModifyNoteTagCbProps } from './components/HighlightableParagraph/types';
 import HighlightableParagraph from './components/HighlightableParagraph/HighlightableParagraph';
+import FadeInMaskView from 'components/FadeInMaskView';
 TRANSCRIPTION_DATA.sort((a, b) => a.sentenceId - b.sentenceId);
 
 const RealtimeTranscribe = () => {
@@ -146,10 +146,11 @@ const RealtimeTranscribe = () => {
 
   useEffect(() => {
     startES();
+    setTranscription(TRANSCRIPTION_WITH_CARD_FULL_DATA.slice(0, 43));
     setTimeout(() => {
-      // setTranscription([SSE_RES_4_TESTING_WITH_CARDS]);
-      setTranscription(TRANSCRIPTION_WITH_CARD_FULL_DATA.slice(0, 43));
+      scrollviewRef.current?.scrollToEnd();
     }, 100);
+
     return () => {
       endES();
     };
@@ -194,7 +195,7 @@ const RealtimeTranscribe = () => {
   return (
     <ScrollView
       onContentSizeChange={() => {
-        scrollviewRef.current?.scrollToEnd({ animated: true });
+        // scrollviewRef.current?.scrollToEnd({ animated: true });
       }}
       ref={scrollviewRef}
       contentContainerStyle={{
@@ -202,7 +203,7 @@ const RealtimeTranscribe = () => {
         flexGrow: 1,
         gap: 12,
         backgroundColor: '#ffffff',
-        paddingHorizontal: 28,
+        paddingHorizontal: 20,
         // paddingBottom: 285,
       }}>
       <View className="relative gap-4">
@@ -217,7 +218,7 @@ const RealtimeTranscribe = () => {
             <ButtonAllinOne onPress={endES} variant="outline" label="结束测试" />
           </View> */}
           {/* <Text className="text-lg font-medium">{`taskKey: ${taskKeyRef.current}`}</Text> */}
-          <View className="flex-1 gap-3">
+          <View style={{ gap: 10 }} className="flex-1">
             {MemoizedParagraphs}
             {currentTranscription && (
               <View className="bg-blue-faint">

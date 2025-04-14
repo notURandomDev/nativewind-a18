@@ -24,7 +24,7 @@ const DigestTabLayout = () => {
 
   return (
     <View style={{ paddingBottom: 220 }} className="flex-1 gap-4">
-      <View accessibilityLabel="block-buttons" className="flex-row gap-3 rounded-none px-8">
+      <View accessibilityLabel="block-buttons" className="flex-row gap-3 rounded-none px-6">
         {buttonConfig.map(({ label }, index) => {
           return (
             <ButtonAllinOne

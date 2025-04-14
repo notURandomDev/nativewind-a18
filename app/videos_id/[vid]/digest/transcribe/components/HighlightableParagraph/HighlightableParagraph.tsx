@@ -1,7 +1,7 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { memo, ReactNode, useEffect, useMemo, useState } from 'react';
 import { HighlightableParagraphProps } from './types';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { ParagraphHighlightConfig } from './constants';
+import { NoteTagConfigs, ParagraphHighlightConfig } from './constants';
 import CustomContextMenu, { CustomContextMenuCbProps } from 'components/ContextMenu';
 import { Alert, DeviceEventEmitter, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -9,6 +9,7 @@ import * as Haptics from 'expo-haptics';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { formatTime } from 'utils/formatTime';
 import segmentSentence from '../../utils/segmentSentence';
+import { NoteTags } from '../../types';
 
 const HighlightableParagraph = ({
   sentence,
@@ -75,18 +76,24 @@ const HighlightableParagraph = ({
       activeOpacity={1}
       onLongPress={handleLongPress}
       onPress={handlePress}>
-      <View className="flex-row items-center gap-1 px-2">
-        <Ionicons name="caret-forward-circle-outline" />
-        <Text className="text-xl">
-          {formatTime(Math.round(sentence.beginTime ? sentence.beginTime / 1000 : 0))}
-        </Text>
+      <View
+        style={{ paddingStart: 7, paddingEnd: 24 }}
+        className="flex-row items-center justify-between">
+        <View className="flex-row items-center gap-1">
+          <Ionicons color="#626262" size={15} name="caret-forward-circle-outline" />
+          <Text className="text-xl text-gray-text">
+            {formatTime(Math.round(sentence.beginTime ? sentence.beginTime / 1000 : 0))}
+          </Text>
+        </View>
+        <NoteTag tag={noteTag} />
       </View>
       <Animated.View
         style={[
           {
-            paddingHorizontal: 16,
-            paddingVertical: 12,
-            borderRadius: 10,
+            marginHorizontal: 24,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            borderRadius: 4,
             boxShadow: ParagraphHighlightConfig[noteTag].boxShadow,
           },
           animatedStyle,
@@ -94,8 +101,8 @@ const HighlightableParagraph = ({
         ]}
         className="bg-white">
         {children}
-        {isActive && <CustomContextMenu cbs={cbs} currentTag={noteTag} />}
       </Animated.View>
+      {isActive && <CustomContextMenu cbs={cbs} currentTag={noteTag} />}
     </TouchableOpacity>
   );
 
@@ -140,6 +147,32 @@ const HighlightableParagraph = ({
     <SentenceWrapper>
       <ReassembledSentence />
     </SentenceWrapper>
+  );
+};
+
+const NoteTag = ({ tag }: { tag: NoteTags }) => {
+  const { label, color } = NoteTagConfigs[tag];
+
+  const opacity = useSharedValue(0);
+  const translateX = useSharedValue(-50);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return { opacity: opacity.value, transform: [{ translateX: translateX.value }] };
+  });
+
+  useEffect(() => {
+    if (tag !== 'none') {
+      opacity.value = withTiming(1, { duration: 1000 });
+      translateX.value = withTiming(0, { duration: 500 });
+    }
+  }, [tag]);
+
+  return (
+    <Animated.View
+      className="px-2 py-0.5"
+      style={[{ backgroundColor: color, borderRadius: 4 }, animatedStyle]}>
+      <Text className="text-base">{tag === 'none' ? '' : `已标记为${label}`}</Text>
+    </Animated.View>
   );
 };
 

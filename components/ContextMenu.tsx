@@ -89,8 +89,8 @@ const CustomContextMenu = ({
     <View
       className="absolute border border-gray bg-white"
       style={{
-        right: 10,
-        bottom: 10,
+        right: 0,
+        top: 0,
         boxShadow: '5px 2.5px 20px rgba(0,0,0,0.2)',
         borderRadius: 8,
         padding: 8,
