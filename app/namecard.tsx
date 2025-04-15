@@ -53,7 +53,7 @@ const Namecard = () => {
           />
           <View className="gap-2">
             <Text className="text-4xl">黄子烨</Text>
-            <Text className="text-lg text-gray-solid">UID: 22050208</Text>
+            <Text className="text-lg text-gray-solid">UID: Kyle_Skelet</Text>
             <Text className="text-lg font-light text-gray-solid">
               我是来自杭州电子科技大学的前端工程师黄子烨！
             </Text>

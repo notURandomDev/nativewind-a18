@@ -11,8 +11,7 @@ import {
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { clearChat, loadChat, saveChat } from 'storage/chatStorage';
-import * as Progress from 'react-native-progress';
-import EventSource, { EventSourceEvent, EventSourceListener } from 'react-native-sse';
+import { EventSourceEvent, EventSourceListener } from 'react-native-sse';
 import { MeetingRefCard, TranscriptionRefCard } from 'components/ReferenceCards';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
@@ -100,6 +99,7 @@ const Modal = () => {
           setCurrentPhase({ completed: false, phaseCode: res.data.phaseCode || -1 });
         }
       } else if (res.type === 'answer') {
+        console.log('here');
         replyMessageRef.current += res.data.text;
         setReplyMessage((prev) => prev + res.data.text);
       } else if (res.type === 'reference') {
@@ -144,6 +144,7 @@ const Modal = () => {
     terminateEventSourceConnection();
     setLinked(false);
     setCompletedPhases([]);
+    saveSSEResponse();
   };
   const {
     sendEventSourceDevRequest,
@@ -293,15 +294,15 @@ const Modal = () => {
     ]);
     // sendEventSourceGetRequest(URL_4_SIMULATE);
     // sendEventSourceDevRequest(TEST_DATA_REF_TRANSCRIPTION);
-    // sendEventSourceDevRequest(TEST_DATA_REF_MEETING);
-    //sendEventSourceDevRequest(TEST_DATA_ANSWER);
-    sendEventSourcePostRequest(
+    sendEventSourceDevRequest(TEST_DATA_REF_MEETING);
+    // sendEventSourceDevRequest(TEST_DATA_ANSWER);
+    /* sendEventSourcePostRequest(
       JSON.stringify({
         input: textinput,
         isInMeeting: chatType === 'insideMeeting' ? true : false,
       }),
       URL_4_REAL
-    );
+    ); */
 
     // sendSSERequest();
   };

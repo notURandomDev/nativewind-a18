@@ -54,7 +54,6 @@ export const useSSE = (lf: ListenerFunctionProps) => {
       }).toString();
       url += `?${queryString}`;
     }
-
     const es = new EventSource(url);
     esRef.current = es;
     bindEventListeners();

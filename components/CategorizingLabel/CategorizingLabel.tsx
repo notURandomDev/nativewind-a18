@@ -16,7 +16,7 @@ const CategorizingLabel = ({
           <View
             style={{ backgroundColor: accentColor, height: 8 }}
             className="absolute bottom-0 left-0 right-0 flex-1"></View>
-          <Text className="text-3xl">{label}</Text>
+          <Text className="text-3xl font-medium">{label}</Text>
         </View>
       </View>
       <Text className="text-base font-light text-gray" style={{ color: '#9F9F9F' }}>

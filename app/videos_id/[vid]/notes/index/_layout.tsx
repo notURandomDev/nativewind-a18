@@ -40,7 +40,7 @@ const CategorizedView = () => {
         </CollapsibleShell>
         <CollapsibleShell
           withPadding={false}
-          label="代办内容"
+          label="待办内容"
           labelClassName="text-black"
           dotColor="#FFD84E"
           toggle="top">

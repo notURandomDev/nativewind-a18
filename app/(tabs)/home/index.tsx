@@ -7,6 +7,7 @@ import MyCarousel from 'components/MyCarousel';
 import VideoThumbnail from 'components/VideoThumbnail';
 import { rrData } from 'data/carousels';
 import BottomIndicator from 'components/BottomIndicator';
+import { router } from 'expo-router';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           data={replayRecommendations}
           renderItem={({ item: { title, time, venue, imgSrc, views, duration } }) => (
             <VideoCard
+              onPress={() => router.push('../../videos_id/1')}
               leftSlot={<VideoThumbnail imgSrc={imgSrc} views={views} duration={duration} />}
               rightSlot={<InfoSlot title={title} time={time} venue={venue} />}
             />

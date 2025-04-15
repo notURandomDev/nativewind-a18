@@ -57,7 +57,7 @@ const CustomContextMenu = ({
     {
       tag: 'todo',
       iconSrc: require('../assets/imgs/pencil-yellow.png'),
-      label: '代办',
+      label: '待办',
       cb: onTodo,
       iconsvg: PencilYellow,
     },

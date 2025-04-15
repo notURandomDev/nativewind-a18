@@ -153,23 +153,23 @@ const DrawerLayout = () => (
       colors={['#1556f050', '#ffffff00']}
     />
     <View style={{ marginBottom: 8 }} className="flex-row items-center justify-between py-2">
-      <View className="flex-row items-center gap-3">
+      <View style={{ gap: 8, paddingStart: 4 }} className="flex-row items-center">
         <Image
           className="rounded-full"
-          style={{ width: 40, aspectRatio: 1 }}
-          source={require('../../assets/imgs/lipu.png')}
+          style={{ width: 35, aspectRatio: 1 }}
+          source={require('../../assets/imgs/boss.jpg')}
         />
-        <Text className="text-2xl text-white">黄子烨</Text>
+        <Text className="text-2xl font-medium">范渊</Text>
       </View>
       <View style={{ gap: 20 }} className="flex-row items-center">
-        <MaterialCommunityIcons name="line-scan" size={24} color="#ffffff" />
+        <MaterialCommunityIcons name="line-scan" size={24} />
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             router.back();
           }}>
-          <Ionicons size={24} name="chevron-forward-outline" color="#ffffff" />
+          <Ionicons size={24} name="chevron-forward-outline" />
         </TouchableOpacity>
       </View>
     </View>

@@ -39,7 +39,7 @@ const ChatTab = () => {
       scrollToEnd();
     });
 
-    /*  const intervalId = setInterval(() => {
+    const intervalId = setInterval(() => {
       setTimeout(
         () =>
           setMsgs((prev) => [
@@ -51,10 +51,10 @@ const ChatTab = () => {
           ]),
         Math.floor((3000 * Math.random()) % 1000)
       );
-    }, 2000); */
+    }, 15000);
 
     return () => {
-      // clearInterval(intervalId);
+      clearInterval(intervalId);
     };
   }, []);
 

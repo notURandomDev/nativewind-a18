@@ -2,6 +2,7 @@ import { View, Text, ImageBackground, Image, TouchableOpacity } from 'react-nati
 import React, { ReactNode } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
+import { router } from 'expo-router';
 
 interface VideoCardProps {
   leftSlot?: ReactNode;

@@ -14,7 +14,7 @@ const CustomChatHeader = () => (
     </ButtonAllinOne>
     <View className="flex-row items-center gap-2">
       <Feather name="edit-3" size={20} color="black" />
-      <Text className="text-xl font-medium">防火墙创新技术在回忆中的讨论与展望</Text>
+      <Text className="text-xl font-medium">技术展示与演示会议的时间咨询</Text>
     </View>
     <ButtonAllinOne variant="ghost" onPress={() => router.replace('/chat/history')}>
       <Octicons name="history" size={22} />

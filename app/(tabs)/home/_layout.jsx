@@ -5,7 +5,6 @@ import { StatusBar } from 'expo-status-bar';
 import { MaterialTopTabs } from 'components/MaterialTopTabs';
 import { LinearGradient } from 'expo-linear-gradient';
 import MyTabBar from '../../../components/MyTabBar';
-import { View } from 'react-native';
 import ChatActivator from 'components/ChatActivator';
 
 const HomeLayout = () => {
